@@ -4,13 +4,14 @@ project(curspp)
 add_library(curspp STATIC
 curspp.cpp
 curspp-draw.cpp
-curspp-graphics.cpp
 )
 
 add_executable(test
 curspp.cpp
 curspp-draw.cpp
-curspp-graphics.cpp
+gfx-context.cpp
+gfx-render-2D.cpp
+ellipse2D.cpp
 test.cpp
 )
 

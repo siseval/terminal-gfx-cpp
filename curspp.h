@@ -24,17 +24,17 @@ enum class color
 };
 
 typedef int32_t coord_type;
-typedef curspp::Vec2<coord_type> vec2c;
+typedef curspp::Vec2<coord_type> coord2D;
 
-constexpr vec2c UP = vec2c { 0, -1 };
-constexpr vec2c DOWN = vec2c { 0, 1 };
-constexpr vec2c LEFT = vec2c { -1, 0 };
-constexpr vec2c RIGHT = vec2c { 1, 0 };
+constexpr coord2D UP = coord2D { 0, -1 };
+constexpr coord2D DOWN = coord2D { 0, 1 };
+constexpr coord2D LEFT = coord2D { -1, 0 };
+constexpr coord2D RIGHT = coord2D { 1, 0 };
 
 void init();
 void end();
 
-inline void add_str(const vec2c pos, const std::string pixel)
+inline void add_str(const coord2D pos, const std::string pixel)
 {
     mvaddstr(pos.y, pos.x, pixel.data());
 }
@@ -56,14 +56,14 @@ inline void set_bold(const bool enable)
     }
 }
 
-inline vec2c get_screen_size()
+inline coord2D get_screen_size()
 {
     coord_type width, height;
     getmaxyx(stdscr, height, width);
     return { width, height };
 }
 
-inline vec2c get_cursor_pos()
+inline coord2D get_cursor_pos()
 {
     coord_type x, y;
     getyx(stdscr, y, x);

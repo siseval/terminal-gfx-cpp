@@ -1,6 +1,6 @@
 #include "curspp.h"
 #include "curspp-draw.h"
-#include "curspp-graphics.h"
+#include "gfx-render-2D.h"
 
 using namespace curspp;
 using namespace curspp::graphics;
@@ -15,80 +15,38 @@ int main()
 
 void gfx_test()
 {
+    init();
     set_bold(true);
     bool run = true;
 
-    int16_t num_points = 700;
-    double distance_factor = 0.4;
-    double rotation = 0.0;
+    coord2D screen_size = get_screen_size() * coord2D{ 4, 2 };
+    coord2D center = screen_size / coord2D{ 4, 2 };
 
-    init();
-    clear_screen();
+    GfxRender2D renderer(screen_size);
 
-    vec2c screen_size = get_screen_size() * vec2c { 4, 2 };
-    vec2c center = screen_size / vec2c { 4, 2 };
-    coord_type distance = std::min(screen_size.x, screen_size.y) * distance_factor;
-
-    std::vector<vec2c> positions;
-
-    auto gfx_context = create_context(screen_size);
-
-    for (uint8_t dr = 0; dr < 10; dr++)
-    {
-        for (uint16_t i = 0; i <= num_points; i++)
-        {
-            double theta = -(M_PI / 2) + (static_cast<double>(i) / num_points) * (2 * M_PI);
-            coord_type x = static_cast<coord_type>(std::round(cos(theta + rotation) * (distance - dr) * 1));
-            coord_type y = static_cast<coord_type>(std::round(sin(theta + rotation) * (distance - dr)));
-            vec2c pos = { x, y };
-
-            positions.push_back(center + pos);
-        }
-    }
-
-    Color3 color = { 0, 255, 50 };
-        
-    set_pixel(gfx_context, center, color);
-    for (vec2c pos : positions)
-    {
-            // draw_line(center, pos, "·");
-        set_pixel(gfx_context, pos, Color3{ 255, 255, 255 });
-    }
+    coord2D radius = { 30, 15 };
+    auto ellipse = renderer.create_ellipse(center - radius, radius, Color3 { 255, 0, 0 }, 5);
 
     while (run)
     {
-        draw_frame(gfx_context);
-
-        // draw_points(positions, "•", color::YELLOW);
+        renderer.draw_frame();
 
         switch (get_input())
         {
+            case 'k':
+                ellipse->set_radius(ellipse->get_radius() + coord2D { 1, 1 });
+                ellipse->set_position(center - ellipse->get_radius());
+                break;
+            case 'j':
+                ellipse->set_radius(ellipse->get_radius() - coord2D { 1, 1 });
+                ellipse->set_position(center - ellipse->get_radius());
+                break;
+
             case 'q':
                 end();
                 run = false;
                 break;
-
-            case '1':
-                distance_factor -= 0.03;
-                break;
-            case '2':
-                distance_factor += 0.03;
-                break;
-
-            case '3':
-                num_points--;
-                break;
-            case '4':
-                num_points++;
-                break;
-
-            case '5':
-                rotation -= 0.03;
-                break;
-            case '6':
-                rotation += 0.03;
-                break;
-        }
+       }
     }
 }
 
@@ -105,23 +63,23 @@ void circle_test()
     {
         clear_screen();
 
-        vec2c screen_size = get_screen_size();
-        vec2c center = screen_size / 2;
+        coord2D screen_size = get_screen_size();
+        coord2D center = screen_size / 2;
         coord_type distance = std::min(screen_size.x, screen_size.y) * distance_factor;
 
-        std::vector<vec2c> positions;
+        std::vector<coord2D> positions;
 
         for (uint16_t i = 0; i <= num_points; i++)
         {
             double theta = -(M_PI / 2) + (static_cast<double>(i) / num_points) * (2 * M_PI);
             coord_type x = static_cast<coord_type>(std::round(cos(theta + rotation) * distance * 2));
             coord_type y = static_cast<coord_type>(std::round(sin(theta + rotation) * distance));
-            vec2c pos = { x, y };
+            coord2D pos = { x, y };
 
             positions.push_back(center + pos);
         }
 
-        for (vec2c pos : positions)
+        for (coord2D pos : positions)
         {
              draw_line(center, pos, "·");
         }

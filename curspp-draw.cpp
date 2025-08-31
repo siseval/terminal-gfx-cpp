@@ -3,22 +3,22 @@
 namespace curspp
 {
  
-void draw_point(const vec2c point, const std::string pixel, const curspp::color color)
+void draw_point(const coord2D point, const std::string pixel, const curspp::color color)
 {
     set_color(color);
     add_str(point, pixel);
 }
 
-void draw_points(const std::vector<vec2c> points, const std::string pixel, const curspp::color color)
+void draw_points(const std::vector<coord2D> points, const std::string pixel, const curspp::color color)
 {
     set_color(color);
-    for (vec2c point : points)
+    for (coord2D point : points)
     {
          add_str(point, pixel);
     }
 }
 
-void draw_line(const vec2c start, const vec2c end, const std::string pixel, const curspp::color color)
+void draw_line(const coord2D start, const coord2D end, const std::string pixel, const curspp::color color)
 {
     coord_type delta_x = std::abs(end.x - start.x);
     int8_t sign_x = start.x < end.x ? 1 : - 1;
@@ -27,7 +27,7 @@ void draw_line(const vec2c start, const vec2c end, const std::string pixel, cons
     int8_t sign_y = start.y < end.y ? 1 : - 1;
 
     coord_type error = delta_x + delta_y;
-    vec2c cur_pos = start;
+    coord2D cur_pos = start;
 
     while (true)
     {
