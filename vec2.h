@@ -3,8 +3,9 @@
 
 #include <cstdint>
 #include <cmath>
+#include <functional>
 
-namespace vec2 
+namespace curspp 
 {
 
 template <typename T>
@@ -94,9 +95,9 @@ using vec2f = Vec2<float>;
 }
 
 template <typename T>
-struct std::hash<vec2::Vec2<T>>
+struct std::hash<curspp::Vec2<T>>
 {
-    size_t operator()(const vec2::Vec2<T>& vec) const
+    size_t operator()(const curspp::Vec2<T>& vec) const
     {
         return std::hash<T>()(vec.x) ^ (std::hash<T>()(vec.y) << 1);
     }

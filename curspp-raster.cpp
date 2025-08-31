@@ -1,1 +1,0 @@
-#include "curspp-raster.h"

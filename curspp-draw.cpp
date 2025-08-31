@@ -20,19 +20,19 @@ void draw_points(const std::vector<vec2c> points, const std::string pixel, const
 
 void draw_line(const vec2c start, const vec2c end, const std::string pixel, const curspp::color color)
 {
-    pos_type delta_x = std::abs(end.x - start.x);
+    coord_type delta_x = std::abs(end.x - start.x);
     int8_t sign_x = start.x < end.x ? 1 : - 1;
 
-    pos_type delta_y = -std::abs(end.y - start.y);
+    coord_type delta_y = -std::abs(end.y - start.y);
     int8_t sign_y = start.y < end.y ? 1 : - 1;
 
-    pos_type error = delta_x + delta_y;
+    coord_type error = delta_x + delta_y;
     vec2c cur_pos = start;
 
     while (true)
     {
         add_str(cur_pos, pixel);
-        pos_type error_doubled = 2 * error;
+        coord_type error_doubled = 2 * error;
 
         if (error_doubled >= delta_y)
         {

@@ -4,11 +4,13 @@ project(curspp)
 add_library(curspp STATIC
 curspp.cpp
 curspp-draw.cpp
+curspp-graphics.cpp
 )
 
 add_executable(test
 curspp.cpp
 curspp-draw.cpp
+curspp-graphics.cpp
 test.cpp
 )
 

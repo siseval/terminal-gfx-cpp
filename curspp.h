@@ -10,32 +10,26 @@
 
 namespace curspp {
 
-typedef int32_t pos_type;
-typedef vec2::Vec2<pos_type> vec2c;
-
-struct color3
-{
-    int8_t r;
-    int8_t g;
-    int8_t b;
-};
 
 enum class color
 {
     BLACK = 1,
-    RED = 2,
-    GREEN = 3,
-    YELLOW = 4,
-    BLUE = 5,
-    MAGENTA = 6,
-    WHITE = 7,
+    RED,
+    GREEN,
+    YELLOW,
+    BLUE,
+    MAGENTA,
+    CYAN,
+    WHITE,
 };
-using color = enum color;
 
-constexpr vec2c UP = vec2c{ 0, -1 };
-constexpr vec2c DOWN = vec2c{ 0, 1 };
-constexpr vec2c LEFT = vec2c{ -1, 0 };
-constexpr vec2c RIGHT = vec2c{ 1, 0 };
+typedef int32_t coord_type;
+typedef curspp::Vec2<coord_type> vec2c;
+
+constexpr vec2c UP = vec2c { 0, -1 };
+constexpr vec2c DOWN = vec2c { 0, 1 };
+constexpr vec2c LEFT = vec2c { -1, 0 };
+constexpr vec2c RIGHT = vec2c { 1, 0 };
 
 void init();
 void end();
@@ -45,9 +39,9 @@ inline void add_str(const vec2c pos, const std::string pixel)
     mvaddstr(pos.y, pos.x, pixel.data());
 }
 
-inline void set_color(const enum color c)
+inline void set_color(const enum color color)
 {
-    attron(COLOR_PAIR(c));
+    attron(COLOR_PAIR(color));
 }
 
 inline void set_bold(const bool enable)
@@ -64,14 +58,14 @@ inline void set_bold(const bool enable)
 
 inline vec2c get_screen_size()
 {
-    pos_type width, height;
+    coord_type width, height;
     getmaxyx(stdscr, height, width);
     return { width, height };
 }
 
 inline vec2c get_cursor_pos()
 {
-    pos_type x, y;
+    coord_type x, y;
     getyx(stdscr, y, x);
     return { x, y };
 }
@@ -86,7 +80,7 @@ inline void flush_input()
     flushinp();
 }
 
-inline void set_timeout_ms(pos_type ms)
+inline void set_timeout_ms(coord_type ms)
 {
     timeout(ms);
 }
