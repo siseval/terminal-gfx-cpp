@@ -21,7 +21,7 @@ std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(coord2D position, coord2D
 
     ellipse->set_radius(radius);
     ellipse->set_line_thickness(line_thickness);
-    ellipse->set_position(position);
+    ellipse->set_pos(position);
     ellipse->set_color(color);
 
 

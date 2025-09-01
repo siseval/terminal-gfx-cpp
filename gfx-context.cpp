@@ -6,11 +6,11 @@ namespace curspp::graphics
 std::shared_ptr<gfx_context> create_context(const coord2D resolution, const coord2D origin, const coord2D viewport_scaling)
 {
     return std::make_shared<gfx_context>(gfx_context {
-        resolution,
+        resolution * viewport_scaling,
         origin,
         viewport_scaling,
         std::make_unique<std::unordered_map<Color3, uint8_t, std::hash<Color3>>>(),
-        std::make_unique<std::vector<uint8_t>>(static_cast<size_t>(resolution.x) * static_cast<size_t>(resolution.y) / 2, 0)
+        std::make_unique<std::vector<uint8_t>>(static_cast<size_t>(resolution.x * viewport_scaling.x) * static_cast<size_t>(resolution.y * viewport_scaling.y) / 2, 0)
     });
 }
 

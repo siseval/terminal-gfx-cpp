@@ -19,13 +19,17 @@ void gfx_test()
     set_bold(true);
     bool run = true;
 
-    coord2D screen_size = get_screen_size() * coord2D{ 4, 2 };
-    coord2D center = screen_size / coord2D{ 4, 2 };
+    coord2D screen_size = get_screen_size() * 2;
 
     GfxRender2D renderer(screen_size);
+    coord2D center = renderer.get_center();
 
-    coord2D radius = { 30, 15 };
-    auto ellipse = renderer.create_ellipse(center - radius, radius, Color3 { 255, 0, 0 }, 5);
+    coord2D radius = { 45, 30 };
+    auto ellipse = renderer.create_ellipse(center - radius, radius, Color3 { 255, 0, 0 }, 3);
+    // coord2D foo = renderer.get_context()->resolution * vec2f {0.5f, 0.5f};
+    ellipse->set_pos(center - radius);
+
+
 
     while (run)
     {
@@ -35,11 +39,11 @@ void gfx_test()
         {
             case 'k':
                 ellipse->set_radius(ellipse->get_radius() + coord2D { 1, 1 });
-                ellipse->set_position(center - ellipse->get_radius());
+                ellipse->set_pos(center - ellipse->get_radius());
                 break;
             case 'j':
                 ellipse->set_radius(ellipse->get_radius() - coord2D { 1, 1 });
-                ellipse->set_position(center - ellipse->get_radius());
+                ellipse->set_pos(center - ellipse->get_radius());
                 break;
 
             case 'q':
