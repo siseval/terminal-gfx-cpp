@@ -26,6 +26,7 @@ void gfx_test()
 
     coord2D radius = { 30, 30 };
     auto ellipse = renderer.create_ellipse(center - radius, radius, Color3 { 240, 240, 20 }, 3);
+    renderer.add_item(ellipse);
 
     while (run)
     {
@@ -56,6 +57,13 @@ void gfx_test()
                 break;
             case 'b':
                 ellipse->set_draw_bounds(!ellipse->get_draw_bounds());
+                break;
+
+            case 'r':
+                renderer.remove_item(ellipse);
+                break;
+            case 'e':
+                renderer.add_item(ellipse);
                 break;
 
             case 'q':

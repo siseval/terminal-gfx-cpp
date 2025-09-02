@@ -7,7 +7,7 @@ void GfxRender2D::draw_frame()
 {
     clear_frame_buffer(context);
 
-    for (auto primitive : primitives->items)
+    for (auto primitive : primitives->get_items())
     {
         primitive->rasterize(context);
     }
@@ -23,8 +23,6 @@ std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(coord2D position, coord2D
     ellipse->set_line_thickness(line_thickness);
     ellipse->set_pos(position);
     ellipse->set_color(color);
-
-    primitives->items.push_back(ellipse);
 
     return ellipse;
 }

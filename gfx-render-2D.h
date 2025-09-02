@@ -30,6 +30,9 @@ class GfxRender2D
     inline std::shared_ptr<GfxPrimitiveStore2D> get_primitives() const { return primitives; };
     inline std::shared_ptr<gfx_context> get_context() const { return context; };
 
+    inline void add_item(std::shared_ptr<GfxPrimitive2D> item) { primitives->add_item(item); }
+    inline void remove_item(std::shared_ptr<GfxPrimitive2D> item) { primitives->remove_item(item); }
+
     private:
 
     std::shared_ptr<gfx_context> context;
