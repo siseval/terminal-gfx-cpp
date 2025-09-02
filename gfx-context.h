@@ -22,7 +22,7 @@ struct gfx_context
 
 std::shared_ptr<gfx_context> create_context(const coord2D resolution, const coord2D origin = coord2D { 0, 0 }, const coord2D viewport_scaling = coord2D { 2, 1 });
 
-inline coord2D scale_with_viewport(std::shared_ptr<gfx_context> context, coord2D vec) { return vec * context->viewport_scaling; }
+inline coord2D scale_with_viewport(std::shared_ptr<gfx_context> context, const coord2D vec) { return vec * context->viewport_scaling; }
 
 uint8_t add_color(std::shared_ptr<gfx_context> context, const Color3 color);
 void set_color(std::shared_ptr<gfx_context> context, const Color3 color);

@@ -3,25 +3,55 @@
 namespace curspp::graphics
 {
 
+Matrix3x3d GfxPrimitive2D::get_transform_matrix(std::shared_ptr<gfx_context> context) const
+{
+    Vec2d global_scale = scale_with_viewport(context, scale);
+    Matrix3x3d scale_matrix = Matrix3x3d({
+        { global_scale.x, 0, 0 },
+        { 0, global_scale.y, 0 },
+        { 0, 0, 1 }
+    });
+
+    double sin_r = std::sin(rotation);
+    double cos_r = std::cos(rotation);
+    Matrix3x3d rotation_matrix = Matrix3x3d({
+        { cos_r, -sin_r, 0 },
+        { sin_r, cos_r, 0 },
+        { 0, 0, 1 }
+    });
+    
+    Vec2d pos = get_pos();
+    Matrix3x3d translation_matrix = Matrix3x3d({
+        { 1, 0, pos.x },
+        { 0, 1, pos.y },
+        { 0, 0, 1 }
+    });
+
+    return scale_matrix * translation_matrix * rotation_matrix;
+}
+
 void GfxPrimitive2D::set_pos(const coord2D pos) 
 { 
-    coord2D size = bounds.max - bounds.min;
-    bounds.min = pos - anchor; 
-    bounds.max = bounds.min + size;
-    update_bounds();
+    coord2D delta = pos - get_pos();
+    bounds.min += delta;
+    bounds.max += delta;
+    // coord2D size = bounds.max - bounds.min;
+    // bounds.min = pos - anchor; 
+    // bounds.max = bounds.min + size;
 }
 
 void GfxPrimitive2D::rasterize_bounds(std::shared_ptr<gfx_context> context)
 {
     coord2D bounds_size = scale_with_viewport(context, get_size());
     coord2D position = scale_with_viewport(context, get_pos());
+    coord2D anchor_point = get_anchor() * bounds_size;
     coord2D center = (bounds_size / 2);
 
-    write_pixel(context, position + center, GFX_BOUNDS_COLOR);
     write_pixel(context, position, GFX_BOUNDS_COLOR);
-    write_pixel(context, position + coord2D{ 0, bounds_size.y }, GFX_BOUNDS_COLOR);
-    write_pixel(context, position + bounds_size, GFX_BOUNDS_COLOR);
-    write_pixel(context, position + coord2D{ bounds_size.x, 0 }, GFX_BOUNDS_COLOR);
+    write_pixel(context, position - anchor_point, GFX_BOUNDS_COLOR);
+    write_pixel(context, position + coord2D{ 0, bounds_size.y } - anchor_point, GFX_BOUNDS_COLOR);
+    write_pixel(context, position + bounds_size - anchor_point, GFX_BOUNDS_COLOR);
+    write_pixel(context, position + coord2D{ bounds_size.x, 0 } - anchor_point, GFX_BOUNDS_COLOR);
 }
 
 void rasterize_line(std::shared_ptr<gfx_context> context, const coord2D start, const coord2D end, double line_thickness, const Color3 color)
@@ -70,9 +100,20 @@ void rasterize_line(std::shared_ptr<gfx_context> context, const coord2D start, c
     }
 }
 
+coord2D apply_transformation(const Vec2d pos, const Matrix3x3d transformation_matrix)
+{
+    Matrix3x1d column_matrix = Matrix3x1d({ 
+        { pos.x }, 
+        { pos.y }, 
+        { 1 }});
+
+    Matrix3x1d transformed = transformation_matrix * column_matrix;
+    return Vec2d { transformed(0, 0), transformed(0, 1), };
+}
+
 void rasterize_circle(std::shared_ptr<gfx_context> context, const coord2D center, const double radius, const Color3 color)
 {
-    vec2d scaled_radius = vec2d { radius, radius } * context->viewport_scaling;
+    Vec2d scaled_radius = Vec2d { radius, radius } * context->viewport_scaling;
     coord_type diameter = radius * 2;
     for (coord_type i = 0; i < diameter * diameter; i++)
     {
@@ -86,7 +127,7 @@ void rasterize_circle(std::shared_ptr<gfx_context> context, const coord2D center
     }
 }
 
-vec2d rotate_point(const coord2D point, const double angle)
+Vec2d rotate_point(const coord2D point, const double angle)
 {
     double s = sin(angle);
     double c = cos(angle);

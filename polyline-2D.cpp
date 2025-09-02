@@ -20,7 +20,7 @@ void Polyline2D::update_bounds()
 {
     if (points.size() < 2)
     {
-        set_bounds({ {0, 0}, {0, 0} });
+        set_size({ 0, 0 });
         return;
     }
 
@@ -35,9 +35,7 @@ void Polyline2D::update_bounds()
         if (point.y > max_point.y) max_point.y = point.y;
     }
 
-    coord2D line_extent = coord2D { static_cast<coord_type>(get_line_thickness()), static_cast<coord_type>(get_line_thickness()) };
-    bbox_2D new_bounds = { min_point - line_extent - coord2D { 1, 1 }, max_point + line_extent + coord2D { 1, 1 } };
-    set_bounds(new_bounds);
+    set_size(max_point + Vec2d::create(get_line_thickness()));
 }
 
 
