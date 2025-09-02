@@ -5,12 +5,13 @@ namespace curspp::graphics
 
 void Ellipse2D::update_bounds()
 {
-    coord2D size = radius * 2 * coord2D { 1, 1 };
+    coord2D size = radius * 2;
     coord2D position = get_pos();
     coord2D line_extent = coord2D { static_cast<coord_type>(get_line_thickness()), static_cast<coord_type>(get_line_thickness()) };
     bbox_2D new_bounds = { -coord2D{ 1, 1 } - line_extent + position, position + size + line_extent + coord2D { 1, 1 } };
     set_bounds(new_bounds);
 }
+
 
 void Ellipse2D::rasterize(std::shared_ptr<gfx_context> context)
 {
@@ -24,26 +25,25 @@ void Ellipse2D::rasterize(std::shared_ptr<gfx_context> context)
         rasterize_bounds(context);
     }
 
-    double semi_major = radius.x / 1.0;
-    double semi_minor = radius.y / 1.0;
-    double thickness = get_line_thickness() / std::min(semi_major, semi_minor);
+    double thickness = get_line_thickness() / std::min(radius.x, radius.y);
 
     for (coord_type i = 0; i < bounds_size.x * bounds_size.y; i++)
     {
-        coord2D pos = coord2D{ i % bounds_size.x, i / bounds_size.x };
+        coord2D pos = coord2D { i % bounds_size.x, i / bounds_size.x };
 
-        double relative_x = pos.x - center.x;
-        double relative_y = pos.y - center.y;
+        vec2d relative_pos = { static_cast<double>(pos.x - center.x), static_cast<double>(pos.y - center.y) };
+        double rotation = get_rotation();
+        vec2d rotated_pos = rotation != 0.0 ? rotate_point(relative_pos, -rotation) : relative_pos;
 
-        double result = ((relative_x * relative_x) / (semi_major * semi_major)) + ((relative_y * relative_y) / (semi_minor * semi_minor));
+        double sdf = ((rotated_pos.x * rotated_pos.x) / (radius.x * radius.x)) + ((rotated_pos.y * rotated_pos.y) / (radius.y * radius.y)) - 1;
 
-        if (get_fill() && result < 1)
+        if (get_fill() && sdf < 0)
         {
             write_pixel(context, position + pos, get_color());
             continue;
         }
 
-        if (std::abs(1 - result) <= thickness)
+        if (std::abs(sdf) <= thickness)
         {
             write_pixel(context, position + pos, get_color());
         }

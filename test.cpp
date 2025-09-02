@@ -26,7 +26,11 @@ void gfx_test()
 
     coord2D radius = { 30, 30 };
     auto ellipse = renderer.create_ellipse(center - radius, radius, Color3 { 240, 240, 20 }, 3);
-    renderer.add_item(ellipse);
+    // renderer.add_item(ellipse);
+
+    std::vector<coord2D> points = { center - coord2D { 40, 37 }, center + coord2D { 0, 30 }, center + coord2D { 30, -30 }, center - coord2D { 40, 37 } };
+    auto polyline = renderer.create_polyline(points, Color3 { 20, 20, 240 }, 5.0);
+    renderer.add_item(polyline);
 
     while (run)
     {
@@ -49,6 +53,15 @@ void gfx_test()
                 break;
             case 'h':
                 ellipse->set_radius(ellipse->get_radius() - coord2D { 1, 0 });
+                ellipse->set_pos(center - ellipse->get_radius());
+                break;
+
+            case 'L':
+                ellipse->set_rotation(ellipse->get_rotation() + 0.05);
+                ellipse->set_pos(center - ellipse->get_radius());
+                break;
+            case 'H':
+                ellipse->set_rotation(ellipse->get_rotation() - 0.05);
                 ellipse->set_pos(center - ellipse->get_radius());
                 break;
 

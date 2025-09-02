@@ -12,7 +12,8 @@ curspp-draw.cpp
 gfx-context.cpp
 gfx-render-2D.cpp
 gfx-primitive-2D.cpp
-ellipse2D.cpp
+ellipse-2D.cpp
+polyline-2D.cpp
 test.cpp
 )
 

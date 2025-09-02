@@ -31,7 +31,9 @@ public:
 
     static double length(Vec2<T> vector) { return std::sqrt(vector.x * vector.x + vector.y * vector.y); }
     static double distance(Vec2<T> a, Vec2<T> b) { return length(subtract(a, b)); }
-    static Vec2<double> normalize(Vec2<T> vector) { return Vec2<double>{ static_cast<T>(vector.x / length()), static_cast<T>(vector.y / length()) }; }
+    static Vec2<double> normalize(Vec2<T> vector) { return Vec2<double>{ static_cast<T>(vector.x / vector.length()), static_cast<T>(vector.y / vector.length()) }; }
+
+    static Vec2<double> normal(Vec2<T> vector) { return Vec2<T>{ -vector.y, vector.x }; }
 
     double length() { return std::sqrt(x * x + y * y); }
 

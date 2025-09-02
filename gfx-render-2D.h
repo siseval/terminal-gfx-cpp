@@ -2,8 +2,9 @@
 #define GFX_RENDER_2D_H
 
 #include "gfx-context.h"
-#include "gfx-primitive-store_2D.h"
+#include "gfx-primitive-store-2D.h"
 #include "ellipse-2D.h"
+#include "polyline-2D.h"
 
 namespace curspp::graphics
 {
@@ -21,6 +22,7 @@ class GfxRender2D
     void draw_frame();
 
     std::shared_ptr<Ellipse2D> create_ellipse(coord2D position, coord2D radius, Color3 color, double line_thickness = 1.0);
+    std::shared_ptr<Polyline2D> create_polyline(std::vector<coord2D> points, Color3 color, double line_thickness = 1.0);
 
     inline coord2D get_resolution() { return context->resolution / context->viewport_scaling; }
 
