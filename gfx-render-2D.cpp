@@ -24,7 +24,6 @@ std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(coord2D position, coord2D
     ellipse->set_pos(position);
     ellipse->set_color(color);
 
-
     primitives->items.push_back(ellipse);
 
     return ellipse;

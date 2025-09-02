@@ -17,9 +17,13 @@ public:
     inline coord2D get_radius() const { return radius; }
     inline void set_radius(const coord2D r) { radius = r; update_bounds(); }
 
+    inline bool get_fill() { return draw_fill; }
+    inline void set_fill(const bool fill) { draw_fill = fill; }
+
 private:
 
     coord2D radius;
+    bool draw_fill = false;
 
 };
 

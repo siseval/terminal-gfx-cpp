@@ -24,12 +24,8 @@ void gfx_test()
     GfxRender2D renderer(screen_size);
     coord2D center = renderer.get_center();
 
-    coord2D radius = { 45, 30 };
-    auto ellipse = renderer.create_ellipse(center - radius, radius, Color3 { 255, 0, 0 }, 3);
-    // coord2D foo = renderer.get_context()->resolution * vec2f {0.5f, 0.5f};
-    ellipse->set_pos(center - radius);
-
-
+    coord2D radius = { 30, 30 };
+    auto ellipse = renderer.create_ellipse(center - radius, radius, Color3 { 240, 240, 20 }, 3);
 
     while (run)
     {
@@ -38,12 +34,28 @@ void gfx_test()
         switch (get_input())
         {
             case 'k':
-                ellipse->set_radius(ellipse->get_radius() + coord2D { 1, 1 });
+                ellipse->set_radius(ellipse->get_radius() + coord2D { 0, 1 });
                 ellipse->set_pos(center - ellipse->get_radius());
                 break;
             case 'j':
-                ellipse->set_radius(ellipse->get_radius() - coord2D { 1, 1 });
+                ellipse->set_radius(ellipse->get_radius() - coord2D { 0, 1 });
                 ellipse->set_pos(center - ellipse->get_radius());
+                break;
+
+            case 'l':
+                ellipse->set_radius(ellipse->get_radius() + coord2D { 1, 0 });
+                ellipse->set_pos(center - ellipse->get_radius());
+                break;
+            case 'h':
+                ellipse->set_radius(ellipse->get_radius() - coord2D { 1, 0 });
+                ellipse->set_pos(center - ellipse->get_radius());
+                break;
+
+            case 'f':
+                ellipse->set_fill(!ellipse->get_fill());
+                break;
+            case 'b':
+                ellipse->set_draw_bounds(!ellipse->get_draw_bounds());
                 break;
 
             case 'q':

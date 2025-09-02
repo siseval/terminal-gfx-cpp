@@ -34,19 +34,12 @@ public:
     inline void set_bounds(const bbox_2D b) { bounds = b; }
 
     inline coord2D get_pos() const { return bounds.min; }
-    inline void set_pos(const coord2D pos) 
-    { 
-        coord2D size = bounds.max - bounds.min;
-        bounds.min = pos; 
-        bounds.max = pos + size;
-        update_bounds();
-    }
-    // inline void set_screen_pos(const std::shared_ptr<gfx_context> context, const vec2f pos) { set_pos(pos * context->resolution); }
-    inline void set_pos_center(const coord2D pos) 
-    { 
-        set_pos(pos - get_size() / 2);
-    }
+    void set_pos(const coord2D pos);
+    
+    inline void set_pos_center(const coord2D pos) { set_pos(pos - get_size() / 2); }
+
     // inline void set_screen_pos_center(const std::shared_ptr<gfx_context> context, const vec2f pos) { vec2f foo = pos * context->resolution; set_pos_center(pos * (context->resolution / context->viewport_scaling)); }
+    // inline void set_screen_pos(const std::shared_ptr<gfx_context> context, const vec2f pos) { set_pos(pos * context->resolution); }
 
     inline coord2D get_size() const { return bounds.max - bounds.min; }
 
@@ -55,12 +48,12 @@ public:
     inline double get_line_thickness() const { return line_thickness; }
     inline void set_line_thickness(const double thickness) { line_thickness = thickness; update_bounds(); }
 
-private:
+protected:
 
     Color3 color;
     bbox_2D bounds;
     double line_thickness;
-    bool draw_bounds;
+    bool draw_bounds = false;
 
     void rasterize_bounds(std::shared_ptr<gfx_context> context);
 };
