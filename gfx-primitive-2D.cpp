@@ -3,7 +3,7 @@
 namespace curspp::graphics
 {
 
-Matrix3x3d GfxPrimitive2D::get_transform_matrix(std::shared_ptr<gfx_context> context) const
+Matrix3x3d GfxPrimitive2D::get_transform(std::shared_ptr<gfx_context> context) const
 {
     Vec2d global_scale = scale_with_viewport(context, scale);
     Matrix3x3d scale_matrix = Matrix3x3d({
@@ -20,14 +20,41 @@ Matrix3x3d GfxPrimitive2D::get_transform_matrix(std::shared_ptr<gfx_context> con
         { 0, 0, 1 }
     });
     
-    Vec2d pos = get_pos();
+    Vec2d pos = get_pos() - get_anchor() * get_size();
     Matrix3x3d translation_matrix = Matrix3x3d({
         { 1, 0, pos.x },
         { 0, 1, pos.y },
         { 0, 0, 1 }
     });
 
-    return scale_matrix * translation_matrix * rotation_matrix;
+    return  translation_matrix * rotation_matrix * scale_matrix;
+}
+
+Matrix3x3d GfxPrimitive2D::get_inverse_transform(std::shared_ptr<gfx_context> context) const
+{
+    Vec2d global_scale = scale_with_viewport(context, scale);
+    Matrix3x3d scale_matrix = Matrix3x3d({
+        { 1.0 / global_scale.x, 0, 0 },
+        { 0, 1.0 / global_scale.y, 0 },
+        { 0, 0, 1 }
+    });
+
+    double sin_r = std::sin(-rotation);
+    double cos_r = std::cos(-rotation);
+    Matrix3x3d rotation_matrix = Matrix3x3d({
+        { cos_r, -sin_r, 0 },
+        { sin_r, cos_r, 0 },
+        { 0, 0, 1 }
+    });
+    
+    Vec2d pos = get_pos() - get_anchor() * get_size();
+    Matrix3x3d translation_matrix = Matrix3x3d({
+        { 1, 0, -pos.x },
+        { 0, 1, -pos.y },
+        { 0, 0, 1 }
+    });
+
+    return rotation_matrix * translation_matrix * scale_matrix;
 }
 
 void GfxPrimitive2D::set_pos(const coord2D pos) 
@@ -40,10 +67,10 @@ void GfxPrimitive2D::set_pos(const coord2D pos)
     // bounds.max = bounds.min + size;
 }
 
-void GfxPrimitive2D::rasterize_bounds(std::shared_ptr<gfx_context> context)
+void GfxPrimitive2D::rasterize_bounds(std::shared_ptr<gfx_context> context) const
 {
-    coord2D bounds_size = scale_with_viewport(context, get_size());
-    coord2D position = scale_with_viewport(context, get_pos());
+    coord2D bounds_size = get_size();
+    coord2D position = get_pos();
     coord2D anchor_point = get_anchor() * bounds_size;
     coord2D center = (bounds_size / 2);
 
@@ -100,15 +127,15 @@ void rasterize_line(std::shared_ptr<gfx_context> context, const coord2D start, c
     }
 }
 
-coord2D apply_transformation(const Vec2d pos, const Matrix3x3d transformation_matrix)
+coord2D apply_transform(const Vec2d pos, const Matrix3x3d transform)
 {
     Matrix3x1d column_matrix = Matrix3x1d({ 
         { pos.x }, 
         { pos.y }, 
         { 1 }});
 
-    Matrix3x1d transformed = transformation_matrix * column_matrix;
-    return Vec2d { transformed(0, 0), transformed(0, 1), };
+    Matrix3x1d transformed = transform * column_matrix;
+    return Vec2d { transformed(0, 0), transformed(1, 0), };
 }
 
 void rasterize_circle(std::shared_ptr<gfx_context> context, const coord2D center, const double radius, const Color3 color)

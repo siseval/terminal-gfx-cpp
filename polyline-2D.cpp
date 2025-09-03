@@ -16,7 +16,7 @@ void Polyline2D::rasterize(std::shared_ptr<gfx_context> context)
     }
 }
 
-void Polyline2D::update_bounds()
+void Polyline2D::update_bounds(std::shared_ptr<gfx_context> context)
 {
     if (points.size() < 2)
     {

@@ -16,9 +16,19 @@ public:
 
     Matrix() {}
 
-    Matrix(std::initializer_list<std::initializer_list<T>> data) 
+    Matrix(std::initializer_list<std::initializer_list<T>> array) 
     { 
-        data = data;
+        uint32_t r = 0;
+        for (const auto& row : array) 
+        {
+            uint32_t c = 0;
+            for (const auto& val : row) 
+            {
+                data[r][c] = val;
+                ++c;
+            }
+            ++r;
+        }
     }
 
     T& operator()(uint32_t r, uint32_t c) 
@@ -126,6 +136,7 @@ public:
         }
         return result;
     }
+
 
 
 private:

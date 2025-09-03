@@ -26,7 +26,7 @@ class GfxRender2D
 
     inline coord2D get_resolution() { return context->resolution / context->viewport_scaling; }
 
-    inline coord2D get_center() { return get_resolution() / (context->viewport_scaling * 2); };
+    inline coord2D get_center() { return get_resolution() / 2; };
     inline coord2D scaled_coord(coord2D vec) { return scale_with_viewport(context, vec); };
 
     inline std::shared_ptr<GfxPrimitiveStore2D> get_primitives() const { return primitives; };

@@ -12,10 +12,10 @@ class Ellipse2D : public GfxPrimitive2D
 public:
 
     void rasterize(std::shared_ptr<gfx_context> context) override;
-    void update_bounds() override;
+    void update_bounds(std::shared_ptr<gfx_context> context) override;
 
     inline coord2D get_radius() const { return radius; }
-    inline void set_radius(const coord2D r) { radius = r; update_bounds(); }
+    inline void set_radius(const coord2D r) { radius = r; }
 
     inline bool get_fill() { return draw_fill; }
     inline void set_fill(const bool fill) { draw_fill = fill; }

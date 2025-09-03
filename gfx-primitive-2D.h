@@ -23,9 +23,10 @@ class GfxPrimitive2D
 public:
         
     virtual void rasterize(std::shared_ptr<gfx_context> context) = 0;
-    virtual void update_bounds() = 0;
+    virtual void update_bounds(std::shared_ptr<gfx_context> context) = 0;
 
-    Matrix3x3d get_transform_matrix(std::shared_ptr<gfx_context> context) const;
+    Matrix3x3d get_transform(std::shared_ptr<gfx_context> context) const;
+    Matrix3x3d get_inverse_transform(std::shared_ptr<gfx_context> context) const;
 
     inline Color3 get_color() const { return color; }
     inline void set_color(const Color3 col) { color = col; }
@@ -52,13 +53,13 @@ public:
     inline coord2D get_center() const { return (bounds.min + bounds.max) / 2; }
 
     inline Vec2f get_scale() const { return scale; }
-    inline void set_scale(const Vec2f s) { scale = s; update_bounds(); }
+    inline void set_scale(const Vec2f s) { scale = s; }
 
     inline double get_rotation() const { return rotation; }
-    inline void set_rotation(const double r) { rotation = r; update_bounds(); }
+    inline void set_rotation(const double r) { rotation = r; }
 
     inline double get_line_thickness() const { return line_thickness; }
-    inline void set_line_thickness(const double thickness) { line_thickness = thickness; update_bounds(); }
+    inline void set_line_thickness(const double thickness) { line_thickness = thickness; }
 
 protected:
 
@@ -70,10 +71,10 @@ protected:
     double rotation = 0.0;
     bool draw_bounds = false;
 
-    void rasterize_bounds(std::shared_ptr<gfx_context> context);
+    void rasterize_bounds(std::shared_ptr<gfx_context> context) const;
 };
 
-coord2D apply_transformation(const coord2D pos, const Matrix3x3d translation_matrix);
+coord2D apply_transform(const Vec2d pos, const Matrix3x3d transform);
 void rasterize_line(std::shared_ptr<gfx_context> context, const coord2D start, const coord2D end, double line_thickness, const Color3 color);
 void rasterize_circle(std::shared_ptr<gfx_context> context, const coord2D center, const double radius, const Color3 color);
 Vec2d rotate_point(const coord2D point, const double angle);
