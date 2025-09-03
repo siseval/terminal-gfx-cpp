@@ -22,12 +22,13 @@ void gfx_test()
     coord2D screen_size = get_screen_size() * 2;
 
     GfxRender2D renderer(screen_size);
+    renderer.set_viewport_scaling({ 2, 1 });
     coord2D center = renderer.get_center();
 
     coord2D radius = { 30, 30 };
     auto ellipse = renderer.create_ellipse(center, radius, Color3 { 240, 240, 20 }, 1);
-    ellipse->set_anchor({ 0.5, 0.5 });
-    ellipse->set_pos(center);
+    ellipse->set_anchor({ 0.0, 0.0 });
+    // ellipse->set_pos({ 0, 0 });//{ 20, 10 });
     renderer.add_item(ellipse);
 
     std::vector<coord2D> points = { center - coord2D { 40, 37 }, center + coord2D { 0, 30 }, center + coord2D { 30, -30 }, center - coord2D { 40, 37 } };

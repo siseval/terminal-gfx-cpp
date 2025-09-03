@@ -3,6 +3,7 @@
 
 #include "curspp.h"
 #include "color3.h"
+#include "matrix.h"
 #include "pixel-tree.h"
 
 namespace curspp::graphics
@@ -10,17 +11,19 @@ namespace curspp::graphics
 
 constexpr uint8_t GFX_DEDICATED_COLOR_START_INDEX = 200;
 const Color3 GFX_BOUNDS_COLOR = { 255, 255, 255 };
+const Color3 GFX_ANCHOR_COLOR = { 255, 255, 255 };
 
 struct gfx_context
 {
     coord2D resolution;
     coord2D origin;
-    coord2D viewport_scaling;
+    Vec2d viewport_scaling;
     std::unique_ptr<std::unordered_map<Color3, uint8_t, std::hash<Color3>>> palette;
     std::unique_ptr<std::vector<uint32_t>> frame_buffer;
 };
 
 std::shared_ptr<gfx_context> create_context(const coord2D resolution, const coord2D origin = coord2D { 0, 0 }, const coord2D viewport_scaling = coord2D { 2, 1 });
+Matrix3x3d get_global_transform(std::shared_ptr<gfx_context> context);
 
 inline coord2D scale_with_viewport(std::shared_ptr<gfx_context> context, const coord2D vec) { return vec * context->viewport_scaling; }
 

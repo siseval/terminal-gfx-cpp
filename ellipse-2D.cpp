@@ -5,12 +5,25 @@ namespace curspp::graphics
 
 void Ellipse2D::update_bounds(std::shared_ptr<gfx_context> context)
 {
-    Matrix3x3d transform = get_transform(context);
+    set_size(radius * 2 + Vec2d::create(get_line_thickness()));
+}
+
+bbox_2D Ellipse2D::get_transformed_bounds(std::shared_ptr<gfx_context> context)
+{
+    Matrix3x3d transform = get_transform(context) * get_global_transform(context);
     coord2D corners[4] = {
-        coord2D { -radius.x, -radius.y },
-        coord2D { radius.x, -radius.y },
-        coord2D { -radius.x,  radius.y },
-        coord2D { radius.x,  radius.y }
+
+
+         coord2D { -radius.x, -radius.y },// * Vec2d { get_anchor().x * 2, get_anchor().y * 2 },
+         coord2D { radius.x, -radius.y },// * Vec2d { (1 - get_anchor().x) * 2, get_anchor().y * 2 },
+         coord2D { -radius.x,  radius.y },// * Vec2d { get_anchor().x * 2, (1 - get_anchor().y) * 2 },
+         coord2D { radius.x,  radius.y },//* Vec2d { (1 - get_anchor().x) * 2, (1 - get_anchor().y) * 2 }
+
+
+        // coord2D { -radius.x, -radius.y },
+        // coord2D { radius.x, -radius.y },
+        // coord2D { -radius.x,  radius.y },
+        // coord2D { radius.x,  radius.y }
     };
 
     for (uint8_t i = 0; i < 4; ++i)
@@ -41,7 +54,7 @@ void Ellipse2D::update_bounds(std::shared_ptr<gfx_context> context)
         }
     }
 
-    set_size(max - min);
+    return bbox_2D { min, max };
 }
 
 
@@ -49,42 +62,31 @@ void Ellipse2D::rasterize(std::shared_ptr<gfx_context> context)
 {
     update_bounds(context);
 
-    coord2D radius = get_radius();
-    coord2D bounds_size = get_size();
-    coord2D anchor_point = get_anchor() * bounds_size;
-    coord2D position = get_pos();
-    coord2D center = (bounds_size / 2);
+    bbox_2D transformed_bounds = get_transformed_bounds(context);
+    Matrix3x3d full_transform = get_transform(context) * get_global_transform(context);
+    Matrix3x3d inv_transform = invert_affine(full_transform);
 
-    Matrix3x3d transform = get_inverse_transform(context);
-
+    Vec2d anchor_offset = get_anchor() * (get_radius() * 2);
     if (get_draw_bounds())
     {
-        rasterize_bounds(context);
+        rasterize_bounds(context, bbox_2D { { transformed_bounds.min + anchor_offset }, { transformed_bounds.max + anchor_offset } });
+        // rasterize_anchor(context, transformed_bounds.min + anchor_offset * 2);
     }
 
-    for (coord_type i = 0; i < bounds_size.x * bounds_size.y; i++)
+    for (coord_type y = transformed_bounds.min.y; y < transformed_bounds.max.y; ++y)
     {
-        coord2D offset = coord2D { i % bounds_size.x, i / bounds_size.x };
-
-        // Vec2d relative_pos = { static_cast<double>(offset.x - center.x), static_cast<double>(offset.y - center.y) };
-        double rotation = get_rotation();
-        // Vec2d rotated_pos = rotation != 0.0 ? rotate_point(relative_pos, -rotation) : relative_pos;
-        Vec2d rotated_pos = curspp::graphics::apply_transform(offset, transform);
-
-        double sdf_result = ((rotated_pos.x * rotated_pos.x) / (radius.x * radius.x)) + ((rotated_pos.y * rotated_pos.y) / (radius.y * radius.y)) - 1;
-
-        // double sdf_result = ((rotated_pos.x * rotated_pos.x) + (rotated_pos.y * rotated_pos.y)) - 1;
-
-        if (get_fill() && sdf_result < 0)
+        for (coord_type x = transformed_bounds.min.x; x < transformed_bounds.max.x; ++x)
         {
-            write_pixel(context, position + offset, get_color());
-            continue;
-        }
+            Vec2d global_pixel = Vec2d { static_cast<double>(x), static_cast<double>(y) };
+            Vec2d local_pixel = apply_transform(global_pixel, inv_transform);
 
-        if (sdf_result > 0.9 && sdf_result < 1.1)
-        {
-            // curspp::graphics::rasterize_circle(context, position + offset, line_thickness / 2, get_color());
-            write_pixel(context, position + offset - anchor_point, get_color());
+            double sdf = (local_pixel.x * local_pixel.x) / (radius.x * radius.x) +
+                         (local_pixel.y * local_pixel.y) / (radius.y * radius.y) - 1;
+
+            if (std::abs(sdf) < 0.1)
+            {
+                write_pixel(context, coord2D { x, y }, get_color());
+            }
         }
     }
 }

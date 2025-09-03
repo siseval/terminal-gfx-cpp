@@ -13,6 +13,7 @@ public:
 
     void rasterize(std::shared_ptr<gfx_context> context) override;
     void update_bounds(std::shared_ptr<gfx_context> context) override;
+    bbox_2D get_transformed_bounds(std::shared_ptr<gfx_context> context);
 
     inline coord2D get_radius() const { return radius; }
     inline void set_radius(const coord2D r) { radius = r; }

@@ -5,10 +5,9 @@ namespace curspp::graphics
 
 Matrix3x3d GfxPrimitive2D::get_transform(std::shared_ptr<gfx_context> context) const
 {
-    Vec2d global_scale = scale_with_viewport(context, scale);
     Matrix3x3d scale_matrix = Matrix3x3d({
-        { global_scale.x, 0, 0 },
-        { 0, global_scale.y, 0 },
+        { scale.x, 0, 0 },
+        { 0, scale.y, 0 },
         { 0, 0, 1 }
     });
 
@@ -27,34 +26,34 @@ Matrix3x3d GfxPrimitive2D::get_transform(std::shared_ptr<gfx_context> context) c
         { 0, 0, 1 }
     });
 
-    return  translation_matrix * rotation_matrix * scale_matrix;
+    return translation_matrix * rotation_matrix * scale_matrix;
 }
 
-Matrix3x3d GfxPrimitive2D::get_inverse_transform(std::shared_ptr<gfx_context> context) const
+Matrix3x3d GfxPrimitive2D::invert_affine(Matrix3x3d m)
 {
-    Vec2d global_scale = scale_with_viewport(context, scale);
-    Matrix3x3d scale_matrix = Matrix3x3d({
-        { 1.0 / global_scale.x, 0, 0 },
-        { 0, 1.0 / global_scale.y, 0 },
-        { 0, 0, 1 }
-    });
+    double a = m(0, 0), b = m(0, 1), c = m(0, 2);
+    double d = m(1, 0), e = m(1, 1), f = m(1, 2);
+    double det = a * e - b * d;
 
-    double sin_r = std::sin(-rotation);
-    double cos_r = std::cos(-rotation);
-    Matrix3x3d rotation_matrix = Matrix3x3d({
-        { cos_r, -sin_r, 0 },
-        { sin_r, cos_r, 0 },
-        { 0, 0, 1 }
-    });
-    
-    Vec2d pos = get_pos() - get_anchor() * get_size();
-    Matrix3x3d translation_matrix = Matrix3x3d({
-        { 1, 0, -pos.x },
-        { 0, 1, -pos.y },
-        { 0, 0, 1 }
-    });
+    if (det == 0) 
+    {
+        throw std::runtime_error("Matrix is not invertible");
+    }
 
-    return rotation_matrix * translation_matrix * scale_matrix;
+    double inv_det = 1.0 / det;
+
+    Matrix3x3d inv;
+    inv(0, 0) = e * inv_det;
+    inv(0, 1) = -b * inv_det;
+    inv(0, 2) = (b * f - c * e) * inv_det;
+    inv(1, 0) = -d * inv_det;
+    inv(1, 1) = a * inv_det;
+    inv(1, 2) = (c * d - a * f) * inv_det;
+    inv(2, 0) = 0;
+    inv(2, 1) = 0;
+    inv(2, 2) = 1;
+
+    return inv;
 }
 
 void GfxPrimitive2D::set_pos(const coord2D pos) 
@@ -67,19 +66,20 @@ void GfxPrimitive2D::set_pos(const coord2D pos)
     // bounds.max = bounds.min + size;
 }
 
-void GfxPrimitive2D::rasterize_bounds(std::shared_ptr<gfx_context> context) const
-{
-    coord2D bounds_size = get_size();
-    coord2D position = get_pos();
-    coord2D anchor_point = get_anchor() * bounds_size;
-    coord2D center = (bounds_size / 2);
-
-    write_pixel(context, position, GFX_BOUNDS_COLOR);
-    write_pixel(context, position - anchor_point, GFX_BOUNDS_COLOR);
-    write_pixel(context, position + coord2D{ 0, bounds_size.y } - anchor_point, GFX_BOUNDS_COLOR);
-    write_pixel(context, position + bounds_size - anchor_point, GFX_BOUNDS_COLOR);
-    write_pixel(context, position + coord2D{ bounds_size.x, 0 } - anchor_point, GFX_BOUNDS_COLOR);
-}
+// void GfxPrimitive2D::rasterize_bounds(std::shared_ptr<gfx_context> context) const
+// {
+//     Matrix3x3d transform = get_transform(context);
+//     coord2D bounds_size = apply_transform(get_size(), transform);
+//     coord2D position = get_pos();
+//     coord2D anchor_point = get_anchor() * bounds_size;
+//     coord2D center = (bounds_size / 2);
+//
+//     write_pixel(context, position, GFX_BOUNDS_COLOR);
+//     write_pixel(context, position - anchor_point, GFX_BOUNDS_COLOR);
+//     write_pixel(context, position + coord2D{ 0, bounds_size.y } - anchor_point, GFX_BOUNDS_COLOR);
+//     write_pixel(context, position + bounds_size - anchor_point, GFX_BOUNDS_COLOR);
+//     write_pixel(context, position + coord2D{ bounds_size.x, 0 } - anchor_point, GFX_BOUNDS_COLOR);
+// }
 
 void rasterize_line(std::shared_ptr<gfx_context> context, const coord2D start, const coord2D end, double line_thickness, const Color3 color)
 {
@@ -136,6 +136,21 @@ coord2D apply_transform(const Vec2d pos, const Matrix3x3d transform)
 
     Matrix3x1d transformed = transform * column_matrix;
     return Vec2d { transformed(0, 0), transformed(1, 0), };
+}
+
+void rasterize_bounds(std::shared_ptr<gfx_context> context, const bbox_2D bounds)
+{
+    write_pixel(context, bounds.min, GFX_BOUNDS_COLOR);
+    write_pixel(context, { bounds.min.x, bounds.max.y }, GFX_BOUNDS_COLOR);
+    write_pixel(context, bounds.max, GFX_BOUNDS_COLOR);
+    write_pixel(context, { bounds.max.x, bounds.min.y }, GFX_BOUNDS_COLOR);
+}
+
+void rasterize_anchor(std::shared_ptr<gfx_context> context, const coord2D pos)
+{
+    write_pixel(context, pos, GFX_ANCHOR_COLOR);
+    // rasterize_line(context, pos - coord2D{ 5, 0 }, pos + coord2D{ 5, 0 }, 1.0, GFX_ANCHOR_COLOR);
+    // rasterize_line(context, pos - coord2D{ 0, 5 }, pos + coord2D{ 0, 5 }, 1.0, GFX_ANCHOR_COLOR);
 }
 
 void rasterize_circle(std::shared_ptr<gfx_context> context, const coord2D center, const double radius, const Color3 color)

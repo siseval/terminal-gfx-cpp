@@ -26,13 +26,16 @@ public:
     virtual void update_bounds(std::shared_ptr<gfx_context> context) = 0;
 
     Matrix3x3d get_transform(std::shared_ptr<gfx_context> context) const;
-    Matrix3x3d get_inverse_transform(std::shared_ptr<gfx_context> context) const;
+    Matrix3x3d invert_affine(Matrix3x3d m);
 
     inline Color3 get_color() const { return color; }
     inline void set_color(const Color3 col) { color = col; }
 
     inline bool get_draw_bounds() { return draw_bounds; }
     inline void set_draw_bounds(const bool draw) { draw_bounds = draw; }
+
+    inline bool get_draw_anchor() { return draw_anchor; }
+    inline void set_draw_anchor(const bool draw) { draw_anchor = draw; }
 
     inline bbox_2D get_bounds() const { return bounds; }
 
@@ -70,11 +73,13 @@ protected:
     double line_thickness = 1.0;
     double rotation = 0.0;
     bool draw_bounds = false;
+    bool draw_anchor = false;
 
-    void rasterize_bounds(std::shared_ptr<gfx_context> context) const;
 };
 
 coord2D apply_transform(const Vec2d pos, const Matrix3x3d transform);
+void rasterize_bounds(std::shared_ptr<gfx_context> context, const bbox_2D bounds);
+void rasterize_anchor(std::shared_ptr<gfx_context> context, const coord2D pos);
 void rasterize_line(std::shared_ptr<gfx_context> context, const coord2D start, const coord2D end, double line_thickness, const Color3 color);
 void rasterize_circle(std::shared_ptr<gfx_context> context, const coord2D center, const double radius, const Color3 color);
 Vec2d rotate_point(const coord2D point, const double angle);

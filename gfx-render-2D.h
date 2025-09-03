@@ -35,6 +35,9 @@ class GfxRender2D
     inline void add_item(std::shared_ptr<GfxPrimitive2D> item) { primitives->add_item(item); }
     inline void remove_item(std::shared_ptr<GfxPrimitive2D> item) { primitives->remove_item(item); }
 
+    inline void set_viewport_scaling(const coord2D scaling) { context->viewport_scaling = scaling; }
+    inline coord2D get_viewport_scaling() const { return context->viewport_scaling; }
+
     private:
 
     std::shared_ptr<gfx_context> context;

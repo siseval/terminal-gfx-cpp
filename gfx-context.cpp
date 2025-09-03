@@ -14,6 +14,17 @@ std::shared_ptr<gfx_context> create_context(const coord2D resolution, const coor
     });
 }
 
+Matrix3x3d get_global_transform(std::shared_ptr<gfx_context> context)
+{
+    Matrix3x3d scale = Matrix3x3d({
+        { context->viewport_scaling.x, 0, 0 },
+        { 0, context->viewport_scaling.y, 0 },
+        { 0, 0, 1 }
+    });
+
+    return scale;
+}
+
 uint8_t add_color(std::shared_ptr<gfx_context> context, const Color3 color)
 {
     if (context->palette->size() + GFX_DEDICATED_COLOR_START_INDEX >= 255)
