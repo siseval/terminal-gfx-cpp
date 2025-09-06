@@ -3,17 +3,16 @@ set(CMAKE_CXX_STANDARD 23)
 project(curspp)
 add_library(curspp STATIC
 curspp.cpp
-curspp-draw.cpp
 )
 
 add_executable(test
 curspp.cpp
-curspp-draw.cpp
 gfx-context.cpp
 gfx-render-2D.cpp
 gfx-primitive-2D.cpp
 ellipse-2D.cpp
 polyline-2D.cpp
+gfx-rasterize.cpp
 test.cpp
 )
 

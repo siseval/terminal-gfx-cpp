@@ -51,8 +51,14 @@ public:
 
     static T cross(Vec2<T> a, Vec2<T> b) 
     { 
-        static_cast<T>(a.x * b.y - a.y * b.x); 
+        return static_cast<T>(a.x * b.y - a.y * b.x); 
     }
+
+    static T dot(Vec2<T> a, Vec2<T> b)
+    {
+        return static_cast<T>(a.x * b.x + a.y * b.y);
+    }
+
     static Vec2<T> scale(Vec2<T> vector, double factor) 
     { 
         return Vec2<T>{ static_cast<T>(vector.x * factor), static_cast<T>(vector.y * factor) }; 
@@ -66,9 +72,10 @@ public:
     { 
         return length(subtract(a, b)); 
     }
-    static Vec2<double> normalize(Vec2<T> vector) 
+
+    Vec2<double> normalize() 
     { 
-        return Vec2<double>{ static_cast<T>(vector.x / vector.length()), static_cast<T>(vector.y / vector.length()) }; 
+        return Vec2<double>{ static_cast<T>(x / length()), static_cast<T>(y / length()) }; 
     }
 
     static Vec2<double> normal(Vec2<T> vector) 
@@ -79,6 +86,11 @@ public:
     double length() 
     { 
         return std::sqrt(x * x + y * y); 
+    }
+
+    Vec2<int> round() const 
+    { 
+        return Vec2<int> { static_cast<int>(std::lround(x)), static_cast<int>(std::lround(y)) }; 
     }
 
     template <typename U>
@@ -102,14 +114,6 @@ public:
         return Vec2<T>{ static_cast<T>(x / other.x), static_cast<T>(y / other.y) }; 
     }
 
-    // Vec2<T> operator+(const double &factor) const 
-    // { 
-    //     return Vec2<T>{ static_cast<T>(x + factor), static_cast<T>(y + factor) }; 
-    // }
-    // Vec2<T> operator-(const double &factor) const 
-    // { 
-    //     return Vec2<T>{ static_cast<T>(x - factor), static_cast<T>(y - factor) }; 
-    // }
     Vec2<T> operator*(const double &factor) const 
     { 
         return Vec2<T>{ static_cast<T>(x * factor), static_cast<T>(y * factor) }; 
@@ -189,16 +193,7 @@ public:
     }
 };
 
-using Vec2l = Vec2<int64_t>;
-using Vec2i = Vec2<int32_t>;
-using Vec2s = Vec2<int16_t>;
-using Vec2b = Vec2<int8_t>;
-
-using Vec2ul = Vec2<uint64_t>;
-using Vec2ui = Vec2<uint32_t>;
-using Vec2us = Vec2<uint16_t>;
-using Vec2ub = Vec2<uint8_t>;
-
+using Vec2i = Vec2<int>;
 using Vec2d = Vec2<double>;
 using Vec2f = Vec2<float>;
 

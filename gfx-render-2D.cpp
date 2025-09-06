@@ -3,19 +3,27 @@
 namespace curspp::graphics
 {
 
-void GfxRender2D::draw_frame()
+void GfxRender2D::draw_frame() const
 {
     clear_frame_buffer(context);
 
     for (auto primitive : primitives->get_items())
     {
         primitive->rasterize(context);
+        if (primitive->get_draw_bounds())
+        {
+            primitive->rasterize_bounds(context);
+        }
+        if (primitive->get_draw_anchor())
+        {
+            primitive->rasterize_anchor(context);
+        }
     }
 
     draw_frame_buffer(context);
 }
 
-std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(coord2D position, coord2D radius, Color3 color, double line_thickness)
+std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(const Vec2d position, const Vec2d radius, const Color3 color, const double line_thickness) const
 {
     auto ellipse = std::make_shared<Ellipse2D>();
 
@@ -27,7 +35,7 @@ std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(coord2D position, coord2D
     return ellipse;
 }
 
-std::shared_ptr<Polyline2D> GfxRender2D::create_polyline(std::vector<coord2D> points, Color3 color, double line_thickness)
+std::shared_ptr<Polyline2D> GfxRender2D::create_polyline(const std::vector<Vec2d> points, const Color3 color, const double line_thickness) const
 {
     auto polyline = std::make_shared<Polyline2D>();
 
@@ -38,13 +46,14 @@ std::shared_ptr<Polyline2D> GfxRender2D::create_polyline(std::vector<coord2D> po
     return polyline;
 }
 
-void GfxRender2D::write_raster_to_frame_buffer(raster_2D raster, bbox_2D bounds, Color3 color)
+void GfxRender2D::write_raster_to_frame_buffer(const std::vector<bool> raster, const BBox2D bounds, const Color3 color)
 {
-    for (coord_type i = 0; i < bounds.max.x * bounds.max.y; i++)
+    Box2i rounded_bounds = { bounds.min.round(), bounds.max.round() };
+    for (int i = 0; i < rounded_bounds.max.x * rounded_bounds.max.y; i++)
     {
         if (raster[i])
         {
-            coord2D pos = bounds.min + coord2D{ i % bounds.max.x, i / bounds.max.x };
+            Vec2i pos = rounded_bounds.min + Vec2i { i % rounded_bounds.max.x, i / rounded_bounds.max.x };
             write_pixel(context, pos, color);
         }
     }

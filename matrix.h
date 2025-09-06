@@ -5,7 +5,7 @@
 #include <cmath>
 #include <functional>
 
-namespace curspp
+namespace curspp::graphics
 {
 
 template <typename T, uint32_t rows, uint32_t cols>
@@ -138,7 +138,6 @@ public:
     }
 
 
-
 private:
 
     T data[rows][cols];
@@ -146,10 +145,7 @@ private:
 };
 
 using Matrix3x3d = Matrix<double, 3, 3>;
-using Matrix3x3f = Matrix<float, 3, 3>;
-
 using Matrix3x1d = Matrix<double, 3, 1>;
-using Matrix3x1f = Matrix<float, 3, 1>;
 }
 
 #endif // MATRIX_H

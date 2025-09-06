@@ -23,18 +23,15 @@ enum class color
     WHITE,
 };
 
-typedef int32_t coord_type;
-typedef curspp::Vec2<coord_type> coord2D;
-
-constexpr coord2D UP = coord2D { 0, -1 };
-constexpr coord2D DOWN = coord2D { 0, 1 };
-constexpr coord2D LEFT = coord2D { -1, 0 };
-constexpr coord2D RIGHT = coord2D { 1, 0 };
+constexpr Vec2i UP = Vec2i { 0, -1 };
+constexpr Vec2i DOWN = Vec2i { 0, 1 };
+constexpr Vec2i LEFT = Vec2i { -1, 0 };
+constexpr Vec2i RIGHT = Vec2i { 1, 0 };
 
 void init();
 void end();
 
-inline void add_str(const coord2D pos, const std::string pixel)
+inline void add_str(const Vec2i pos, const std::string pixel)
 {
     mvaddstr(pos.y, pos.x, pixel.data());
 }
@@ -56,16 +53,16 @@ inline void set_bold(const bool enable)
     }
 }
 
-inline coord2D get_screen_size()
+inline Vec2i get_screen_size()
 {
-    coord_type width, height;
+    int width, height;
     getmaxyx(stdscr, height, width);
     return { width, height };
 }
 
-inline coord2D get_cursor_pos()
+inline Vec2i get_cursor_pos()
 {
-    coord_type x, y;
+    int x, y;
     getyx(stdscr, y, x);
     return { x, y };
 }
@@ -80,7 +77,7 @@ inline void flush_input()
     flushinp();
 }
 
-inline void set_timeout_ms(coord_type ms)
+inline void set_timeout_ms(int ms)
 {
     timeout(ms);
 }

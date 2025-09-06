@@ -2,61 +2,54 @@
 #define GFX_PRIMITIVE_2D_H
 
 #include "color3.h"
+#include "box2.h"
 #include "curspp.h"
 #include "gfx-context.h"
+#include "gfx-rasterize.h"
 #include "matrix.h"
 
 namespace curspp::graphics
 {
-
-struct bbox_2D
-{
-    coord2D min;
-    coord2D max;
-};
-
-typedef std::vector<bool> raster_2D;
 
 class GfxPrimitive2D
 {
 
 public:
         
-    virtual void rasterize(std::shared_ptr<gfx_context> context) = 0;
-    virtual void update_bounds(std::shared_ptr<gfx_context> context) = 0;
+    virtual void rasterize(std::shared_ptr<gfx_context> context) const = 0;
+    void rasterize_bounds(std::shared_ptr<gfx_context> context) const;
+    void rasterize_anchor(std::shared_ptr<gfx_context> context) const;
 
-    Matrix3x3d get_transform(std::shared_ptr<gfx_context> context) const;
-    Matrix3x3d invert_affine(Matrix3x3d m);
+    BBox2D get_global_bounds(std::shared_ptr<gfx_context> context) const;
+    virtual BBox2D get_relative_extent() const = 0;
+
+    Matrix3x3d get_transform() const;
 
     inline Color3 get_color() const { return color; }
     inline void set_color(const Color3 col) { color = col; }
 
-    inline bool get_draw_bounds() { return draw_bounds; }
+    inline bool get_draw_bounds() const { return draw_bounds; }
     inline void set_draw_bounds(const bool draw) { draw_bounds = draw; }
 
-    inline bool get_draw_anchor() { return draw_anchor; }
+    inline bool get_draw_anchor() const { return draw_anchor; }
     inline void set_draw_anchor(const bool draw) { draw_anchor = draw; }
 
-    inline bbox_2D get_bounds() const { return bounds; }
+    inline BBox2D get_bounds() const { return bounds; }
+    inline Vec2d get_bounds_size() const { return bounds.size(); }
 
-    inline Vec2f get_anchor() const { return anchor; }
-    inline void set_anchor(const Vec2f pos) { anchor = pos; }
+    inline Vec2d get_anchor() const { return anchor; }
+    inline void set_anchor(const Vec2d pos) { anchor = pos; }
 
-    inline coord2D get_pos() const { return bounds.min; }
-    void set_pos(const coord2D pos);
+    inline Vec2d get_pos() const { return position; }
+    void set_pos(const Vec2d pos) { position = pos; }
     
-    inline void set_pos_center(const coord2D pos) { set_pos(pos - get_size() / 2); }
+    // inline Vec2d get_size() const { return bounds.max - bounds.min; }
+    // inline void set_size(const Vec2d size) { bounds.max = bounds.min + size; }
 
-    // inline void set_screen_pos_center(const std::shared_ptr<gfx_context> context, const vec2f pos) { vec2f foo = pos * context->resolution; set_pos_center(pos * (context->resolution / context->viewport_scaling)); }
-    // inline void set_screen_pos(const std::shared_ptr<gfx_context> context, const vec2f pos) { set_pos(pos * context->resolution); }
-
-    inline coord2D get_size() const { return bounds.max - bounds.min; }
-    inline void set_size(const coord2D size) { bounds.max = bounds.min + size; }
-
-    inline coord2D get_center() const { return (bounds.min + bounds.max) / 2; }
+    // inline Vec2d get_center() const { return (bounds.min + bounds.max) / 2; }
 
     inline Vec2f get_scale() const { return scale; }
-    inline void set_scale(const Vec2f s) { scale = s; }
+    inline void set_scale(const Vec2d s) { scale = s; }
 
     inline double get_rotation() const { return rotation; }
     inline void set_rotation(const double r) { rotation = r; }
@@ -67,9 +60,10 @@ public:
 protected:
 
     Color3 color;
-    bbox_2D bounds;
-    Vec2f anchor = { 0.0, 0.0 };
-    Vec2f scale = { 1.0, 1.0 };
+    BBox2D bounds;
+    Vec2d position;
+    Vec2d anchor = { 0.0, 0.0 };
+    Vec2d scale = { 1.0, 1.0 };
     double line_thickness = 1.0;
     double rotation = 0.0;
     bool draw_bounds = false;
@@ -77,12 +71,8 @@ protected:
 
 };
 
-coord2D apply_transform(const Vec2d pos, const Matrix3x3d transform);
-void rasterize_bounds(std::shared_ptr<gfx_context> context, const bbox_2D bounds);
-void rasterize_anchor(std::shared_ptr<gfx_context> context, const coord2D pos);
-void rasterize_line(std::shared_ptr<gfx_context> context, const coord2D start, const coord2D end, double line_thickness, const Color3 color);
-void rasterize_circle(std::shared_ptr<gfx_context> context, const coord2D center, const double radius, const Color3 color);
-Vec2d rotate_point(const coord2D point, const double angle);
+Vec2d apply_transform(const Vec2d pos, const Matrix3x3d transform);
+Matrix3x3d invert_affine(Matrix3x3d m);
 
 };
 

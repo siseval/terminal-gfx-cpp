@@ -11,19 +11,24 @@ class Polyline2D : public GfxPrimitive2D
 
 public:
 
-    void rasterize(std::shared_ptr<gfx_context> context) override;
-    void update_bounds(std::shared_ptr<gfx_context> context) override;
+    void rasterize(std::shared_ptr<gfx_context> context) const override;
+    // void update_bounds(std::shared_ptr<gfx_context> context) override;
+    BBox2D get_relative_extent() const override;
 
-    inline void add_point(const coord2D point) { points.push_back(point); }
-    inline void add_points(const std::vector<coord2D>& new_points) { points.insert(points.end(), new_points.begin(), new_points.end()); }
-    inline void set_points(const std::vector<coord2D>& new_points) { points = new_points; }
-    inline const std::vector<coord2D>& get_points() const { return points; }
+    inline void add_point(const Vec2d point) { points.push_back(point); }
+    inline void add_points(const std::vector<Vec2d>& new_points) { points.insert(points.end(), new_points.begin(), new_points.end()); }
+    inline void set_points(const std::vector<Vec2d>& new_points) { points = new_points; }
     inline void clear_points() { points.clear(); }
 
+    inline const std::vector<Vec2d>& get_points() const { return points; }
+
+    inline void set_close(const bool close) { do_close = close; }
+    inline bool get_close() const { return do_close; }
 
 protected:
 
-    std::vector<coord2D> points = std::vector<coord2D>();
+    std::vector<Vec2d> points = std::vector<Vec2d>();
+    bool do_close = false;
 };
 
 };

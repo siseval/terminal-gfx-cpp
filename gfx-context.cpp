@@ -3,14 +3,14 @@
 namespace curspp::graphics
 {
 
-std::shared_ptr<gfx_context> create_context(const coord2D resolution, const coord2D origin, const coord2D viewport_scaling)
+std::shared_ptr<gfx_context> create_context(const Vec2i resolution, const Vec2i origin, const Vec2d viewport_scaling)
 {
     return std::make_shared<gfx_context>(gfx_context {
-        resolution * viewport_scaling,
+        resolution,
         origin,
         viewport_scaling,
         std::make_unique<std::unordered_map<Color3, uint8_t, std::hash<Color3>>>(),
-        std::make_unique<std::vector<uint32_t>>(static_cast<size_t>(resolution.x * viewport_scaling.x) * static_cast<size_t>(resolution.y * viewport_scaling.y) / 2, 0)
+        std::make_unique<std::vector<int32_t>>(static_cast<size_t>(resolution.x * viewport_scaling.x) * static_cast<size_t>(resolution.y * viewport_scaling.y) / 2, 0)
     });
 }
 
@@ -54,7 +54,7 @@ void set_color(std::shared_ptr<gfx_context> context, const Color3 color)
     attron(COLOR_PAIR(color_index));
 }
 
-void write_pixel(std::shared_ptr<gfx_context> context, const coord2D pos, const Color3 color)
+void write_pixel(std::shared_ptr<gfx_context> context, const Vec2i pos, const Color3 color)
 {
     if (pos.x < 0 || pos.x >= context->resolution.x || pos.y < 0 || pos.y >= context->resolution.y)
     {
@@ -63,7 +63,7 @@ void write_pixel(std::shared_ptr<gfx_context> context, const coord2D pos, const 
 
     bool left_in_pixel = pos.x % 2 == 0;
     bool top_in_pixel = pos.y % 2 == 0;
-    uint16_t frame_buffer_index = (pos.y / 2) * context->resolution.x + pos.x / 2;
+    int frame_buffer_index = (pos.y / 2) * context->resolution.x + pos.x / 2;
 
     int32_t color_int = (color.to_int() << 8);
     context->frame_buffer->at(frame_buffer_index) |= color_int;
@@ -91,7 +91,7 @@ void write_pixel(std::shared_ptr<gfx_context> context, const coord2D pos, const 
     }
 }
 
-void erase_pixel(std::shared_ptr<gfx_context> context, const coord2D pos)
+void erase_pixel(std::shared_ptr<gfx_context> context, const Vec2i pos)
 {
     if (pos.x < 0 || pos.x >= context->resolution.x || pos.y < 0 || pos.y >= context->resolution.y)
     {
@@ -100,7 +100,7 @@ void erase_pixel(std::shared_ptr<gfx_context> context, const coord2D pos)
 
     bool left_in_pixel = pos.x % 2 == 0;
     bool top_in_pixel = pos.y % 2 == 0;
-    uint16_t frame_buffer_index = (pos.y / 2) * context->resolution.x + pos.x / 2;
+    int frame_buffer_index = (pos.y / 2) * context->resolution.x + pos.x / 2;
 
     if (left_in_pixel)
     {
@@ -128,7 +128,7 @@ void erase_pixel(std::shared_ptr<gfx_context> context, const coord2D pos)
 
 void clear_frame_buffer(std::shared_ptr<gfx_context> context)
 {
-    for (uint32_t &pixel : *context->frame_buffer)
+    for (int32_t &pixel : *context->frame_buffer)
     {
         pixel &= 0x1110;
     }
@@ -136,13 +136,13 @@ void clear_frame_buffer(std::shared_ptr<gfx_context> context)
 
 void draw_frame_buffer(std::shared_ptr<gfx_context> context)
 {
-    coord2D frame_buffer_dimensions = context->resolution / 2;
-    for (coord_type y = 0; y < frame_buffer_dimensions.y; y++)
+    Vec2i frame_buffer_dimensions = context->resolution / 2;
+    for (int y = 0; y < frame_buffer_dimensions.y; y++)
     {
-        for (coord_type x = 0; x < frame_buffer_dimensions.x / 2; x++)
+        for (int x = 0; x < frame_buffer_dimensions.x; x++)
         {
-            uint16_t frame_buffer_index = y * context->resolution.x + x;
-            uint32_t pixel_value = context->frame_buffer->at(frame_buffer_index);
+            int frame_buffer_index = y * context->resolution.x + x;
+            int32_t pixel_value = context->frame_buffer->at(frame_buffer_index);
 
             std::string pixel = pixel_tree[(pixel_value & 0b1000) >> 3]
                                            [(pixel_value & 0b0100) >> 2]
@@ -152,7 +152,7 @@ void draw_frame_buffer(std::shared_ptr<gfx_context> context)
 
             Color3 color = Color3(pixel_value >> 8);
             set_color(context, color);
-            add_str(context->origin + coord2D { x, y }, pixel);
+            add_str(context->origin + Vec2i { x, y }, pixel);
         }
     }
 }
