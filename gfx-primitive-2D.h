@@ -4,7 +4,7 @@
 #include "color3.h"
 #include "box2.h"
 #include "curspp.h"
-#include "gfx-context.h"
+#include "gfx-context-2D.h"
 #include "gfx-rasterize.h"
 #include "matrix.h"
 
@@ -16,12 +16,12 @@ class GfxPrimitive2D
 
 public:
         
-    virtual void rasterize(std::shared_ptr<gfx_context> context) const = 0;
-    void rasterize_bounds(std::shared_ptr<gfx_context> context) const;
-    void rasterize_anchor(std::shared_ptr<gfx_context> context) const;
+    virtual void rasterize(std::shared_ptr<GfxContext2D> context) const = 0;
+    void rasterize_bounds(std::shared_ptr<GfxContext2D> context) const;
+    void rasterize_anchor(std::shared_ptr<GfxContext2D> context) const;
 
-    BBox2D get_global_bounds(std::shared_ptr<gfx_context> context) const;
-    virtual BBox2D get_relative_extent() const = 0;
+    Box2d get_global_bounds(std::shared_ptr<GfxContext2D> context) const;
+    virtual Box2d get_relative_extent() const = 0;
 
     Matrix3x3d get_transform() const;
 
@@ -34,7 +34,7 @@ public:
     inline bool get_draw_anchor() const { return draw_anchor; }
     inline void set_draw_anchor(const bool draw) { draw_anchor = draw; }
 
-    inline BBox2D get_bounds() const { return bounds; }
+    inline Box2d get_bounds() const { return bounds; }
     inline Vec2d get_bounds_size() const { return bounds.size(); }
 
     inline Vec2d get_anchor() const { return anchor; }
@@ -63,7 +63,7 @@ public:
 protected:
 
     Color3 color;
-    BBox2D bounds;
+    Box2d bounds;
     Vec2d position;
     Vec2d anchor = { 0.0, 0.0 };
     Vec2d scale = { 1.0, 1.0 };

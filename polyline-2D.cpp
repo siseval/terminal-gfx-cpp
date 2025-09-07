@@ -3,7 +3,7 @@
 namespace curspp::graphics
 {
 
-BBox2D Polyline2D::get_relative_extent() const
+Box2d Polyline2D::get_relative_extent() const
 {
     Vec2d min = Vec2d::zero();
     Vec2d max = Vec2d::zero();
@@ -31,13 +31,13 @@ BBox2D Polyline2D::get_relative_extent() const
     return { min, max };
 }
 
-void Polyline2D::rasterize(std::shared_ptr<gfx_context> context) const
+void Polyline2D::rasterize(std::shared_ptr<GfxContext2D> context) const
 {
     if (points.size() < 2)
     {
         return;
     }
-    Matrix3x3d full_transform = get_global_transform(context) * get_transform();
+    Matrix3x3d full_transform = context->get_transform() * get_transform();
     for (int i = 0; i < points.size() - 1; i++)
     {
         Vec2d transformed_start = apply_transform(points[i], full_transform);

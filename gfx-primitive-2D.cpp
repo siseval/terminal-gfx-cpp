@@ -3,23 +3,23 @@
 namespace curspp::graphics
 {
 
-void GfxPrimitive2D::rasterize_bounds(std::shared_ptr<gfx_context> context) const
+void GfxPrimitive2D::rasterize_bounds(std::shared_ptr<GfxContext2D> context) const
 {
-    BBox2D bounds = get_global_bounds(context);
-    rasterize_box_corners(context, BBox2D { { bounds.min }, { bounds.max } });
+    Box2d bounds = get_global_bounds(context);
+    rasterize_box_corners(context, Box2d { { bounds.min }, { bounds.max } });
 }
 
-void GfxPrimitive2D::rasterize_anchor(std::shared_ptr<gfx_context> context) const
+void GfxPrimitive2D::rasterize_anchor(std::shared_ptr<GfxContext2D> context) const
 {
-    Matrix3x3d full_transform = get_global_transform(context) * get_transform();
+    Matrix3x3d full_transform = context->get_transform() * get_transform();
     rasterize_point(context, apply_transform(get_anchor() * get_relative_extent().size(), full_transform));
 }
 
-BBox2D GfxPrimitive2D::get_global_bounds(std::shared_ptr<gfx_context> context) const
+Box2d GfxPrimitive2D::get_global_bounds(std::shared_ptr<GfxContext2D> context) const
 {
-    Matrix3x3d transform = get_global_transform(context) * get_transform();
+    Matrix3x3d full_transform = context->get_transform() * get_transform();
 
-    BBox2D extent = get_relative_extent();
+    Box2d extent = get_relative_extent();
     Vec2d top_left = extent.min - Vec2d::create(std::ceil(get_line_thickness() / 2));
     Vec2d bot_right = extent.max + Vec2d::create(std::ceil(get_line_thickness() / 2));
 
@@ -32,10 +32,10 @@ BBox2D GfxPrimitive2D::get_global_bounds(std::shared_ptr<gfx_context> context) c
 
     for (int i = 0; i < 4; ++i)
     {
-        corners[i] = apply_transform(corners[i], transform);
+        corners[i] = apply_transform(corners[i], full_transform);
     }
 
-    BBox2D bounds = { { corners[0].x, corners[0].y }, { corners[0].x, corners[0].y } };
+    Box2d bounds = { { corners[0].x, corners[0].y }, { corners[0].x, corners[0].y } };
 
     for (int i = 0; i < 4; ++i)
     {

@@ -3,9 +3,9 @@
 namespace curspp::graphics
 {
 
-void rasterize_circle(std::shared_ptr<gfx_context> context, const Vec2d center, const double radius, const Color3 color)
+void rasterize_circle(std::shared_ptr<GfxContext2D> context, const Vec2d center, const double radius, const Color3 color)
 {
-    Vec2d scaled_radius = scale_with_viewport(context, Vec2d { radius, radius });
+    Vec2d scaled_radius = context->scale_with_viewport(Vec2d { radius, radius });
 
     for (int y = -scaled_radius.y; y <= scaled_radius.y; y++)
     {
@@ -13,13 +13,13 @@ void rasterize_circle(std::shared_ptr<gfx_context> context, const Vec2d center, 
         {
             if (x * x + y * y <= scaled_radius.x * scaled_radius.y)
             {
-                write_pixel(context, center.round() + Vec2i { x, y }, color);
+                context->write_pixel(center.round() + Vec2i { x, y }, color);
             }
         }
     }
 }
 
-void rasterize_line(std::shared_ptr<gfx_context> context, const Vec2d start, const Vec2d end, const double line_thickness, const Color3 color)
+void rasterize_line(std::shared_ptr<GfxContext2D> context, const Vec2d start, const Vec2d end, const double line_thickness, const Color3 color)
 {
     Vec2d direction = (end - start).normalize();
     Vec2d cur_pos = start;
@@ -32,24 +32,24 @@ void rasterize_line(std::shared_ptr<gfx_context> context, const Vec2d start, con
         }
         else
         {
-            write_pixel(context, cur_pos.round(), color);
+            context->write_pixel(cur_pos.round(), color);
         }
         cur_pos += direction;
     }
 }
 
-void rasterize_box_corners(std::shared_ptr<gfx_context> context, const BBox2D bounds)
+void rasterize_box_corners(std::shared_ptr<GfxContext2D> context, const Box2d bounds)
 {
     Box2i rounded_bounds = { bounds.min.round(), bounds.max.round() };
-    write_pixel(context, rounded_bounds.min, GFX_BOUNDS_COLOR);
-    write_pixel(context, { rounded_bounds.min.x, rounded_bounds.max.y }, GFX_BOUNDS_COLOR);
-    write_pixel(context, rounded_bounds.max, GFX_BOUNDS_COLOR);
-    write_pixel(context, { rounded_bounds.max.x, rounded_bounds.min.y }, GFX_BOUNDS_COLOR);
+    context->write_pixel(rounded_bounds.min, GFX_BOUNDS_COLOR);
+    context->write_pixel({ rounded_bounds.min.x, rounded_bounds.max.y }, GFX_BOUNDS_COLOR);
+    context->write_pixel(rounded_bounds.max, GFX_BOUNDS_COLOR);
+    context->write_pixel({ rounded_bounds.max.x, rounded_bounds.min.y }, GFX_BOUNDS_COLOR);
 }
 
-void rasterize_point(std::shared_ptr<gfx_context> context, const Vec2d pos)
+void rasterize_point(std::shared_ptr<GfxContext2D> context, const Vec2d pos)
 {
-    write_pixel(context, pos.round(), GFX_ANCHOR_COLOR);
+    context->write_pixel(pos.round(), GFX_ANCHOR_COLOR);
     // rasterize_line(context, pos - coord2D{ 5, 0 }, pos + coord2D{ 5, 0 }, 1.0, GFX_ANCHOR_COLOR);
     // rasterize_line(context, pos - coord2D{ 0, 5 }, pos + coord2D{ 0, 5 }, 1.0, GFX_ANCHOR_COLOR);
 }

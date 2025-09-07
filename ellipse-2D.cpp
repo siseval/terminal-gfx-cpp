@@ -3,15 +3,15 @@
 namespace curspp::graphics
 {
 
-BBox2D Ellipse2D::get_relative_extent() const
+Box2d Ellipse2D::get_relative_extent() const
 {
     return { { 0, 0 }, { radius * 2 } };
 }
 
-void Ellipse2D::rasterize(std::shared_ptr<gfx_context> context) const
+void Ellipse2D::rasterize(std::shared_ptr<GfxContext2D> context) const
 {
-    BBox2D global_bounds = get_global_bounds(context);
-    Matrix3x3d full_transform = get_global_transform(context) * get_transform();
+    Box2d global_bounds = get_global_bounds(context);
+    Matrix3x3d full_transform = context->get_transform() * get_transform();
     Matrix3x3d inv_transform = invert_affine(full_transform);
 
     for (int y = global_bounds.min.y; y < global_bounds.max.y; ++y)
@@ -26,7 +26,7 @@ void Ellipse2D::rasterize(std::shared_ptr<gfx_context> context) const
 
             if (get_fill() && sdf < 0)
             {
-                write_pixel(context, Vec2i { x, y }, get_color());
+                context->write_pixel(Vec2i { x, y }, get_color());
             }
             if (std::abs(sdf) < 1.0 / std::min(radius.x, radius.y))
             {

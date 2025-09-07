@@ -5,7 +5,7 @@ namespace curspp::graphics
 
 void GfxRender2D::draw_frame() const
 {
-    clear_frame_buffer(context);
+    context->clear_frame_buffer();
 
     primitives->sort_by_depth();
     for (auto primitive : primitives->get_items())
@@ -21,7 +21,7 @@ void GfxRender2D::draw_frame() const
         }
     }
 
-    draw_frame_buffer(context);
+    context->draw_frame_buffer();
 }
 
 std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(const Vec2d position, const Vec2d radius, const Color3 color, const double line_thickness) const
@@ -48,7 +48,7 @@ std::shared_ptr<Polyline2D> GfxRender2D::create_polyline(const Vec2d position, c
     return polyline;
 }
 
-void GfxRender2D::write_raster_to_frame_buffer(const std::vector<bool> raster, const BBox2D bounds, const Color3 color)
+void GfxRender2D::write_raster_to_frame_buffer(const std::vector<bool> raster, const Box2d bounds, const Color3 color)
 {
     Box2i rounded_bounds = { bounds.min.round(), bounds.max.round() };
     for (int i = 0; i < rounded_bounds.max.x * rounded_bounds.max.y; i++)
@@ -56,7 +56,7 @@ void GfxRender2D::write_raster_to_frame_buffer(const std::vector<bool> raster, c
         if (raster[i])
         {
             Vec2i pos = rounded_bounds.min + Vec2i { i % rounded_bounds.max.x, i / rounded_bounds.max.x };
-            write_pixel(context, pos, color);
+            context->write_pixel(pos, color);
         }
     }
 }

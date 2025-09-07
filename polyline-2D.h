@@ -11,9 +11,9 @@ class Polyline2D : public GfxPrimitive2D
 
 public:
 
-    void rasterize(std::shared_ptr<gfx_context> context) const override;
+    void rasterize(std::shared_ptr<GfxContext2D> context) const override;
     // void update_bounds(std::shared_ptr<gfx_context> context) override;
-    BBox2D get_relative_extent() const override;
+    Box2d get_relative_extent() const override;
 
     inline void add_point(const Vec2d point) { points.push_back(point); }
     inline void add_points(const std::vector<Vec2d>& new_points) { points.insert(points.end(), new_points.begin(), new_points.end()); }

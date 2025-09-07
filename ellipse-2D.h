@@ -11,9 +11,9 @@ class Ellipse2D : public GfxPrimitive2D
 
 public:
 
-    void rasterize(std::shared_ptr<gfx_context> context) const override;
+    void rasterize(std::shared_ptr<GfxContext2D> context) const override;
     // void update_bounds(std::shared_ptr<gfx_context> context) override;
-    BBox2D get_relative_extent() const override;
+    Box2d get_relative_extent() const override;
 
     inline Vec2d get_radius() const { return radius; }
     inline void set_radius(const Vec2d r) { radius = r; }
