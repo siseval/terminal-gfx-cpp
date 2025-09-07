@@ -43,8 +43,6 @@ class GfxRender2D
 
     std::shared_ptr<GfxContext2D> context;
     std::shared_ptr<GfxPrimitiveStore2D> primitives;
-
-    void write_raster_to_frame_buffer(const std::vector<bool> raster, const Box2d bounds, const Color3 color);
 };
 
 }

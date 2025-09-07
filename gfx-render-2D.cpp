@@ -48,17 +48,4 @@ std::shared_ptr<Polyline2D> GfxRender2D::create_polyline(const Vec2d position, c
     return polyline;
 }
 
-void GfxRender2D::write_raster_to_frame_buffer(const std::vector<bool> raster, const Box2d bounds, const Color3 color)
-{
-    Box2i rounded_bounds = { bounds.min.round(), bounds.max.round() };
-    for (int i = 0; i < rounded_bounds.max.x * rounded_bounds.max.y; i++)
-    {
-        if (raster[i])
-        {
-            Vec2i pos = rounded_bounds.min + Vec2i { i % rounded_bounds.max.x, i / rounded_bounds.max.x };
-            context->write_pixel(pos, color);
-        }
-    }
-}
-
 }
