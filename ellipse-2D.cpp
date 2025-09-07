@@ -3,11 +3,6 @@
 namespace curspp::graphics
 {
 
-// void Ellipse2D::update_bounds(std::shared_ptr<gfx_context> context)
-// {
-//     set_size(radius * 2 + Vec2d::create(get_line_thickness()));
-// }
-
 BBox2D Ellipse2D::get_relative_extent() const
 {
     return { { 0, 0 }, { radius * 2 } };
@@ -36,7 +31,6 @@ void Ellipse2D::rasterize(std::shared_ptr<gfx_context> context) const
             if (std::abs(sdf) < 1.0 / std::min(radius.x, radius.y))
             {
                 rasterize_circle(context, Vec2i { x, y }, get_line_thickness() / 2, get_color());
-                // write_pixel(context, Vec2i { x, y }, get_color());
             }
         }
     }

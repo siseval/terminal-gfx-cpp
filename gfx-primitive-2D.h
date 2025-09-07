@@ -40,6 +40,9 @@ public:
     inline Vec2d get_anchor() const { return anchor; }
     inline void set_anchor(const Vec2d pos) { anchor = pos; }
 
+    inline void set_depth(const int d) { depth = d; }
+    inline int get_depth() const { return depth; }
+
     inline Vec2d get_pos() const { return position; }
     void set_pos(const Vec2d pos) { position = pos; }
     
@@ -66,6 +69,7 @@ protected:
     Vec2d scale = { 1.0, 1.0 };
     double line_thickness = 1.0;
     double rotation = 0.0;
+    int depth = 0;
     bool draw_bounds = false;
     bool draw_anchor = false;
 

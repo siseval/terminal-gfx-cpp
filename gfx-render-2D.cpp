@@ -7,6 +7,7 @@ void GfxRender2D::draw_frame() const
 {
     clear_frame_buffer(context);
 
+    primitives->sort_by_depth();
     for (auto primitive : primitives->get_items())
     {
         primitive->rasterize(context);
@@ -35,10 +36,11 @@ std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(const Vec2d position, con
     return ellipse;
 }
 
-std::shared_ptr<Polyline2D> GfxRender2D::create_polyline(const std::vector<Vec2d> points, const Color3 color, const double line_thickness) const
+std::shared_ptr<Polyline2D> GfxRender2D::create_polyline(const Vec2d position, const std::vector<Vec2d> points, const Color3 color, const double line_thickness) const
 {
     auto polyline = std::make_shared<Polyline2D>();
 
+    polyline->set_pos(position);
     polyline->set_points(points);
     polyline->set_line_thickness(line_thickness);
     polyline->set_color(color);

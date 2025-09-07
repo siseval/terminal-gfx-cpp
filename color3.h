@@ -13,6 +13,7 @@ class Color3
 public:
 
     Color3(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b) {}
+    Color3(int r, int g, int b) : r(r), g(g), b(b) {}
     Color3() : Color3(0, 0, 0) {}
 
     Color3(int32_t color) : r(color >> 16 & 0xFF), g(color >> 8 & 0xFF), b(color & 0xFF) {}

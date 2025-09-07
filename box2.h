@@ -20,6 +20,31 @@ public:
         return max - min;
     }
 
+    inline Vec2<T> center() const
+    {
+        return (min + max) / 2;
+    }
+
+    inline bool contains(const Vec2<T>& point) const
+    {
+        return point.x >= min.x && point.x <= max.x &&
+               point.y >= min.y && point.y <= max.y;
+    }
+
+    inline bool intersects(const Box2<T>& other) const
+    {
+        return !(other.min.x > max.x || other.max.x < min.x ||
+                 other.min.y > max.y || other.max.y < min.y);
+    }
+
+    inline void expand(const Vec2<T>& point)
+    {
+        if (point.x < min.x) min.x = point.x;
+        if (point.x > max.x) max.x = point.x;
+        if (point.y < min.y) min.y = point.y;
+        if (point.y > max.y) max.y = point.y;
+    }
+
 };
 
 using Box2d = Box2<double>;

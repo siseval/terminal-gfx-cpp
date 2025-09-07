@@ -35,30 +35,14 @@ BBox2D GfxPrimitive2D::get_global_bounds(std::shared_ptr<gfx_context> context) c
         corners[i] = apply_transform(corners[i], transform);
     }
 
-    Vec2d min = { corners[0].x, corners[0].y };
-    Vec2d max = { corners[0].x, corners[0].y };
+    BBox2D bounds = { { corners[0].x, corners[0].y }, { corners[0].x, corners[0].y } };
 
     for (int i = 0; i < 4; ++i)
     {
-        if (corners[i].x < min.x)
-        {
-            min.x = corners[i].x;
-        }
-        if (corners[i].y < min.y)
-        {
-            min.y = corners[i].y;
-        }
-        if (corners[i].x > max.x)
-        {
-            max.x = corners[i].x;
-        }
-        if (corners[i].y > max.y)
-        {
-            max.y = corners[i].y;
-        }
+        bounds.expand(corners[i]);
     }
 
-    return BBox2D { min, max };
+    return bounds;
 }
 
 Matrix3x3d GfxPrimitive2D::get_transform() const

@@ -10,7 +10,9 @@ std::shared_ptr<gfx_context> create_context(const Vec2i resolution, const Vec2i 
         origin,
         viewport_scaling,
         std::make_unique<std::unordered_map<Color3, uint8_t, std::hash<Color3>>>(),
-        std::make_unique<std::vector<int32_t>>(static_cast<size_t>(resolution.x * viewport_scaling.x) * static_cast<size_t>(resolution.y * viewport_scaling.y) / 2, 0)
+        std::make_unique<std::vector<int32_t>>(
+            static_cast<size_t>(resolution.x * viewport_scaling.x) * 
+            static_cast<size_t>(resolution.y * viewport_scaling.y) / 2, 0)
     });
 }
 
@@ -66,6 +68,7 @@ void write_pixel(std::shared_ptr<gfx_context> context, const Vec2i pos, const Co
     int frame_buffer_index = (pos.y / 2) * context->resolution.x + pos.x / 2;
 
     int32_t color_int = (color.to_int() << 8);
+    context->frame_buffer->at(frame_buffer_index) &= 0x000000FF;
     context->frame_buffer->at(frame_buffer_index) |= color_int;
     if (left_in_pixel)
     {

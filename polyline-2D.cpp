@@ -52,28 +52,5 @@ void Polyline2D::rasterize(std::shared_ptr<gfx_context> context) const
     }
 }
 
-// void Polyline2D::update_bounds(std::shared_ptr<gfx_context> context)
-// {
-//     if (points.size() < 2)
-//     {
-//         // set_size({ 0, 0 });
-//         return;
-//     }
-//
-//     coord2D min_point = points[0];
-//     coord2D max_point = points[0];
-//
-//     for (const coord2D& point : points)
-//     {
-//         if (point.x < min_point.x) min_point.x = point.x;
-//         if (point.y < min_point.y) min_point.y = point.y;
-//         if (point.x > max_point.x) max_point.x = point.x;
-//         if (point.y > max_point.y) max_point.y = point.y;
-//     }
-//
-//     set_size(max_point + Vec2d::create(get_line_thickness()));
-// }
-
-
 
 }

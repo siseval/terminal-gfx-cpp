@@ -22,7 +22,7 @@ class GfxRender2D
     void draw_frame() const;
 
     std::shared_ptr<Ellipse2D> create_ellipse(const Vec2d position, const Vec2d radius, const Color3 color, const double line_thickness = 1.0) const;
-    std::shared_ptr<Polyline2D> create_polyline(const std::vector<Vec2d> points, const Color3 color, const double line_thickness = 1.0) const;
+    std::shared_ptr<Polyline2D> create_polyline(const Vec2d position, const std::vector<Vec2d> points, const Color3 color, const double line_thickness = 1.0) const;
 
     inline Vec2i get_resolution() const { return context->resolution / context->viewport_scaling; }
 
@@ -33,6 +33,8 @@ class GfxRender2D
 
     inline void add_item(const std::shared_ptr<GfxPrimitive2D> item) { primitives->add_item(item); }
     inline void remove_item(const std::shared_ptr<GfxPrimitive2D> item) { primitives->remove_item(item); }
+
+    inline int num_items() const { return primitives->num_items(); }
 
     inline void set_viewport_scaling(const Vec2d scaling) { context->viewport_scaling = scaling; }
     inline Vec2d get_viewport_scaling() const { return context->viewport_scaling; }

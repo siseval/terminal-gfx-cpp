@@ -10,7 +10,7 @@
 namespace curspp::graphics
 {
 
-constexpr uint8_t GFX_DEDICATED_COLOR_START_INDEX = 200;
+constexpr uint8_t GFX_DEDICATED_COLOR_START_INDEX = 128;
 const Color3 GFX_BOUNDS_COLOR = { 255, 255, 255 };
 const Color3 GFX_ANCHOR_COLOR = { 255, 255, 255 };
 

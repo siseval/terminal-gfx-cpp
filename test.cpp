@@ -12,6 +12,23 @@ int main()
     gfx_test();
 }
 
+void select(int index, std::shared_ptr<GfxPrimitive2D>& selected, std::vector<std::shared_ptr<GfxPrimitive2D>> items, std::shared_ptr<GfxRender2D> renderer)
+{
+    if (items.size() <= 0)
+    {
+        selected = nullptr;
+        return;
+    }
+    if (selected != nullptr)
+    {
+        selected->set_draw_bounds(false);
+        selected->set_depth(1);
+    }
+    selected = items[index];
+    selected->set_draw_bounds(true);
+    selected->set_depth(0);
+}
+
 void gfx_test()
 {
     init();
@@ -20,100 +37,147 @@ void gfx_test()
 
     Vec2d screen_size = get_screen_size() * 2;
 
-    GfxRender2D renderer(screen_size);
-    renderer.set_viewport_scaling({ 2, 1 });
-    Vec2d center = renderer.center();
+    auto renderer = std::make_shared<GfxRender2D>(screen_size);
+    renderer->set_viewport_scaling({ 2, 1 });
+    Vec2d center = renderer->center();
 
     Vec2d radius = { center.y / 2, center.y / 2 };
-    auto ellipse = renderer.create_ellipse(center, radius, Color3 { 240, 240, 20 }, 3);
-    ellipse->set_anchor({ 0.5, 0.5 });
-    ellipse->set_draw_anchor(true);
-    // ellipse->set_scale({ 2, 1 });
-    // ellipse->set_pos({ 0, 0 });//{ 20, 10 });
-    renderer.add_item(ellipse);
 
-    std::vector<Vec2d> points = { Vec2d { 0, 0 }, Vec2d { 30, 0 }, Vec2d { 15, 15 } };
-    auto polyline = renderer.create_polyline(points, Color3 { 20, 20, 240 }, 5.0);
-    polyline->set_close(true);
-    polyline->set_pos(center);
-    // polyline->set_anchor({ 0.5, 0.5 });
-    // polyline->set_scale({ 2, 1 });
-    polyline->set_draw_bounds(true);
-    polyline->set_draw_anchor(true);
-    // polyline->set_rotation(1);
-    renderer.add_item(polyline);
+    std::vector<std::shared_ptr<GfxPrimitive2D>> items;
 
-    std::shared_ptr<GfxPrimitive2D> selected = polyline;
+    int index = 0;
+    std::shared_ptr<GfxPrimitive2D> selected = nullptr;
+
+    Color3 color;
+    std::shared_ptr<Ellipse2D> ellipse;
+    std::shared_ptr<Polyline2D> polyline;
 
     while (run)
     {
-        renderer.draw_frame();
+        renderer->draw_frame();
         set_color(curspp::color::WHITE);
-        add_str({ 0, 0 }, "resolution: " + std::to_string(renderer.get_resolution().round().x) + "x" + std::to_string(renderer.get_resolution().round().y));
-        add_str({ 0, 1 }, "radius: " + std::to_string(ellipse->get_radius().round().x) + "x" + std::to_string(ellipse->get_radius().round().y));
-        add_str({ 0, 2 }, "pos: " + std::to_string(ellipse->get_pos().round().x) + "x" + std::to_string(ellipse->get_pos().round().y));
+
+        if (selected != nullptr)
+        {
+            add_str({ 0, 0 }, "resolution: " + std::to_string(renderer->get_resolution().round().x) + "x" + std::to_string(renderer->get_resolution().round().y));
+            add_str({ 0, 1 }, "pos: " + std::to_string(selected->get_pos().round().x) + "x" + std::to_string(selected->get_pos().round().y));
+            add_str({ 0, 2 }, "items: " + std::to_string(renderer->num_items()));
+        }
 
         switch (get_input())
         {
-            case 'k':
-                ellipse->set_radius(ellipse->get_radius() + Vec2d { 0, 1 });
-                break;
-            case 'j':
-                ellipse->set_radius(ellipse->get_radius() - Vec2d { 0, 1 });
-                break;
-
-            case 'l':
-                ellipse->set_radius(ellipse->get_radius() + Vec2d { 1, 0 });
-                break;
-            case 'h':
-                ellipse->set_radius(ellipse->get_radius() - Vec2d { 1, 0 });
-                break;
-
-            case 'w':
-                selected->set_pos(selected->get_pos() + Vec2d { 0, -1 });
-                break;
-            case 'a':
-                selected->set_pos(selected->get_pos() + Vec2d { -1, 0 });
-                break;
-            case 's':
-                selected->set_pos(selected->get_pos() + Vec2d { 0, 1 });
-                break;
-            case 'd':
-                selected->set_pos(selected->get_pos() + Vec2d { 1, 0 });
-                break;
-
-            case 'L':
-                selected->set_rotation(selected->get_rotation() + 0.05);
-                break;
-            case 'H':
-                selected->set_rotation(selected->get_rotation() - 0.05);
-                break;
-
-            case 'i':
-                selected->set_line_thickness(selected->get_line_thickness() - 1);
-                break;
-            case 'o':
-                selected->set_line_thickness(selected->get_line_thickness() + 1);
-                break;
-
-            case 'f':
-                ellipse->set_fill(!ellipse->get_fill());
-                break;
-            case 'b':
-                selected->set_draw_bounds(!selected->get_draw_bounds());
-                break;
-
-            case 'r':
-                renderer.remove_item(ellipse);
-                break;
-            case 'e':
-                renderer.add_item(ellipse);
-                break;
-
             case 'q':
                 end();
                 run = false;
                 break;
+
+            // case 'k':
+            //     ellipse->set_radius(ellipse->get_radius() + Vec2d { 0, 1 });
+            //     break;
+            // case 'j':
+            //     ellipse->set_radius(ellipse->get_radius() - Vec2d { 0, 1 });
+            //     break;
+            //
+            // case 'l':
+            //     ellipse->set_radius(ellipse->get_radius() + Vec2d { 1, 0 });
+            //     break;
+            // case 'h':
+            //     ellipse->set_radius(ellipse->get_radius() - Vec2d { 1, 0 });
+            //     break;
+
+            case 'k':
+                if (selected == nullptr) { break; }
+                selected->set_scale(selected->get_scale() + Vec2d { 0, 0.05 });
+                break;
+            case 'j':
+                if (selected == nullptr) { break; }
+                selected->set_scale(selected->get_scale() - Vec2d { 0, 0.05 });
+                break;
+
+            case 'l':
+                if (selected == nullptr) { break; }
+                selected->set_scale(selected->get_scale() + Vec2d { 0.05, 0 });
+                break;
+            case 'h':
+                if (selected == nullptr) { break; }
+                selected->set_scale(selected->get_scale() - Vec2d { 0.05, 0 });
+                break;
+
+            case 'w':
+                if (selected == nullptr) { break; }
+                selected->set_pos(selected->get_pos() + Vec2d { 0, -1 });
+                break;
+            case 'a':
+                if (selected == nullptr) { break; }
+                selected->set_pos(selected->get_pos() + Vec2d { -1, 0 });
+                break;
+            case 's':
+                if (selected == nullptr) { break; }
+                selected->set_pos(selected->get_pos() + Vec2d { 0, 1 });
+                break;
+            case 'd':
+                if (selected == nullptr) { break; }
+                selected->set_pos(selected->get_pos() + Vec2d { 1, 0 });
+                break;
+
+            case 'L':
+                if (selected == nullptr) { break; }
+                selected->set_rotation(selected->get_rotation() + 0.05);
+                break;
+            case 'H':
+                if (selected == nullptr) { break; }
+                selected->set_rotation(selected->get_rotation() - 0.05);
+                break;
+
+            case 'i':
+                if (selected == nullptr) { break; }
+                selected->set_line_thickness(selected->get_line_thickness() - 1);
+                break;
+            case 'o':
+                if (selected == nullptr) { break; }
+                selected->set_line_thickness(selected->get_line_thickness() + 1);
+                break;
+
+            // case 'f':
+            //     ellipse->set_fill(!ellipse->get_fill());
+            //     break;
+            case 'b':
+                if (selected == nullptr) { break; }
+                selected->set_draw_bounds(!selected->get_draw_bounds());
+                break;
+
+
+            case 'n':
+                select((index += 1) %= items.size(), selected, items, renderer);
+                break;
+
+            case 'r':
+                if (selected == nullptr) { break; }
+                renderer->remove_item(selected);
+                items.erase(std::remove(items.begin(), items.end(), selected));
+                select((index -= 1) %= items.size(), selected, items, renderer);
+                break;
+                
+            case 'e':
+                color = { std::rand() % 255, std::rand() % 255, std::rand() % 255 };
+                ellipse = renderer->create_ellipse(center, { 10, 10 }, color, 3);
+                ellipse->set_anchor({ 0.5, 0.5 });
+                items.push_back(ellipse);
+                select(index = items.size() - 1, selected, items, renderer);
+                renderer->add_item(ellipse);
+                break;
+
+            case 't':
+                Color3 color = { std::rand() % 255, std::rand() % 255, std::rand() % 255 };
+                polyline = renderer->create_polyline(center, { { 0, 0 }, { 20, 0 }, { 10, 10} }, color, 3);
+                polyline->set_close(true);
+                polyline->set_anchor({ 0.5, 0.5 });
+                items.push_back(polyline);
+                select(index = items.size() - 1, selected, items, renderer);
+                renderer->add_item(polyline);
+                break;
+
+
        }
     }
 }
