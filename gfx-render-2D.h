@@ -6,7 +6,7 @@
 #include "ellipse-2D.h"
 #include "polyline-2D.h"
 
-namespace curspp::graphics
+namespace curspp::gfx
 {
 
 

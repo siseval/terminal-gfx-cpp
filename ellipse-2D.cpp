@@ -1,6 +1,6 @@
 #include "ellipse-2D.h"
 
-namespace curspp::graphics
+namespace curspp::gfx
 {
 
 Box2d Ellipse2D::get_relative_extent() const
@@ -30,7 +30,7 @@ void Ellipse2D::rasterize(std::shared_ptr<GfxContext2D> context) const
             }
             if (std::abs(sdf) < 1.0 / std::min(radius.x, radius.y))
             {
-                rasterize_circle(context, Vec2i { x, y }, get_line_thickness() / 2, get_color());
+                utils::rasterize_circle(context, Vec2i { x, y }, get_line_thickness() / 2, get_color());
             }
         }
     }

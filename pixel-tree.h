@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace curspp::graphics
+namespace curspp::gfx
 {
 
 static const std::string pixel_tree[2][2][2][2] =

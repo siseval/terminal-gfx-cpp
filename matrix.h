@@ -5,7 +5,7 @@
 #include <cmath>
 #include <functional>
 
-namespace curspp::graphics
+namespace curspp::gfx
 {
 
 template <typename T, int rows, int cols>

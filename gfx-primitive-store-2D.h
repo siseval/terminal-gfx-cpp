@@ -5,7 +5,7 @@
 #include "gfx-primitive-2D.h"
 #include "ellipse-2D.h"
 
-namespace curspp::graphics
+namespace curspp::gfx
 {
 
 struct compare_primitive_by_depth

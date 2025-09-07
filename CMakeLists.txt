@@ -10,9 +10,10 @@ curspp.cpp
 gfx-context-2D.cpp
 gfx-render-2D.cpp
 gfx-primitive-2D.cpp
+gfx-utils-rasterize.cpp
+gfx-utils-transform.cpp
 ellipse-2D.cpp
 polyline-2D.cpp
-gfx-rasterize.cpp
 test.cpp
 )
 

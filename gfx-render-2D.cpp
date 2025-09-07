@@ -1,6 +1,6 @@
 #include "gfx-render-2D.h"
 
-namespace curspp::graphics
+namespace curspp::gfx
 {
 
 void GfxRender2D::draw_frame() const

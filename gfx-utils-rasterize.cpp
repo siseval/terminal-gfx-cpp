@@ -1,6 +1,6 @@
-#include "gfx-rasterize.h"
+#include "gfx-utils-rasterize.h"
 
-namespace curspp::graphics
+namespace curspp::gfx::utils
 {
 
 void rasterize_circle(std::shared_ptr<GfxContext2D> context, const Vec2d center, const double radius, const Color3 color)

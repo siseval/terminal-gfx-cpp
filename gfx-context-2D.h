@@ -6,8 +6,9 @@
 #include "matrix.h"
 #include "box2.h"
 #include "pixel-tree.h"
+#include "gfx-utils-transform.h"
 
-namespace curspp::graphics
+namespace curspp::gfx
 {
 
 constexpr uint8_t GFX_DEDICATED_COLOR_START_INDEX = 128;

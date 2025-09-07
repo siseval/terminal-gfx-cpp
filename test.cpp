@@ -2,7 +2,7 @@
 #include "gfx-render-2D.h"
 
 using namespace curspp;
-using namespace curspp::graphics;
+using namespace curspp::gfx;
 
 void gfx_test();
 void circle_test();

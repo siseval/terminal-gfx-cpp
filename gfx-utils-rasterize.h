@@ -4,7 +4,7 @@
 #include "gfx-context-2D.h"
 #include "box2.h"
 
-namespace curspp::graphics
+namespace curspp::gfx::utils
 {
 
 void rasterize_circle(std::shared_ptr<GfxContext2D> context, const Vec2d center, const double radius, const Color3 color);

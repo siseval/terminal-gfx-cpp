@@ -1,6 +1,6 @@
 #include "polyline-2D.h"
 
-namespace curspp::graphics
+namespace curspp::gfx
 {
 
 Box2d Polyline2D::get_relative_extent() const
@@ -42,13 +42,13 @@ void Polyline2D::rasterize(std::shared_ptr<GfxContext2D> context) const
     {
         Vec2d transformed_start = apply_transform(points[i], full_transform);
         Vec2d transformed_end = apply_transform(points[i + 1], full_transform);
-        rasterize_line(context, transformed_start, transformed_end, get_line_thickness(), get_color());
+        utils::rasterize_line(context, transformed_start, transformed_end, get_line_thickness(), get_color());
     }
     if (do_close)
     {
         Vec2d transformed_start = apply_transform(points.front(), full_transform);
         Vec2d transformed_end = apply_transform(points.back(), full_transform);
-        rasterize_line(context, transformed_start, transformed_end, get_line_thickness(), get_color());
+        utils::rasterize_line(context, transformed_start, transformed_end, get_line_thickness(), get_color());
     }
 }
 

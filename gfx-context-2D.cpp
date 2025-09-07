@@ -1,16 +1,11 @@
 #include "gfx-context-2D.h"
 
-namespace curspp::graphics
+namespace curspp::gfx
 {
 
 Matrix3x3d GfxContext2D::get_transform()
 {
-    Matrix3x3d scale = Matrix3x3d({
-        { viewport_scaling.x, 0, 0 },
-        { 0, viewport_scaling.y, 0 },
-        { 0, 0, 1 }
-    });
-
+    Matrix3x3d scale = utils::scale(viewport_scaling);
     return scale;
 }
 
@@ -139,7 +134,6 @@ void GfxContext2D::draw_frame_buffer()
                                            [(pixel_value & 0b0100) >> 2]
                                            [(pixel_value & 0b0010) >> 1]
                                            [(pixel_value & 0b0001)];
-
 
             Color3 color = Color3(pixel_value >> 8);
             set_color(color);

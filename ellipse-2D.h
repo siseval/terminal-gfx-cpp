@@ -3,7 +3,7 @@
 
 #include "gfx-primitive-2D.h"
 
-namespace curspp::graphics
+namespace curspp::gfx
 {
 
 class Ellipse2D : public GfxPrimitive2D

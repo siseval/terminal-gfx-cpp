@@ -1,18 +1,18 @@
 #include "gfx-primitive-2D.h"
 
-namespace curspp::graphics
+namespace curspp::gfx
 {
 
 void GfxPrimitive2D::rasterize_bounds(std::shared_ptr<GfxContext2D> context) const
 {
     Box2d bounds = get_global_bounds(context);
-    rasterize_box_corners(context, Box2d { { bounds.min }, { bounds.max } });
+    utils::rasterize_box_corners(context, Box2d { { bounds.min }, { bounds.max } });
 }
 
 void GfxPrimitive2D::rasterize_anchor(std::shared_ptr<GfxContext2D> context) const
 {
     Matrix3x3d full_transform = context->get_transform() * get_transform();
-    rasterize_point(context, apply_transform(get_anchor() * get_relative_extent().size(), full_transform));
+    utils::rasterize_point(context, apply_transform(get_anchor() * get_relative_extent().size(), full_transform));
 }
 
 Box2d GfxPrimitive2D::get_global_bounds(std::shared_ptr<GfxContext2D> context) const
@@ -50,31 +50,10 @@ Matrix3x3d GfxPrimitive2D::get_transform() const
     Vec2d size = get_relative_extent().size();
     Vec2d anchor_offset = get_anchor() * size;
 
-    Matrix3x3d anchor_translation_matrix = Matrix3x3d({
-        { 1, 0, -anchor_offset.x },
-        { 0, 1, -anchor_offset.y },
-        { 0, 0, 1 }
-    });
-
-    Matrix3x3d scale_matrix = Matrix3x3d({
-        { scale.x, 0, 0 },
-        { 0, scale.y, 0 },
-        { 0, 0, 1 }
-    });
-
-    double sin_r = std::sin(rotation);
-    double cos_r = std::cos(rotation);
-    Matrix3x3d rotation_matrix = Matrix3x3d({
-        { cos_r, -sin_r, 0 },
-        { sin_r, cos_r, 0 },
-        { 0, 0, 1 }
-    });
-
-    Matrix3x3d position_translation_matrix = Matrix3x3d({
-        { 1, 0, get_pos().x },
-        { 0, 1, get_pos().y },
-        { 0, 0, 1 }
-    });
+    Matrix3x3d anchor_translation_matrix = utils::translate(-anchor_offset);
+    Matrix3x3d scale_matrix = utils::scale(scale);
+    Matrix3x3d rotation_matrix  = utils::rotate(rotation);
+    Matrix3x3d position_translation_matrix = utils::translate(get_pos());
 
     return position_translation_matrix * rotation_matrix * scale_matrix * anchor_translation_matrix;
 }

@@ -5,10 +5,11 @@
 #include "box2.h"
 #include "curspp.h"
 #include "gfx-context-2D.h"
-#include "gfx-rasterize.h"
+#include "gfx-utils-rasterize.h"
+#include "gfx-utils-transform.h"
 #include "matrix.h"
 
-namespace curspp::graphics
+namespace curspp::gfx
 {
 
 class GfxPrimitive2D
