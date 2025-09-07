@@ -38,10 +38,7 @@ void gfx_test()
     Vec2d screen_size = get_screen_size() * 2;
 
     auto renderer = std::make_shared<GfxRender2D>(screen_size);
-    renderer->set_viewport_scaling({ 2, 1 });
     Vec2d center = renderer->center();
-
-    Vec2d radius = { center.y / 2, center.y / 2 };
 
     std::vector<std::shared_ptr<GfxPrimitive2D>> items;
 
@@ -60,8 +57,8 @@ void gfx_test()
         if (selected != nullptr)
         {
             add_str({ 0, 0 }, "resolution: " + std::to_string(renderer->get_resolution().round().x) + "x" + std::to_string(renderer->get_resolution().round().y));
-            add_str({ 0, 1 }, "pos: " + std::to_string(selected->get_pos().round().x) + "x" + std::to_string(selected->get_pos().round().y));
-            add_str({ 0, 2 }, "items: " + std::to_string(renderer->num_items()));
+            add_str({ 0, 1 }, "items: " + std::to_string(renderer->num_items()));
+            add_str({ 0, 2 }, "pos: " + std::to_string(selected->get_pos().round().x) + "x" + std::to_string(selected->get_pos().round().y));
         }
 
         switch (get_input())

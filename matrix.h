@@ -8,7 +8,7 @@
 namespace curspp::graphics
 {
 
-template <typename T, uint32_t rows, uint32_t cols>
+template <typename T, int rows, int cols>
 class Matrix
 {
 
@@ -18,10 +18,10 @@ public:
 
     Matrix(std::initializer_list<std::initializer_list<T>> array) 
     { 
-        uint32_t r = 0;
+        int r = 0;
         for (const auto& row : array) 
         {
-            uint32_t c = 0;
+            int c = 0;
             for (const auto& val : row) 
             {
                 data[r][c] = val;
@@ -31,12 +31,12 @@ public:
         }
     }
 
-    T& operator()(uint32_t r, uint32_t c) 
+    T& operator()(int r, int c) 
     { 
         return data[r][c]; 
     }
 
-    const T& operator()(uint32_t r, uint32_t c) const 
+    const T& operator()(int r, int c) const 
     { 
         return data[r][c]; 
     }
@@ -44,9 +44,9 @@ public:
     Matrix<T, rows, cols> operator+(const Matrix<T, rows, cols>& other) const
     {
         Matrix<T, rows, cols> result;
-        for (uint32_t r = 0; r < rows; ++r)
+        for (int r = 0; r < rows; ++r)
         {
-            for (uint32_t c = 0; c < cols; ++c)
+            for (int c = 0; c < cols; ++c)
             {
                 result(r, c) = data[r][c] + other(r, c);
             }
@@ -57,9 +57,9 @@ public:
     Matrix<T, rows, cols> operator-(const Matrix<T, rows, cols>& other) const
     {
         Matrix<T, rows, cols> result;
-        for (uint32_t r = 0; r < rows; ++r)
+        for (int r = 0; r < rows; ++r)
         {
-            for (uint32_t c = 0; c < cols; ++c)
+            for (int c = 0; c < cols; ++c)
             {
                 result(r, c) = data[r][c] - other(r, c);
             }
@@ -70,9 +70,9 @@ public:
     Matrix<T, rows, cols> operator*(T scalar) const
     {
         Matrix<T, rows, cols> result;
-        for (uint32_t r = 0; r < rows; ++r)
+        for (int r = 0; r < rows; ++r)
         {
-            for (uint32_t c = 0; c < cols; ++c)
+            for (int c = 0; c < cols; ++c)
             {
                 result(r, c) = data[r][c] * scalar;
             }
@@ -83,9 +83,9 @@ public:
     Matrix<T, rows, cols> operator/(T scalar) const
     {
         Matrix<T, rows, cols> result;
-        for (uint32_t r = 0; r < rows; ++r)
+        for (int r = 0; r < rows; ++r)
         {
-            for (uint32_t c = 0; c < cols; ++c)
+            for (int c = 0; c < cols; ++c)
             {
                 result(r, c) = data[r][c] / scalar;
             }
@@ -96,9 +96,9 @@ public:
     Matrix<T, cols, rows> transpose() const
     {
         Matrix<T, cols, rows> result;
-        for (uint32_t r = 0; r < rows; ++r)
+        for (int r = 0; r < rows; ++r)
         {
-            for (uint32_t c = 0; c < cols; ++c)
+            for (int c = 0; c < cols; ++c)
             {
                 result(c, r) = data[r][c];
             }
@@ -109,9 +109,9 @@ public:
     Matrix<T, rows, cols> apply(std::function<T(T)> func) const
     {
         Matrix<T, rows, cols> result;
-        for (uint32_t r = 0; r < rows; ++r)
+        for (int r = 0; r < rows; ++r)
         {
-            for (uint32_t c = 0; c < cols; ++c)
+            for (int c = 0; c < cols; ++c)
             {
                 result(r, c) = func(data[r][c]);
             }
@@ -119,16 +119,16 @@ public:
         return result;
     }
 
-    template <uint32_t cols2>
+    template <int cols2>
     Matrix<T, rows, cols2> operator*(const Matrix<T, cols, cols2> &other) const
     {
         Matrix<T, rows, cols2> result;
-        for (uint32_t r = 0; r < rows; ++r)
+        for (int r = 0; r < rows; ++r)
         {
-            for (uint32_t c = 0; c < cols2; ++c)
+            for (int c = 0; c < cols2; ++c)
             {
                 result(r, c) = T();
-                for (uint32_t k = 0; k < cols; ++k)
+                for (int k = 0; k < cols; ++k)
                 {
                     result(r, c) += data[r][k] * other(k, c);
                 }

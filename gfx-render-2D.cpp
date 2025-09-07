@@ -28,9 +28,9 @@ std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(const Vec2d position, con
 {
     auto ellipse = std::make_shared<Ellipse2D>();
 
+    ellipse->set_pos(position);
     ellipse->set_radius(radius);
     ellipse->set_line_thickness(line_thickness);
-    ellipse->set_pos(position);
     ellipse->set_color(color);
 
     return ellipse;

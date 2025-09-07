@@ -22,6 +22,7 @@ struct gfx_context
     Vec2i origin;
     Vec2d viewport_scaling;
     std::unique_ptr<std::unordered_map<Color3, uint8_t, std::hash<Color3>>> palette;
+    int color_index;
     std::unique_ptr<std::vector<int32_t>> frame_buffer;
 };
 

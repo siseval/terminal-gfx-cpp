@@ -10,6 +10,7 @@ std::shared_ptr<gfx_context> create_context(const Vec2i resolution, const Vec2i 
         origin,
         viewport_scaling,
         std::make_unique<std::unordered_map<Color3, uint8_t, std::hash<Color3>>>(),
+        0,
         std::make_unique<std::vector<int32_t>>(
             static_cast<size_t>(resolution.x * viewport_scaling.x) * 
             static_cast<size_t>(resolution.y * viewport_scaling.y) / 2, 0)
@@ -29,12 +30,13 @@ Matrix3x3d get_global_transform(std::shared_ptr<gfx_context> context)
 
 uint8_t add_color(std::shared_ptr<gfx_context> context, const Color3 color)
 {
-    if (context->palette->size() + GFX_DEDICATED_COLOR_START_INDEX >= 255)
+    if (context->color_index + GFX_DEDICATED_COLOR_START_INDEX >= 255)
     {
-        return -1;
+        context->color_index = 0;
     }
-    uint8_t color_index = context->palette->size() + GFX_DEDICATED_COLOR_START_INDEX;
+    uint8_t color_index = context->color_index + GFX_DEDICATED_COLOR_START_INDEX;
     context->palette->insert(std::pair(color, color_index));
+    context->color_index += 1;
     init_color(color_index, color.r_float() * 1000, color.g_float() * 1000, color.b_float() * 1000);
     init_pair(color_index, color_index, -1);
     return color_index;
