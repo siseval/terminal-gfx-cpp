@@ -22,7 +22,7 @@ add_library(gfx STATIC
 
 target_include_directories(gfx
     PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/inc
 )
 
 find_package(Curses REQUIRED)
