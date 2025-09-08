@@ -135,9 +135,10 @@ void gfx_test()
                 selected->set_line_thickness(selected->get_line_thickness() + 1);
                 break;
 
-            // case 'f':
-            //     ellipse->set_fill(!ellipse->get_fill());
-            //     break;
+            case 'f':
+                if (selected == nullptr) { break; }
+                selected->set_fill(!selected->get_fill());
+                break;
             case 'b':
                 if (selected == nullptr) { break; }
                 selected->set_draw_bounds(!selected->get_draw_bounds());

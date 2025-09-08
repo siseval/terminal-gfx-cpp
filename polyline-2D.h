@@ -27,6 +27,8 @@ public:
 
 protected:
 
+    void rasterize_fill(std::shared_ptr<GfxContext2D> context) const;
+
     std::vector<Vec2d> points = std::vector<Vec2d>();
     bool do_close = false;
 };

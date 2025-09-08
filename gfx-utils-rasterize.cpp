@@ -3,9 +3,9 @@
 namespace curspp::gfx::utils
 {
 
-void rasterize_circle(std::shared_ptr<GfxContext2D> context, const Vec2d center, const double radius, const Color3 color)
+void rasterize_circle(std::shared_ptr<GfxContext2D> context, const Vec2d center, const double radius, const Color3 color, const Vec2d scale)
 {
-    Vec2d scaled_radius = context->scale_with_viewport(Vec2d { radius, radius });
+    Vec2d scaled_radius = Vec2d::create(radius) * scale;
 
     for (int y = -scaled_radius.y; y <= scaled_radius.y; y++)
     {
@@ -28,7 +28,7 @@ void rasterize_line(std::shared_ptr<GfxContext2D> context, const Vec2d start, co
     {
         if (line_thickness > 1.0)
         {
-            rasterize_circle(context, cur_pos, line_thickness / 2, color);
+            rasterize_circle(context, cur_pos, line_thickness / 2, color, context->get_viewport_scaling());
         }
         else
         {

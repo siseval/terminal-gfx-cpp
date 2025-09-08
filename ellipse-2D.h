@@ -18,13 +18,9 @@ public:
     inline Vec2d get_radius() const { return radius; }
     inline void set_radius(const Vec2d r) { radius = r; }
 
-    inline bool get_fill() const { return draw_fill; }
-    inline void set_fill(const bool fill) { draw_fill = fill; }
-
 private:
 
     Vec2d radius;
-    bool draw_fill = false;
 
 };
 

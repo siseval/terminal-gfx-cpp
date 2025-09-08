@@ -32,5 +32,42 @@ Matrix3x3d scale(const Vec2d scale)
     });
 }
 
+Vec2d apply_transform(const Vec2d pos, const Matrix3x3d transform)
+{
+    Matrix3x1d column_matrix = Matrix3x1d({ 
+        { pos.x }, 
+        { pos.y }, 
+        { 1 }});
+
+    Matrix3x1d transformed = transform * column_matrix;
+    return Vec2d { transformed(0, 0), transformed(1, 0), };
+}
+
+Matrix3x3d invert_affine(Matrix3x3d m)
+{
+    double a = m(0, 0), b = m(0, 1), c = m(0, 2);
+    double d = m(1, 0), e = m(1, 1), f = m(1, 2);
+    double det = a * e - b * d;
+
+    if (det == 0) 
+    {
+        throw std::runtime_error("Matrix is not invertible");
+    }
+
+    double inv_det = 1.0 / det;
+
+    Matrix3x3d inv;
+    inv(0, 0) = e * inv_det;
+    inv(0, 1) = -b * inv_det;
+    inv(0, 2) = (b * f - c * e) * inv_det;
+    inv(1, 0) = -d * inv_det;
+    inv(1, 1) = a * inv_det;
+    inv(1, 2) = (c * d - a * f) * inv_det;
+    inv(2, 0) = 0;
+    inv(2, 1) = 0;
+    inv(2, 2) = 1;
+
+    return inv;
+}
 
 }
