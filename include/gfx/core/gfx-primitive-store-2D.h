@@ -2,10 +2,9 @@
 #define GFX_PRIMITIVE_STORE_2D_H
 
 #include <algorithm>
-#include "gfx-primitive-2D.h"
-#include "ellipse-2D.h"
+#include <gfx/core/gfx-primitive-2D.h>
 
-namespace curspp::gfx
+namespace gfx::core
 {
 
 struct compare_primitive_by_depth

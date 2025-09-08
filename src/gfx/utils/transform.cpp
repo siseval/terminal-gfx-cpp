@@ -1,7 +1,10 @@
-#include "gfx-utils-transform.h"
+#include <gfx/utils/transform.h>
 
-namespace curspp::gfx::utils
+namespace gfx::utils
 {
+
+using namespace gfx::math;
+
 
 Matrix3x3d translate(const Vec2d pos)
 {

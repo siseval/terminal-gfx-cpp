@@ -1,7 +1,12 @@
-#include "gfx-render-2D.h"
+#include <gfx/core/gfx-render-2D.h>
 
-namespace curspp::gfx
+namespace gfx::core
 {
+
+using namespace gfx::core::types;
+using namespace gfx::primitives;
+using namespace gfx::math;
+
 
 void GfxRender2D::draw_frame() const
 {

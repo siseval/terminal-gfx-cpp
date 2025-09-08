@@ -1,7 +1,10 @@
-#include "gfx-primitive-2D.h"
+#include <gfx/core/gfx-primitive-2D.h>
 
-namespace curspp::gfx
+namespace gfx::core
 {
+
+using namespace gfx::math;
+
 
 void GfxPrimitive2D::rasterize_bounds(std::shared_ptr<GfxContext2D> context) const
 {

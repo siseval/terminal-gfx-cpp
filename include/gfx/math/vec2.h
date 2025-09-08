@@ -5,7 +5,7 @@
 #include <cmath>
 #include <functional>
 
-namespace curspp 
+namespace gfx::math 
 {
 
 template <typename T>
@@ -32,23 +32,6 @@ public:
         return Vec2<T> { 0, 0 }; 
     }
 
-    static Vec2<T> add(Vec2<T> a, Vec2<T> b) 
-    { 
-        return Vec2<T>{ static_cast<T>(a.x + b.x), static_cast<T>(a.y + b.y) }; 
-    }
-    static Vec2<T> subtract(Vec2<T> a, Vec2<T> b) 
-    { 
-        return Vec2<T>{ static_cast<T>(a.x - b.x), static_cast<T>(a.y - b.y) }; 
-    }
-    static Vec2<T> multiply(Vec2<T> a, Vec2<T> b) 
-    { 
-        return Vec2<T>{ static_cast<T>(a.x * b.x), static_cast<T>(a.y * b.y) }; 
-    }
-    static Vec2<T> divide(Vec2<T> a, Vec2<T> b) 
-    { 
-        return Vec2<T>{ static_cast<T>(a.x / b.x), static_cast<T>(a.y / b.y) }; 
-    }
-
     static T cross(Vec2<T> a, Vec2<T> b) 
     { 
         return static_cast<T>(a.x * b.y - a.y * b.x); 
@@ -59,18 +42,9 @@ public:
         return static_cast<T>(a.x * b.x + a.y * b.y);
     }
 
-    static Vec2<T> scale(Vec2<T> vector, double factor) 
-    { 
-        return Vec2<T>{ static_cast<T>(vector.x * factor), static_cast<T>(vector.y * factor) }; 
-    }
-
-    static double length(Vec2<T> vector) 
-    { 
-        return std::sqrt(vector.x * vector.x + vector.y * vector.y); 
-    }
     static double distance(Vec2<T> a, Vec2<T> b) 
     { 
-        return length(subtract(a, b)); 
+        return (b - a).length();
     }
 
     Vec2<double> normalize() 
@@ -78,9 +52,9 @@ public:
         return Vec2<double>{ static_cast<T>(x / length()), static_cast<T>(y / length()) }; 
     }
 
-    static Vec2<double> normal(Vec2<T> vector) 
+    Vec2<double> normal() 
     { 
-        return Vec2<T>{ -vector.y, vector.x }; 
+        return Vec2<T>{ -y, x }; 
     }
 
     double length() 
@@ -149,14 +123,6 @@ public:
         x /= other.x; y /= other.y; return *this; 
     }
 
-    Vec2<T>& operator+=(const double &factor) 
-    { 
-        x += factor; y += factor; return *this; 
-    }
-    Vec2<T>& operator-=(const double &factor) 
-    { 
-        x -= factor; y -= factor; return *this; 
-    }
     Vec2<T>& operator*=(const double &factor) 
     { 
         x *= factor; y *= factor; return *this; 
@@ -200,9 +166,9 @@ using Vec2f = Vec2<float>;
 }
 
 template <typename T>
-struct std::hash<curspp::Vec2<T>>
+struct std::hash<gfx::math::Vec2<T>>
 {
-    size_t operator()(const curspp::Vec2<T>& vec) const
+    size_t operator()(const gfx::math::Vec2<T>& vec) const
     {
         return std::hash<T>()(vec.x) ^ (std::hash<T>()(vec.y) << 1);
     }

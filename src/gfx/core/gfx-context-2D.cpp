@@ -1,7 +1,11 @@
-#include "gfx-context-2D.h"
+#include <gfx/core/gfx-context-2D.h>
 
-namespace curspp::gfx
+namespace gfx::core
 {
+
+using namespace gfx::core::types;
+using namespace gfx::math;
+
 
 Matrix3x3d GfxContext2D::get_transform()
 {
@@ -130,14 +134,14 @@ void GfxContext2D::draw_frame_buffer()
             int frame_buffer_index = y * resolution.x + x;
             int32_t pixel_value = frame_buffer->at(frame_buffer_index);
 
-            std::string pixel = pixel_tree[(pixel_value & 0b1000) >> 3]
+            std::string pixel = draw::pixel_tree[(pixel_value & 0b1000) >> 3]
                                            [(pixel_value & 0b0100) >> 2]
                                            [(pixel_value & 0b0010) >> 1]
                                            [(pixel_value & 0b0001)];
 
             Color3 color = Color3(pixel_value >> 8);
             set_color(color);
-            add_str(origin + Vec2i { x, y }, pixel);
+            mvaddstr(origin.y + y, origin.x + x, pixel.data());
         }
     }
 }

@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <functional>
 
-namespace curspp::gfx
+namespace gfx::core::types
 {
 
 class Color3
@@ -37,9 +37,9 @@ public:
 }
 
 template <>
-struct std::hash<curspp::gfx::Color3>
+struct std::hash<gfx::core::types::Color3>
 {
-    size_t operator()(const curspp::gfx::Color3& color) const
+    size_t operator()(const gfx::core::types::Color3& color) const
     {
         return std::hash<uint8_t>()(color.r ^ (std::hash<uint8_t>()(color.g) << 1)) ^ (std::hash<uint8_t>()(color.b) << 2);
     }

@@ -1,7 +1,10 @@
-#include "ellipse-2D.h"
+#include <gfx/primitives/ellipse-2D.h>
 
-namespace curspp::gfx
+namespace gfx::primitives
 {
+
+using namespace gfx::core;
+using namespace gfx::math;
 
 Box2d Ellipse2D::get_relative_extent() const
 {
@@ -31,7 +34,7 @@ void Ellipse2D::rasterize(std::shared_ptr<GfxContext2D> context) const
             double sdf_threshold = 1.0 / (std::min(radius.x, radius.y) * std::min(scale.x, scale.y));
             if (std::abs(sdf) < sdf_threshold)
             {
-                Vec2d brush_scale = context->get_viewport_scaling() * get_scale();
+                Vec2d brush_scale = context->get_viewport_scaling();
                 utils::rasterize_circle(context, Vec2i { x, y }, get_line_thickness() / 2, get_color(), brush_scale);
             }
         }

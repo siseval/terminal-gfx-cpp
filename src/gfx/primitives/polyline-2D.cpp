@@ -1,7 +1,11 @@
-#include "polyline-2D.h"
+#include <gfx/primitives/polyline-2D.h>
 
-namespace curspp::gfx
+namespace gfx::primitives
 {
+
+using namespace gfx::core;
+using namespace gfx::math;
+
 
 Box2d Polyline2D::get_relative_extent() const
 {
