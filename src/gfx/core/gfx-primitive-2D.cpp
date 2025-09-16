@@ -6,22 +6,20 @@ namespace gfx::core
 using namespace gfx::math;
 
 
-void GfxPrimitive2D::rasterize_bounds(std::shared_ptr<GfxContext2D> context) const
-{
-    Box2d bounds = get_global_bounds(context);
-    utils::rasterize_box_corners(context, Box2d { { bounds.min }, { bounds.max } });
-}
+// void GfxPrimitive2D::rasterize_bounds(std::shared_ptr<GfxContext2D> context) const
+// {
+//     Box2d bounds = get_global_bounds(context);
+//     utils::rasterize_box_corners(context, Box2d { { bounds.min }, { bounds.max } });
+// }
+//
+// void GfxPrimitive2D::rasterize_anchor(std::shared_ptr<GfxContext2D> context) const
+// {
+//     Matrix3x3d full_transform = context->get_transform() * get_transform();
+//     utils::rasterize_point(context, utils::apply_transform(get_anchor() * get_relative_extent().size(), full_transform));
+// }
 
-void GfxPrimitive2D::rasterize_anchor(std::shared_ptr<GfxContext2D> context) const
+Box2d GfxPrimitive2D::get_global_bounds(const Matrix3x3d transform) const
 {
-    Matrix3x3d full_transform = context->get_transform() * get_transform();
-    utils::rasterize_point(context, utils::apply_transform(get_anchor() * get_relative_extent().size(), full_transform));
-}
-
-Box2d GfxPrimitive2D::get_global_bounds(std::shared_ptr<GfxContext2D> context) const
-{
-    Matrix3x3d full_transform = context->get_transform() * get_transform();
-
     Box2d extent = get_relative_extent();
     Vec2d top_left = extent.min - Vec2d::create(std::ceil(get_line_thickness() / 2));
     Vec2d bot_right = extent.max + Vec2d::create(std::ceil(get_line_thickness() / 2));
@@ -35,7 +33,7 @@ Box2d GfxPrimitive2D::get_global_bounds(std::shared_ptr<GfxContext2D> context) c
 
     for (int i = 0; i < 4; ++i)
     {
-        corners[i] = utils::apply_transform(corners[i], full_transform);
+        corners[i] = utils::apply_transform(corners[i], transform);
     }
 
     Box2d bounds = { { corners[0].x, corners[0].y }, { corners[0].x, corners[0].y } };
@@ -62,17 +60,17 @@ Matrix3x3d GfxPrimitive2D::get_transform() const
 }
 
 
-bool GfxPrimitive2D::should_fill_pixel(std::shared_ptr<GfxContext2D> context, const Vec2d pixel) const
-{
-    double fill = std::clamp(get_fill(), 0.0, 1.0);
-
-    if (fill >= 1.0 - std::numeric_limits<double>::epsilon())
-        return true;
-
-    else return false;
-
-    // bool on_checkerboard = (rounded_pos.x / gaps.x + rounded_pos.y / gaps.y) % 2 == 0;
-}
+// bool GfxPrimitive2D::should_fill_pixel(std::shared_ptr<GfxContext2D> context, const Vec2d pixel) const
+// {
+//     double fill = std::clamp(get_fill(), 0.0, 1.0);
+//
+//     if (fill >= 1.0 - std::numeric_limits<double>::epsilon())
+//         return true;
+//
+//     else return false;
+//
+//     // bool on_checkerboard = (rounded_pos.x / gaps.x + rounded_pos.y / gaps.y) % 2 == 0;
+// }
 
 
 }

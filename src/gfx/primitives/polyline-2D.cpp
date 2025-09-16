@@ -35,12 +35,12 @@ Box2d Polyline2D::get_relative_extent() const
     return { min, max };
 }
 
-void Polyline2D::rasterize_fill(std::shared_ptr<GfxContext2D> context) const
+void Polyline2D::rasterize_fill(std::shared_ptr<RenderSurface> surface, const Matrix3x3d transform) const
 {
     std::vector<Vec2d> transformed_points;
     for (auto point : points)
     {
-        transformed_points.push_back(utils::apply_transform(point, context->get_transform() * get_transform()));
+        transformed_points.push_back(utils::apply_transform(point, transform));
     }
 
     std::vector<Box2d> edges;
@@ -51,7 +51,7 @@ void Polyline2D::rasterize_fill(std::shared_ptr<GfxContext2D> context) const
     }
     edges.push_back({ transformed_points.back(), transformed_points.front() });
 
-    Box2d bounds = get_global_bounds(context);
+    Box2d bounds = get_global_bounds(transform);
     Box2i rounded_bounds = { bounds.min.round(), bounds.max.round() };
 
     for (int y = rounded_bounds.min.y; y < rounded_bounds.max.y; y++)
@@ -74,40 +74,39 @@ void Polyline2D::rasterize_fill(std::shared_ptr<GfxContext2D> context) const
                     inside = !inside;
                 }
             }
-            if (inside && should_fill_pixel(context, pixel))
+            if (inside)
             {
-                context->write_pixel(Vec2i { x, y }, get_color());
+                surface->write_pixel(Vec2i { x, y }, get_color());
             }
         }
     }
 }
 
-void Polyline2D::rasterize(std::shared_ptr<GfxContext2D> context) const
+void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3d transform) const
 {
     if (points.size() < 2)
     {
         return;
     }
-    Matrix3x3d full_transform = context->get_transform() * get_transform();
 
     std::vector<Vec2d> transformed_points;
     for (auto point : points)
     {
-        transformed_points.push_back(utils::apply_transform(point, full_transform));
+        transformed_points.push_back(utils::apply_transform(point, transform));
     }
 
     for (int i = 0; i < points.size() - 1; i++)
     {
-        utils::rasterize_line(context, transformed_points[i], transformed_points[i + 1], get_line_thickness(), get_color());
+        utils::rasterize_line(surface, transformed_points[i], transformed_points[i + 1], get_line_thickness(), get_color());
     }
     if (do_close)
     {
-        utils::rasterize_line(context, transformed_points.front(), transformed_points.back(), get_line_thickness(), get_color());
+        utils::rasterize_line(surface, transformed_points.front(), transformed_points.back(), get_line_thickness(), get_color());
     }
 
     if (get_fill() > 0)
     {
-        rasterize_fill(context);
+        rasterize_fill(surface, transform);
     }
 }
 

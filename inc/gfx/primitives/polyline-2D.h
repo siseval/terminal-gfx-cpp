@@ -1,7 +1,7 @@
 #ifndef POLYLINE_2D_H
 #define POLYLINE_2D_H
 
-#include <gfx/core/gfx-context-2D.h>
+#include <gfx/core/render-surface.h>
 #include <gfx/core/gfx-primitive-2D.h>
 #include <gfx/math/box2.h>
 #include <gfx/math/vec2.h>
@@ -15,7 +15,7 @@ class Polyline2D : public gfx::core::GfxPrimitive2D
 
 public:
 
-    void rasterize(std::shared_ptr<gfx::core::GfxContext2D> context) const override;
+    void rasterize(std::shared_ptr<gfx::core::RenderSurface> surface, const math::Matrix3x3d transform) const override;
     // void update_bounds(std::shared_ptr<gfx_context> context) override;
     gfx::math::Box2d get_relative_extent() const override;
 
@@ -31,7 +31,7 @@ public:
 
 protected:
 
-    void rasterize_fill(std::shared_ptr<gfx::core::GfxContext2D> context) const;
+    void rasterize_fill(std::shared_ptr<gfx::core::RenderSurface> surface, const math::Matrix3x3d transform) const;
 
     std::vector<gfx::math::Vec2d> points = std::vector<gfx::math::Vec2d>();
     bool do_close = false;

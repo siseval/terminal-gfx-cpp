@@ -2,12 +2,10 @@
 #define GFX_PRIMITIVE_2D_H
 
 #include <gfx/core/types/color3.h>
-#include <gfx/core/gfx-context-2D.h>
 #include <gfx/utils/rasterize.h>
 #include <gfx/utils/transform.h>
 #include <gfx/math/box2.h>
 #include <gfx/math/matrix.h>
-#include <algorithm>
 
 namespace gfx::core
 {
@@ -17,11 +15,11 @@ class GfxPrimitive2D
 
 public:
         
-    virtual void rasterize(std::shared_ptr<GfxContext2D> context) const = 0;
-    void rasterize_bounds(std::shared_ptr<GfxContext2D> context) const;
-    void rasterize_anchor(std::shared_ptr<GfxContext2D> context) const;
+    virtual void rasterize(std::shared_ptr<RenderSurface> surface, const gfx::math::Matrix3x3d transform) const = 0;
+    // void rasterize_bounds(std::shared_ptr<GfxContext2D> context) const;
+    // void rasterize_anchor(std::shared_ptr<GfxContext2D> context) const;
 
-    gfx::math::Box2d get_global_bounds(std::shared_ptr<GfxContext2D> context) const;
+    gfx::math::Box2d get_global_bounds(const gfx::math::Matrix3x3d transform) const;
     virtual gfx::math::Box2d get_relative_extent() const = 0;
 
     gfx::math::Matrix3x3d get_transform() const;
@@ -78,7 +76,7 @@ protected:
     bool draw_bounds = false;
     bool draw_anchor = false;
 
-    bool should_fill_pixel(std::shared_ptr<GfxContext2D> context, const gfx::math::Vec2d pixel) const;
+    // bool should_fill_pixel(std::shared_ptr<GfxContext2D> context, const gfx::math::Vec2d pixel) const;
 
 };
 

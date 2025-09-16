@@ -35,6 +35,23 @@ Matrix3x3d scale(const Vec2d scale)
     });
 }
 
+Vec2d extract_translation(const Matrix3x3d transform)
+{
+    return Vec2d { transform(0, 2), transform(1, 2) };
+}
+
+double extract_rotation(const Matrix3x3d transform)
+{
+    return std::atan2(transform(1, 0), transform(0, 0));
+}
+
+Vec2d extract_scale(const Matrix3x3d transform)
+{
+    double scale_x = std::sqrt(transform(0, 0) * transform(0, 0) + transform(1, 0) * transform(1, 0));
+    double scale_y = std::sqrt(transform(0, 1) * transform(0, 1) + transform(1, 1) * transform(1, 1));
+    return Vec2d { scale_x, scale_y };
+}
+
 Vec2d apply_transform(const Vec2d pos, const Matrix3x3d transform)
 {
     Matrix3x1d column_matrix = Matrix3x1d({ 

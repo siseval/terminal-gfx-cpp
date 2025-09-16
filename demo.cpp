@@ -1,5 +1,8 @@
+#include <ncurses.h>
+#include <string>
 #include <locale.h>
 #include <gfx/core/gfx-render-2D.h>
+#include <gfx/surfaces/curses-render-surface.h>
 
 
 enum class default_color
@@ -33,6 +36,7 @@ void end();
 
 int main()
 {
+    std::srand(std::time(0));
     init();
     gfx_test();
     end();
@@ -63,7 +67,7 @@ void gfx_test()
 
     Vec2d screen_size = get_screen_size() * 2;
 
-    auto renderer = std::make_shared<GfxRender2D>(screen_size);
+    auto renderer = std::make_shared<GfxRender2D>(std::make_shared<gfx::surfaces::CursesRenderSurface>(screen_size), Vec2d { 2, 1 });
     Vec2d center = renderer->center();
 
     std::vector<std::shared_ptr<GfxPrimitive2D>> items;
@@ -266,4 +270,5 @@ void init()
 void end()
 {
     endwin();
+    exit(0);
 }

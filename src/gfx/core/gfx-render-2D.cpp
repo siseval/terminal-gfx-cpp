@@ -10,23 +10,31 @@ using namespace gfx::math;
 
 void GfxRender2D::draw_frame() const
 {
-    context->clear_frame_buffer();
+    surface->clear_frame_buffer();
 
     primitives->sort_by_depth();
     for (auto primitive : primitives->get_items())
     {
-        primitive->rasterize(context);
-        if (primitive->get_draw_bounds())
-        {
-            primitive->rasterize_bounds(context);
-        }
-        if (primitive->get_draw_anchor())
-        {
-            primitive->rasterize_anchor(context);
-        }
+        Matrix3x3d global_transform = get_global_transform() * primitive->get_transform();
+        primitive->rasterize(surface, global_transform);
+        // if (primitive->get_draw_bounds())
+        // {
+        //     primitive->rasterize_bounds(surface);
+        // }
+        // if (primitive->get_draw_anchor())
+        // {
+        //     primitive->rasterize_anchor(surface);
+        // }
     }
 
-    context->draw_frame_buffer();
+    surface->write_pixel(Vec2i { 2, 2 }, Color3 { 255, 0, 0 });
+    surface->present();
+}
+
+gfx::math::Matrix3x3d GfxRender2D::get_global_transform() const
+{
+    Matrix3x3d scale = utils::scale(viewport_scaling);
+    return scale;
 }
 
 std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(const Vec2d position, const Vec2d radius, const Color3 color, const double line_thickness) const

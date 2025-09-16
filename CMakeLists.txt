@@ -9,9 +9,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(gfx STATIC
-    src/gfx/core/gfx-context-2D.cpp
     src/gfx/core/gfx-render-2D.cpp
     src/gfx/core/gfx-primitive-2D.cpp
+    src/gfx/core/render-surface.cpp
+
+    src/gfx/surfaces/curses-render-surface.cpp
 
     src/gfx/utils/rasterize.cpp
     src/gfx/utils/transform.cpp
