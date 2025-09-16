@@ -63,6 +63,16 @@ Vec2d apply_transform(const Vec2d pos, const Matrix3x3d transform)
     return Vec2d { transformed(0, 0), transformed(1, 0), };
 }
 
+std::vector<Vec2d> apply_transform(const std::vector<Vec2d> points, const Matrix3x3d transform)
+{
+    std::vector<Vec2d> transformed_points;
+    for (auto point : points)
+    {
+        transformed_points.push_back(apply_transform(point, transform));
+    }
+    return transformed_points;
+}
+
 Matrix3x3d invert_affine(Matrix3x3d m)
 {
     double a = m(0, 0), b = m(0, 1), c = m(0, 2);

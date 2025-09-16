@@ -15,16 +15,19 @@ void GfxRender2D::draw_frame() const
     primitives->sort_by_depth();
     for (auto primitive : primitives->get_items())
     {
-        Matrix3x3d global_transform = get_global_transform() * primitive->get_transform();
-        primitive->rasterize(surface, global_transform);
-        // if (primitive->get_draw_bounds())
-        // {
-        //     primitive->rasterize_bounds(surface);
-        // }
-        // if (primitive->get_draw_anchor())
-        // {
-        //     primitive->rasterize_anchor(surface);
-        // }
+        Matrix3x3d full_transform = get_global_transform() * primitive->get_transform();
+        primitive->rasterize(surface, full_transform);
+
+        if (primitive->get_draw_bounds())
+        {
+            Box2d bounds = primitive->get_axis_aligned_bounding_box(full_transform);
+            utils::rasterize_box_corners(surface, bounds, GFX_BOUNDS_COLOR);
+        }
+        if (primitive->get_draw_anchor())
+        {
+            Vec2d anchor_pos = utils::apply_transform(primitive->get_pos(), get_global_transform());
+            utils::rasterize_cross(surface, anchor_pos, 1.0, GFX_ANCHOR_COLOR);
+        }
     }
 
     surface->write_pixel(Vec2i { 2, 2 }, Color3 { 255, 0, 0 });

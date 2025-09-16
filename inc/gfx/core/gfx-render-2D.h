@@ -10,7 +10,7 @@ namespace gfx::core
 {
 
 const types::Color3 GFX_BOUNDS_COLOR = { 255, 255, 255 };
-const types::Color3 GFX_ANCHOR_COLOR = { 255, 255, 255 };
+const types::Color3 GFX_ANCHOR_COLOR = { 255, 255, 0 };
 
 
 class GfxRender2D

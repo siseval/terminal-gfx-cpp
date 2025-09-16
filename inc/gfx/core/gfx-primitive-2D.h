@@ -16,10 +16,10 @@ class GfxPrimitive2D
 public:
         
     virtual void rasterize(std::shared_ptr<RenderSurface> surface, const gfx::math::Matrix3x3d transform) const = 0;
-    // void rasterize_bounds(std::shared_ptr<GfxContext2D> context) const;
-    // void rasterize_anchor(std::shared_ptr<GfxContext2D> context) const;
+    void rasterize_bounds(std::shared_ptr<RenderSurface> surface, const gfx::math::Matrix3x3d transform) const;
+    void rasterize_anchor(std::shared_ptr<RenderSurface> surface, const gfx::math::Matrix3x3d transform) const;
 
-    gfx::math::Box2d get_global_bounds(const gfx::math::Matrix3x3d transform) const;
+    gfx::math::Box2d get_axis_aligned_bounding_box(const gfx::math::Matrix3x3d transform) const;
     virtual gfx::math::Box2d get_relative_extent() const = 0;
 
     gfx::math::Matrix3x3d get_transform() const;

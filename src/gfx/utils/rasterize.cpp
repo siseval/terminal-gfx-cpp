@@ -24,42 +24,107 @@ void rasterize_circle(std::shared_ptr<RenderSurface> surface, const Vec2d center
     }
 }
 
-void rasterize_line(std::shared_ptr<RenderSurface> surface, const Vec2d start, const Vec2d end, const double line_thickness, const Color3 color)
+void rasterize_filled_polygon(std::shared_ptr<RenderSurface> surface, const std::vector<Vec2d> vertices, const Color3 color)
 {
-    Vec2d direction = (end - start).normalize();
-    Vec2d cur_pos = start;
-
-    while (Vec2d::distance(cur_pos, end) > 1)
+    if (vertices.size() < 3)
     {
-        if (line_thickness > 1.0)
+        return;
+    }
+
+    std::vector<Box2d> edges;
+    for (int i = 0; i < vertices.size() - 1; i++)
+    {
+        edges.push_back({ vertices[i], vertices[i + 1] });
+    }
+    edges.push_back({ vertices.back(), vertices.front() });
+
+    Box2d bounds = Box2d { vertices[0], vertices[0] };
+    bounds.expand(vertices);
+
+    Box2i rounded_bounds = { bounds.min.round(), bounds.max.round() };
+    for (int y = rounded_bounds.min.y; y < rounded_bounds.max.y; y++)
+    {
+        for (int x = rounded_bounds.min.x; x < rounded_bounds.max.x; x++)
         {
-            rasterize_circle(surface, cur_pos, line_thickness / 2, color);
+            Vec2d pixel = Vec2d { static_cast<double>(x), static_cast<double>(y) };
+            bool inside = false;
+            for (auto edge : edges)
+            {
+                bool intersects_y = (edge.min.y > pixel.y) != (edge.max.y > pixel.y);
+                if (!intersects_y)
+                {
+                    continue;
+                }
+                double progress = (pixel.y - edge.min.y) / (edge.max.y - edge.min.y);
+                bool intersects = pixel.x < (edge.max.x - edge.min.x) * progress + edge.min.x;
+                if (intersects)
+                {
+                    inside = !inside;
+                }
+            }
+            if (inside)
+            {
+                surface->write_pixel(Vec2i { x, y }, color);
+            }
         }
-        else
-        {
-            surface->write_pixel(cur_pos.round(), color);
-        }
-        cur_pos += direction;
     }
 }
 
-void rasterize_box_corners(std::shared_ptr<RenderSurface> surface, const Box2d bounds)
+void rasterize_filled_triangle(std::shared_ptr<RenderSurface> surface, const Vec2d v0, const Vec2d v1, const Vec2d v2, const Color3 color)
 {
-    Color3 GFX_BOUNDS_COLOR = { 255, 255, 255 };
-    Box2i rounded_bounds = { bounds.min.round(), bounds.max.round() };
-    surface->write_pixel(rounded_bounds.min, GFX_BOUNDS_COLOR);
-    surface->write_pixel({ rounded_bounds.min.x, rounded_bounds.max.y }, GFX_BOUNDS_COLOR);
-    surface->write_pixel(rounded_bounds.max, GFX_BOUNDS_COLOR);
-    surface->write_pixel({ rounded_bounds.max.x, rounded_bounds.min.y }, GFX_BOUNDS_COLOR);
+    Box2d bounds;
+    bounds.min = Vec2d { std::min({ v0.x, v1.x, v2.x }), std::min({ v0.y, v1.y, v2.y }) };
+    bounds.max = Vec2d { std::max({ v0.x, v1.x, v2.x }), std::max({ v0.y, v1.y, v2.y }) };
+
+    for (int y = bounds.min.y; y <= bounds.max.y; y++)
+    {
+        for (int x = bounds.min.x; x <= bounds.max.x; x++)
+        {
+            Vec2d pos = Vec2d { static_cast<double>(x), static_cast<double>(y) };
+
+            double area = 0.5 * (-v1.y * v2.x + v0.y * (-v1.x + v2.x) + v0.x * (v1.y - v2.y) + v1.x * v2.y);
+            double s = 1 / (2 * area) * (v0.y * v2.x - v0.x * v2.y + (v2.y - v0.y) * pos.x + (v0.x - v2.x) * pos.y);
+            double t = 1 / (2 * area) * (v0.x * v1.y - v0.y * v1.x + (v0.y - v1.y) * pos.x + (v1.x - v0.x) * pos.y);
+
+            if (s >= 0 && t >= 0 && (s + t) <= 1)
+            {
+                surface->write_pixel(pos.round(), color);
+            }
+        }
+    }
 }
 
-void rasterize_point(std::shared_ptr<RenderSurface> surface, const Vec2d pos)
+void rasterize_line(std::shared_ptr<RenderSurface> surface, const Vec2d start, const Vec2d end, const double line_thickness, const Color3 color)
 {
+    double line_extent = line_thickness / 2.0;
+    Vec2d normal = (end - start).normal().normalize();
 
-    Color3 GFX_ANCHOR_COLOR = { 255, 255, 255 };
-    surface->write_pixel(pos.round(), GFX_ANCHOR_COLOR);
-    // rasterize_line(context, pos - coord2D{ 5, 0 }, pos + coord2D{ 5, 0 }, 1.0, GFX_ANCHOR_COLOR);
-    // rasterize_line(context, pos - coord2D{ 0, 5 }, pos + coord2D{ 0, 5 }, 1.0, GFX_ANCHOR_COLOR);
+    Vec2d v0 = start + normal * line_extent;
+    Vec2d v1 = start - normal * line_extent;
+    Vec2d v2 = end + normal * line_extent;
+    Vec2d v3 = end - normal * line_extent;
+
+    rasterize_filled_triangle(surface, v0, v1, v2, color);
+    rasterize_filled_triangle(surface, v1, v3, v2, color);
+}
+
+void rasterize_box_corners(std::shared_ptr<RenderSurface> surface, const Box2d bounds, const Color3 color)
+{
+    Box2i rounded_bounds = { bounds.min.round(), bounds.max.round() };
+    surface->write_pixel(rounded_bounds.min, color);
+    surface->write_pixel({ rounded_bounds.min.x, rounded_bounds.max.y }, color);
+    surface->write_pixel(rounded_bounds.max, color);
+    surface->write_pixel({ rounded_bounds.max.x, rounded_bounds.min.y }, color);
+}
+
+void rasterize_cross(std::shared_ptr<RenderSurface> surface, const Vec2d pos, const double size, const Color3 color)
+{
+    int half_size = static_cast<int>(size / 2);
+    for (int i = -half_size; i <= half_size; i++)
+    {
+        surface->write_pixel(pos.round() + Vec2i { i, 0 }, color);
+        surface->write_pixel(pos.round() + Vec2i { 0, i }, color);
+    }
 }
 
 }

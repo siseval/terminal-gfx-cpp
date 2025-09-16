@@ -4,82 +4,41 @@ namespace gfx::primitives
 {
 
 using namespace gfx::core;
+using namespace gfx::core::types;
 using namespace gfx::math;
 
 
 Box2d Polyline2D::get_relative_extent() const
 {
-    Vec2d min = Vec2d::zero();
-    Vec2d max = Vec2d::zero();
+    Box2d bounds = { Vec2d::zero(), Vec2d::zero() };
 
     for (auto point : points)
     {
-        if (point.x < min.x)
-        {
-            min.x = point.x;
-        }
-        if (point.x > max.x)
-        {
-            max.x = point.x;
-        }
-        if (point.y < min.y)
-        {
-            min.y = point.y;
-        }
-        if (point.y > max.y)
-        {
-            max.y = point.y;
-        }
+        bounds.expand(point);
     }
 
-    return { min, max };
+    return bounds;
 }
 
-void Polyline2D::rasterize_fill(std::shared_ptr<RenderSurface> surface, const Matrix3x3d transform) const
+void Polyline2D::rasterize_edge(std::shared_ptr<RenderSurface> surface, const Vec2d start, const Vec2d end, const Matrix3x3d transform) const
 {
-    std::vector<Vec2d> transformed_points;
-    for (auto point : points)
-    {
-        transformed_points.push_back(utils::apply_transform(point, transform));
-    }
+    double line_extent = line_thickness / 2.0;
+    Vec2d normal = (end - start).normal().normalize();
 
-    std::vector<Box2d> edges;
+    Vec2d offset = normal * line_extent;
 
-    for (int i = 0; i < points.size() - 1; i++)
-    {
-        edges.push_back({ transformed_points[i], transformed_points[i + 1] });
-    }
-    edges.push_back({ transformed_points.back(), transformed_points.front() });
+    Vec2d v0 = start + offset;
+    Vec2d v1 = start - offset;
+    Vec2d v2 = end + offset;
+    Vec2d v3 = end - offset;
 
-    Box2d bounds = get_global_bounds(transform);
-    Box2i rounded_bounds = { bounds.min.round(), bounds.max.round() };
+    v0 = utils::apply_transform(v0, transform);
+    v1 = utils::apply_transform(v1, transform);
+    v2 = utils::apply_transform(v2, transform);
+    v3 = utils::apply_transform(v3, transform);
 
-    for (int y = rounded_bounds.min.y; y < rounded_bounds.max.y; y++)
-    {
-        for (int x = rounded_bounds.min.x; x < rounded_bounds.max.x; x++)
-        {
-            Vec2d pixel = Vec2d { static_cast<double>(x), static_cast<double>(y) };
-            bool inside = false;
-            for (auto edge : edges)
-            {
-                bool intersects_y = (edge.min.y > pixel.y) != (edge.max.y > pixel.y);
-                if (!intersects_y)
-                {
-                    continue;
-                }
-                double progress = (pixel.y - edge.min.y) / (edge.max.y - edge.min.y);
-                bool intersects = pixel.x < (edge.max.x - edge.min.x) * progress + edge.min.x;
-                if (intersects)
-                {
-                    inside = !inside;
-                }
-            }
-            if (inside)
-            {
-                surface->write_pixel(Vec2i { x, y }, get_color());
-            }
-        }
-    }
+    utils::rasterize_filled_triangle(surface, v0, v1, v2, color);
+    utils::rasterize_filled_triangle(surface, v1, v3, v2, color);
 }
 
 void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3d transform) const
@@ -89,24 +48,18 @@ void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3
         return;
     }
 
-    std::vector<Vec2d> transformed_points;
-    for (auto point : points)
-    {
-        transformed_points.push_back(utils::apply_transform(point, transform));
-    }
-
     for (int i = 0; i < points.size() - 1; i++)
     {
-        utils::rasterize_line(surface, transformed_points[i], transformed_points[i + 1], get_line_thickness(), get_color());
+        rasterize_edge(surface, points[i], points[i + 1], transform);
     }
     if (do_close)
     {
-        utils::rasterize_line(surface, transformed_points.front(), transformed_points.back(), get_line_thickness(), get_color());
+        rasterize_edge(surface, points.back(), points.front(), transform);
     }
-
-    if (get_fill() > 0)
+    if (get_fill())
     {
-        rasterize_fill(surface, transform);
+        std::vector<Vec2d> transformed_points = utils::apply_transform(points, transform);
+        utils::rasterize_filled_polygon(surface, transformed_points, get_color());
     }
 }
 

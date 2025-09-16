@@ -15,6 +15,11 @@ public:
     Vec2<T> min;
     Vec2<T> max;
 
+    static inline Box2<T> zero()
+    {
+        return Box2<T> { Vec2<T>::zero(), Vec2<T>::zero() };
+    }
+
     inline Vec2<T> size() const
     {
         return max - min;
@@ -43,6 +48,20 @@ public:
         if (point.x > max.x) max.x = point.x;
         if (point.y < min.y) min.y = point.y;
         if (point.y > max.y) max.y = point.y;
+    }
+
+    inline void expand(const std::vector<Vec2<T>>& points)
+    {
+        for (const auto& point : points)
+        {
+            expand(point);
+        }
+    }
+
+    inline void expand(const Box2<T>& box)
+    {
+        expand(box.min);
+        expand(box.max);
     }
 
 };

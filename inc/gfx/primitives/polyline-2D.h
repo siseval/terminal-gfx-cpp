@@ -29,10 +29,9 @@ public:
     inline void set_close(const bool close) { do_close = close; }
     inline bool get_close() const { return do_close; }
 
-protected:
+private:
 
-    void rasterize_fill(std::shared_ptr<gfx::core::RenderSurface> surface, const math::Matrix3x3d transform) const;
-
+    void rasterize_edge(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Vec2d start, const gfx::math::Vec2d end, const gfx::math::Matrix3x3d transform) const;
     std::vector<gfx::math::Vec2d> points = std::vector<gfx::math::Vec2d>();
     bool do_close = false;
 };
