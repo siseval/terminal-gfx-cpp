@@ -30,7 +30,6 @@ void GfxRender2D::draw_frame() const
         }
     }
 
-    surface->write_pixel(Vec2i { 2, 2 }, Color3 { 255, 0, 0 });
     surface->present();
 }
 

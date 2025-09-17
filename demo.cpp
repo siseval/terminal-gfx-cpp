@@ -199,6 +199,7 @@ void gfx_test()
                 Color3 color = { std::rand() % 255, std::rand() % 255, std::rand() % 255 };
                 polyline = renderer->create_polyline(center, { { 0, 0 }, { 20, 0 }, { 10, 10} }, color, 3);
                 polyline->set_close(true);
+                polyline->set_rounded_corners(true);
                 polyline->set_anchor({ 0.5, 0.5 });
                 items.push_back(polyline);
                 select(index = items.size() - 1, selected, items, renderer);

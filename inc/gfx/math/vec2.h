@@ -47,6 +47,11 @@ public:
         return (b - a).length();
     }
 
+    double angle() 
+    { 
+        return std::atan2(y, x);
+    }
+
     Vec2<double> normalize() 
     { 
         return Vec2<double>{ static_cast<T>(x / length()), static_cast<T>(y / length()) }; 

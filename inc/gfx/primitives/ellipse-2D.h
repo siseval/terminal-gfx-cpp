@@ -24,7 +24,7 @@ public:
 private:
 
     gfx::math::Vec2d radius;
-    const int SEGMENTS = 64;
+    static constexpr int SEGMENTS = 64;
 };
 
 };

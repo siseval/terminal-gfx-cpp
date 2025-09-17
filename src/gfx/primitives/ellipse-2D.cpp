@@ -20,7 +20,8 @@ void Ellipse2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x
 
     for (int i = 0; i < SEGMENTS; ++i)
     {
-        double theta = 2.0 * M_PI * double(i) / double(SEGMENTS);
+        double progress = static_cast<double>(i) / static_cast<double>(SEGMENTS);
+        double theta = 2.0 * M_PI * progress;
 
         double outer_x = (radius.x + line_extent) * std::cos(theta) + radius.x;
         double outer_y = (radius.y + line_extent) * std::sin(theta) + radius.y;
@@ -50,28 +51,5 @@ void Ellipse2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x
         utils::rasterize_filled_polygon(surface, transformed_outer_ring, get_color());
     }
 }
-
-    // for (int y = global_bounds.min.y; y < global_bounds.max.y; ++y)
-    // {
-    //     for (int x = global_bounds.min.x; x < global_bounds.max.x; ++x)
-    //     {
-    //         Vec2d global_pixel = Vec2d { static_cast<double>(x), static_cast<double>(y) };
-    //         Vec2d local_pixel = utils::apply_transform(global_pixel, inv_transform) - radius;
-    //
-    //         double sdf = (local_pixel.x * local_pixel.x) / (radius.x * radius.x) +
-    //                      (local_pixel.y * local_pixel.y) / (radius.y * radius.y) - 1;
-    //
-    //         if (get_fill() > 0 && sdf < 0)
-    //         {
-    //             surface->write_pixel(Vec2i { x, y }, get_color());
-    //         }
-    //         double sdf_threshold = 1.0 / (std::min(radius.x, radius.y) * std::min(scale.x, scale.y));
-    //         if (std::abs(sdf) < sdf_threshold)
-    //         {
-    //             utils::rasterize_circle(surface, Vec2i { x, y }, get_line_thickness() / 2, get_color());
-    //         }
-    //     }
-    // }
-
 
 }
