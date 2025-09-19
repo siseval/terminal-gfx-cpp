@@ -8,8 +8,9 @@ using namespace gfx::math;
 Box2d GfxPrimitive2D::get_axis_aligned_bounding_box(const Matrix3x3d transform) const
 {
     Box2d extent = get_relative_extent();
-    Vec2d top_left = extent.min - Vec2d::create(std::ceil(get_line_thickness() / 2));
-    Vec2d bot_right = extent.max + Vec2d::create(std::ceil(get_line_thickness() / 2));
+    double line_extent = get_line_thickness() / 2;
+    Vec2d top_left = extent.min - Vec2d::create(std::ceil(line_extent));
+    Vec2d bot_right = extent.max + Vec2d::create(std::ceil(line_extent));
 
     std::vector<Vec2d> corners = {
          Vec2d { top_left.x, top_left.y },

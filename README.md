@@ -1,17 +1,22 @@
-# Terminal GFX
-*This is still very much a work in progress.*
+## Terminal-GFX
+A simple retained mode graphics-API, still very much a work in progress  
+Currently only supports a terminal based rendering backend using **ncurses**
 
-## Setup
-- Install NCurses if needed
-- Build with CMake
-- Currently there is a basic demo app that can be run with ./test
+### Setup
+1. Install **ncurses** if needed
+2. `cd` to main source directory
+3. `mkdir build`
+4. `cd build`
+5. `cmake ..`
+6. `make`
+7. `./demo` to launch the demo app
 
-## Demo app
-- **e** and **t** to create an ellipse or triangle polyline respectively
-- **n** to cycle selected object
-- **r** to remove selected object
-- **wasd** to move selected object
-- **hjkl** to scale selected object
-- **H** and **L** to rotate selected object
-- **i** an **o** to change line thickness of selected object
+### Demo app
+- `e` and `t` to create an ellipse or triangle polyline respectively
+- `n` to cycle selected object
+- `r` to remove selected object
+- `wasd` to move selected object
+- `hjkl` to scale selected object
+- `H` and `L` to rotate selected object
+- `i` an `o` to change line thickness of selected object
 
