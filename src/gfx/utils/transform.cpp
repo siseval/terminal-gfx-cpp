@@ -52,7 +52,7 @@ Vec2d extract_scale(const Matrix3x3d transform)
     return Vec2d { scale_x, scale_y };
 }
 
-Vec2d apply_transform(const Vec2d pos, const Matrix3x3d transform)
+Vec2d transform_point(const Vec2d pos, const Matrix3x3d transform)
 {
     Matrix3x1d column_matrix = Matrix3x1d({ 
         { pos.x }, 
@@ -63,14 +63,35 @@ Vec2d apply_transform(const Vec2d pos, const Matrix3x3d transform)
     return Vec2d { transformed(0, 0), transformed(1, 0), };
 }
 
-std::vector<Vec2d> apply_transform(const std::vector<Vec2d> points, const Matrix3x3d transform)
+Vec2d transform_vector(const Vec2d vec, const Matrix3x3d transform)
+{
+    Matrix3x1d column_matrix = Matrix3x1d({ 
+        { vec.x }, 
+        { vec.y }, 
+        { 0 }});
+
+    Matrix3x1d transformed = transform * column_matrix;
+    return Vec2d { transformed(0, 0), transformed(1, 0), };
+}
+
+std::vector<Vec2d> transform_points(const std::vector<Vec2d> points, const Matrix3x3d transform)
 {
     std::vector<Vec2d> transformed_points;
     for (auto point : points)
     {
-        transformed_points.push_back(apply_transform(point, transform));
+        transformed_points.push_back(transform_point(point, transform));
     }
     return transformed_points;
+}
+
+std::vector<Vec2d> transform_vectors(const std::vector<Vec2d> vectors, const Matrix3x3d transform)
+{
+    std::vector<Vec2d> transformed_vectors;
+    for (auto vec : vectors)
+    {
+        transformed_vectors.push_back(transform_vector(vec, transform));
+    }
+    return transformed_vectors;
 }
 
 Matrix3x3d invert_affine(Matrix3x3d m)

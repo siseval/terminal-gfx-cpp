@@ -18,14 +18,19 @@ void GfxRender2D::draw_frame() const
         Matrix3x3d full_transform = get_global_transform() * primitive->get_transform();
         primitive->rasterize(surface, full_transform);
 
-        if (primitive->get_draw_bounds())
+        if (primitive->get_draw_aabb())
         {
             Box2d bounds = primitive->get_axis_aligned_bounding_box(full_transform);
-            utils::rasterize_box_corners(surface, bounds, GFX_BOUNDS_COLOR);
+            utils::rasterize_aabb(surface, bounds, GFX_BOUNDS_COLOR);
+        }
+        if (primitive->get_draw_obb())
+        {
+            OBB2D obb = primitive->get_oriented_bounding_box(full_transform);
+            utils::rasterize_obb(surface, obb, GFX_BOUNDS_COLOR);
         }
         if (primitive->get_draw_anchor())
         {
-            Vec2d anchor_pos = utils::apply_transform(primitive->get_pos(), get_global_transform());
+            Vec2d anchor_pos = utils::transform_point(primitive->get_pos(), get_global_transform());
             utils::rasterize_cross(surface, anchor_pos, 1.0, GFX_ANCHOR_COLOR);
         }
     }

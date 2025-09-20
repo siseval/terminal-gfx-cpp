@@ -52,11 +52,11 @@ void select(int index, std::shared_ptr<GfxPrimitive2D>& selected, std::vector<st
     }
     if (selected != nullptr)
     {
-        selected->set_draw_bounds(false);
+        selected->set_draw_aabb(false);
         selected->set_depth(1);
     }
     selected = items[index];
-    selected->set_draw_bounds(true);
+    selected->set_draw_aabb(true);
     selected->set_depth(0);
 }
 
@@ -169,11 +169,15 @@ void gfx_test()
                 if (selected == nullptr) { break; }
                 selected->set_fill(!selected->get_fill());
                 break;
+
             case 'b':
                 if (selected == nullptr) { break; }
-                selected->set_draw_bounds(!selected->get_draw_bounds());
+                selected->set_draw_aabb(!selected->get_draw_aabb());
                 break;
-
+            case 'B':
+                if (selected == nullptr) { break; }
+                selected->set_draw_obb(!selected->get_draw_obb());
+                break;
 
             case 'n':
                 select((index += 1) %= items.size(), selected, items, renderer);

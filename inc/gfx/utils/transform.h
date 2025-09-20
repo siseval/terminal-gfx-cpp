@@ -15,8 +15,11 @@ gfx::math::Vec2d extract_translation(const gfx::math::Matrix3x3d transform);
 double extract_rotation(const gfx::math::Matrix3x3d transform);
 gfx::math::Vec2d extract_scale(const gfx::math::Matrix3x3d transform);
 
-gfx::math::Vec2d apply_transform(const gfx::math::Vec2d pos, const gfx::math::Matrix3x3d transform);
-std::vector<gfx::math::Vec2d> apply_transform(const std::vector<gfx::math::Vec2d> points, const gfx::math::Matrix3x3d transform);
+gfx::math::Vec2d transform_point(const gfx::math::Vec2d pos, const gfx::math::Matrix3x3d transform);
+gfx::math::Vec2d transform_vector(const gfx::math::Vec2d vec, const gfx::math::Matrix3x3d transform);
+
+std::vector<gfx::math::Vec2d> transform_points(const std::vector<gfx::math::Vec2d> points, const gfx::math::Matrix3x3d transform);
+std::vector<gfx::math::Vec2d> transform_vectors(const std::vector<gfx::math::Vec2d> vectors, const gfx::math::Matrix3x3d transform);
 
 gfx::math::Matrix3x3d invert_affine(gfx::math::Matrix3x3d m);
 

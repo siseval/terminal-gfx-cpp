@@ -32,8 +32,8 @@ void Ellipse2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x
         inner_ring.push_back(Vec2d { inner_x, inner_y });
     }
 
-    std::vector<Vec2d> transformed_outer_ring = utils::apply_transform(outer_ring, transform);
-    std::vector<Vec2d> transformed_inner_ring = utils::apply_transform(inner_ring, transform);
+    std::vector<Vec2d> transformed_outer_ring = utils::transform_points(outer_ring, transform);
+    std::vector<Vec2d> transformed_inner_ring = utils::transform_points(inner_ring, transform);
 
     for (int i = 0; i < SEGMENTS; ++i)
     {

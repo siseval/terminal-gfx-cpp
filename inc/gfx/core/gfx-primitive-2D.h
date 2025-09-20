@@ -6,6 +6,7 @@
 #include <gfx/utils/transform.h>
 #include <gfx/math/box2.h>
 #include <gfx/math/matrix.h>
+#include <gfx/math/obb2.h>
 
 namespace gfx::core
 {
@@ -18,6 +19,7 @@ public:
     virtual void rasterize(std::shared_ptr<RenderSurface> surface, const gfx::math::Matrix3x3d transform) const = 0;
 
     gfx::math::Box2d get_axis_aligned_bounding_box(const gfx::math::Matrix3x3d transform) const;
+    gfx::math::OBB2D get_oriented_bounding_box(const gfx::math::Matrix3x3d transform) const;
     virtual gfx::math::Box2d get_relative_extent() const = 0;
 
     gfx::math::Matrix3x3d get_transform() const;
@@ -25,11 +27,14 @@ public:
     inline types::Color3 get_color() const { return color; }
     inline void set_color(const types::Color3 col) { color = col; }
 
-    inline bool get_draw_bounds() const { return draw_bounds; }
-    inline void set_draw_bounds(const bool draw) { draw_bounds = draw; }
+    inline bool get_draw_aabb() const { return draw_aabb; }
+    inline void set_draw_aabb(const bool draw) { draw_aabb = draw; }
 
     inline bool get_draw_anchor() const { return draw_anchor; }
     inline void set_draw_anchor(const bool draw) { draw_anchor = draw; }
+
+    inline bool get_draw_obb() const { return draw_obb; }
+    inline void set_draw_obb(const bool draw) { draw_obb = draw; }
 
     inline gfx::math::Box2d get_bounds() const { return bounds; }
     inline gfx::math::Vec2d get_bounds_size() const { return bounds.size(); }
@@ -71,7 +76,8 @@ protected:
     double fill = 0;
     double rotation = 0.0;
     int depth = 0;
-    bool draw_bounds = false;
+    bool draw_aabb = false;
+    bool draw_obb = false;
     bool draw_anchor = false;
 
     // bool should_fill_pixel(std::shared_ptr<GfxContext2D> context, const gfx::math::Vec2d pixel) const;

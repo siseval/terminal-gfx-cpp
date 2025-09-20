@@ -18,10 +18,27 @@ Box2d GfxPrimitive2D::get_axis_aligned_bounding_box(const Matrix3x3d transform) 
          Vec2d { top_left.x,  bot_right.y },
          Vec2d { bot_right.x,  bot_right.y },
     };
-    std::vector<Vec2d> transformed_corners = utils::apply_transform(corners, transform);
+    std::vector<Vec2d> transformed_corners = utils::transform_points(corners, transform);
 
     Box2d bounds = Box2d { transformed_corners[0], transformed_corners[0] };
     bounds.expand(transformed_corners);
+
+    return bounds;
+}
+
+OBB2D GfxPrimitive2D::get_oriented_bounding_box(const Matrix3x3d transform) const
+{
+    Box2d extent = get_relative_extent();
+    double line_extent = get_line_thickness() / 2;
+
+    OBB2D bounds;
+    bounds.origin = extent.min - Vec2d::create(std::ceil(line_extent));
+    bounds.side_x = Vec2d { extent.max.x - extent.min.x + 2 * std::ceil(line_extent), 0 };
+    bounds.side_y = Vec2d { 0, extent.max.y - extent.min.y + 2 * std::ceil(line_extent) };
+
+    bounds.origin = utils::transform_point(bounds.origin, transform);
+    bounds.side_x = utils::transform_vector(bounds.side_x, transform);
+    bounds.side_y = utils::transform_vector(bounds.side_y, transform);
 
     return bounds;
 }

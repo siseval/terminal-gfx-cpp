@@ -14,7 +14,7 @@ Box2d Polyline2D::get_relative_extent() const
 
     for (auto point : points)
     {
-        bounds.expand(point);
+        bounds.expand(point - get_anchor());
     }
 
     return bounds;
@@ -22,7 +22,7 @@ Box2d Polyline2D::get_relative_extent() const
 
 void Polyline2D::rasterize_rounded_corner(std::shared_ptr<RenderSurface> surface, const Vec2d pos, const double angle0, const double angle1, const Matrix3x3d transform) const
 {
-    std::vector<Vec2d> vertices = { utils::apply_transform(pos, transform) };
+    std::vector<Vec2d> vertices = { utils::transform_point(pos, transform) };
 
     for (int i = 0; i <= CORNER_SEGMENTS; i++)
     {
@@ -32,7 +32,7 @@ void Polyline2D::rasterize_rounded_corner(std::shared_ptr<RenderSurface> surface
         Vec2d vertex; 
         vertex.x = pos.x + (line_thickness / 2.0) * std::cos(theta);
         vertex.y = pos.y + (line_thickness / 2.0) * std::sin(theta);
-        vertices.push_back(utils::apply_transform(vertex, transform));
+        vertices.push_back(utils::transform_point(vertex, transform));
     }
 
     utils::rasterize_filled_polygon(surface, vertices, color);
@@ -79,10 +79,10 @@ void Polyline2D::rasterize_edge(std::shared_ptr<RenderSurface> surface, const Ve
     Vec2d v2 = end + offset;
     Vec2d v3 = end - offset;
 
-    v0 = utils::apply_transform(v0, transform);
-    v1 = utils::apply_transform(v1, transform);
-    v2 = utils::apply_transform(v2, transform);
-    v3 = utils::apply_transform(v3, transform);
+    v0 = utils::transform_point(v0, transform);
+    v1 = utils::transform_point(v1, transform);
+    v2 = utils::transform_point(v2, transform);
+    v3 = utils::transform_point(v3, transform);
 
     utils::rasterize_filled_triangle(surface, v0, v1, v2, color);
     utils::rasterize_filled_triangle(surface, v1, v3, v2, color);
@@ -106,7 +106,7 @@ void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3
 
     if (get_fill())
     {
-        std::vector<Vec2d> transformed_points = utils::apply_transform(points, transform);
+        std::vector<Vec2d> transformed_points = utils::transform_points(points, transform);
         utils::rasterize_filled_polygon(surface, transformed_points, get_color());
     }
 

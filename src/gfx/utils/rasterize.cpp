@@ -108,13 +108,28 @@ void rasterize_line(std::shared_ptr<RenderSurface> surface, const Vec2d start, c
     rasterize_filled_triangle(surface, v1, v3, v2, color);
 }
 
-void rasterize_box_corners(std::shared_ptr<RenderSurface> surface, const Box2d bounds, const Color3 color)
+void rasterize_aabb(std::shared_ptr<RenderSurface> surface, const Box2d bounds, const Color3 color)
 {
     Box2i rounded_bounds = { bounds.min.round(), bounds.max.round() };
     surface->write_pixel(rounded_bounds.min, color);
     surface->write_pixel({ rounded_bounds.min.x, rounded_bounds.max.y }, color);
     surface->write_pixel(rounded_bounds.max, color);
     surface->write_pixel({ rounded_bounds.max.x, rounded_bounds.min.y }, color);
+}
+
+void rasterize_obb(std::shared_ptr<RenderSurface> surface, const OBB2D obb, const Color3 color)
+{
+    Vec2d corners[4] = {
+        obb.origin,
+        obb.origin + obb.side_x,
+        obb.origin + obb.side_x + obb.side_y,
+        obb.origin + obb.side_y
+    };
+
+    for (int i = 0; i < 4; i++)
+    {
+        rasterize_line(surface, corners[i], corners[(i + 1) % 4], 1.0, color);
+    }
 }
 
 void rasterize_cross(std::shared_ptr<RenderSurface> surface, const Vec2d pos, const double size, const Color3 color)
