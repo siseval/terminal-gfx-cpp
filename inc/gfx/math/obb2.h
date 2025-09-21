@@ -6,10 +6,8 @@
 namespace gfx::math
 {
 
-class OBB2D
+struct OBB2D
 {
-
-public:
 
     Vec2d origin;
     Vec2d side_x;

@@ -44,7 +44,7 @@ gfx::math::Matrix3x3d GfxRender2D::get_global_transform() const
     return scale;
 }
 
-std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(const Vec2d position, const Vec2d radius, const Color3 color, const double line_thickness) const
+std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(const Vec2d position, const Vec2d radius, const Color4 color, const double line_thickness) const
 {
     auto ellipse = std::make_shared<Ellipse2D>();
 
@@ -56,7 +56,7 @@ std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(const Vec2d position, con
     return ellipse;
 }
 
-std::shared_ptr<Polyline2D> GfxRender2D::create_polyline(const Vec2d position, const std::vector<Vec2d> points, const Color3 color, const double line_thickness) const
+std::shared_ptr<Polyline2D> GfxRender2D::create_polyline(const Vec2d position, const std::vector<Vec2d> points, const Color4 color, const double line_thickness) const
 {
     auto polyline = std::make_shared<Polyline2D>();
 

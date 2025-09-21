@@ -8,7 +8,7 @@ using namespace gfx::core::types;
 using namespace gfx::math;
 
 
-void rasterize_circle(std::shared_ptr<RenderSurface> surface, const Vec2d center, const double radius, const Color3 color, const Vec2d scale)
+void rasterize_circle(std::shared_ptr<RenderSurface> surface, const Vec2d center, const double radius, const Color4 color, const Vec2d scale)
 {
     Vec2d scaled_radius = Vec2d::create(radius) * scale;
 
@@ -24,7 +24,7 @@ void rasterize_circle(std::shared_ptr<RenderSurface> surface, const Vec2d center
     }
 }
 
-void rasterize_filled_polygon(std::shared_ptr<RenderSurface> surface, const std::vector<Vec2d> vertices, const Color3 color)
+void rasterize_filled_polygon(std::shared_ptr<RenderSurface> surface, const std::vector<Vec2d> vertices, const Color4 color)
 {
     if (vertices.size() < 3)
     {
@@ -70,7 +70,7 @@ void rasterize_filled_polygon(std::shared_ptr<RenderSurface> surface, const std:
     }
 }
 
-void rasterize_filled_triangle(std::shared_ptr<RenderSurface> surface, const Vec2d v0, const Vec2d v1, const Vec2d v2, const Color3 color)
+void rasterize_filled_triangle(std::shared_ptr<RenderSurface> surface, const Vec2d v0, const Vec2d v1, const Vec2d v2, const Color4 color)
 {
     Box2d bounds;
     bounds.min = Vec2d { std::min({ v0.x, v1.x, v2.x }), std::min({ v0.y, v1.y, v2.y }) };
@@ -94,7 +94,7 @@ void rasterize_filled_triangle(std::shared_ptr<RenderSurface> surface, const Vec
     }
 }
 
-void rasterize_line(std::shared_ptr<RenderSurface> surface, const Vec2d start, const Vec2d end, const double line_thickness, const Color3 color)
+void rasterize_line(std::shared_ptr<RenderSurface> surface, const Vec2d start, const Vec2d end, const double line_thickness, const Color4 color)
 {
     double line_extent = line_thickness / 2.0;
     Vec2d normal = (end - start).normal().normalize();
@@ -108,7 +108,7 @@ void rasterize_line(std::shared_ptr<RenderSurface> surface, const Vec2d start, c
     rasterize_filled_triangle(surface, v1, v3, v2, color);
 }
 
-void rasterize_aabb(std::shared_ptr<RenderSurface> surface, const Box2d bounds, const Color3 color)
+void rasterize_aabb(std::shared_ptr<RenderSurface> surface, const Box2d bounds, const Color4 color)
 {
     Box2i rounded_bounds = { bounds.min.round(), bounds.max.round() };
     surface->write_pixel(rounded_bounds.min, color);
@@ -117,7 +117,7 @@ void rasterize_aabb(std::shared_ptr<RenderSurface> surface, const Box2d bounds, 
     surface->write_pixel({ rounded_bounds.max.x, rounded_bounds.min.y }, color);
 }
 
-void rasterize_obb(std::shared_ptr<RenderSurface> surface, const OBB2D obb, const Color3 color)
+void rasterize_obb(std::shared_ptr<RenderSurface> surface, const OBB2D obb, const Color4 color)
 {
     Vec2d corners[4] = {
         obb.origin,
@@ -132,7 +132,7 @@ void rasterize_obb(std::shared_ptr<RenderSurface> surface, const OBB2D obb, cons
     }
 }
 
-void rasterize_cross(std::shared_ptr<RenderSurface> surface, const Vec2d pos, const double size, const Color3 color)
+void rasterize_cross(std::shared_ptr<RenderSurface> surface, const Vec2d pos, const double size, const Color4 color)
 {
     int half_size = static_cast<int>(size / 2);
     for (int i = -half_size; i <= half_size; i++)

@@ -15,22 +15,22 @@ public:
 
     CursesRenderSurface(const gfx::math::Vec2i resolution) 
         : RenderSurface(resolution), 
-        palette(std::make_unique<std::unordered_map<gfx::core::types::Color3, uint8_t, std::hash<gfx::core::types::Color3>>>()), 
-        frame_buffer(std::make_unique<std::vector<int32_t>>(resolution.x * resolution.y / 2, 0)) {};
+        palette(std::make_unique<std::unordered_map<gfx::core::types::Color4, uint8_t, std::hash<gfx::core::types::Color4>>>()), 
+        frame_buffer(std::make_unique<std::vector<int64_t>>(resolution.x * resolution.y / 2, 0)) {};
 
     void present() override;
     void clear() const override;
 
     void clear_frame_buffer() override;
-    void write_pixel(const gfx::math::Vec2i pos, const gfx::core::types::Color3 color) override;
+    void write_pixel(const gfx::math::Vec2i pos, const gfx::core::types::Color4 color) override;
 
 private:
 
-    void set_color(const gfx::core::types::Color3 color);
-    uint8_t add_color(const gfx::core::types::Color3 color);
+    void set_color(const gfx::core::types::Color4 color);
+    uint8_t add_color(const gfx::core::types::Color4 color);
 
-    std::unique_ptr<std::vector<int32_t>> frame_buffer;
-    std::unique_ptr<std::unordered_map<gfx::core::types::Color3, uint8_t, std::hash<gfx::core::types::Color3>>> palette;
+    std::unique_ptr<std::vector<int64_t>> frame_buffer;
+    std::unique_ptr<std::unordered_map<gfx::core::types::Color4, uint8_t, std::hash<gfx::core::types::Color4>>> palette;
     int color_index = 0;
 
     static constexpr uint8_t DEDICATED_CURSES_COLOR_START_INDEX = 128;

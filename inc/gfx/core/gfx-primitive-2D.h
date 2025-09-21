@@ -1,7 +1,7 @@
 #ifndef GFX_PRIMITIVE_2D_H
 #define GFX_PRIMITIVE_2D_H
 
-#include <gfx/core/types/color3.h>
+#include <gfx/core/types/color4.h>
 #include <gfx/utils/rasterize.h>
 #include <gfx/utils/transform.h>
 #include <gfx/math/box2.h>
@@ -24,8 +24,8 @@ public:
 
     gfx::math::Matrix3x3d get_transform() const;
 
-    inline types::Color3 get_color() const { return color; }
-    inline void set_color(const types::Color3 col) { color = col; }
+    inline types::Color4 get_color() const { return color; }
+    inline void set_color(const types::Color4 col) { color = col; }
 
     inline bool get_draw_aabb() const { return draw_aabb; }
     inline void set_draw_aabb(const bool draw) { draw_aabb = draw; }
@@ -48,11 +48,6 @@ public:
     inline gfx::math::Vec2d get_pos() const { return position; }
     void set_pos(const gfx::math::Vec2d pos) { position = pos; }
     
-    // inline gfx::math::Vec2d get_size() const { return bounds.max - bounds.min; }
-    // inline void set_size(const gfx::math::Vec2d size) { bounds.max = bounds.min + size; }
-
-    // inline gfx::math::Vec2d get_center() const { return (bounds.min + bounds.max) / 2; }
-
     inline gfx::math::Vec2f get_scale() const { return scale; }
     inline void set_scale(const gfx::math::Vec2d s) { scale = s; }
 
@@ -67,7 +62,7 @@ public:
 
 protected:
 
-    types::Color3 color;
+    types::Color4 color;
     gfx::math::Box2d bounds;
     gfx::math::Vec2d position;
     gfx::math::Vec2d anchor = { 0.0, 0.0 };

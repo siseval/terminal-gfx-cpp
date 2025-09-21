@@ -14,7 +14,7 @@ Box2d Polyline2D::get_relative_extent() const
 
     for (auto point : points)
     {
-        bounds.expand(point - get_anchor());
+        bounds.expand(point);
     }
 
     return bounds;

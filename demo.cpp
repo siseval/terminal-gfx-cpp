@@ -75,7 +75,7 @@ void gfx_test()
     int index = 0;
     std::shared_ptr<GfxPrimitive2D> selected = nullptr;
 
-    Color3 color;
+    Color4 color;
     std::shared_ptr<Ellipse2D> ellipse;
     std::shared_ptr<Polyline2D> polyline;
 
@@ -200,7 +200,7 @@ void gfx_test()
                 break;
 
             case 't':
-                Color3 color = { std::rand() % 255, std::rand() % 255, std::rand() % 255 };
+                Color4 color = { std::rand() % 255, std::rand() % 255, std::rand() % 255 };
                 polyline = renderer->create_polyline(center, { { 0, 0 }, { 20, 0 }, { 10, 10} }, color, 3);
                 polyline->set_close(true);
                 polyline->set_rounded_corners(true);
