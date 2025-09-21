@@ -1,7 +1,7 @@
 #ifndef GFX_SHADER_2D_H
 #define GFX_SHADER_2D_H
 
-#include <gfx/core/types/color3.h>
+#include <gfx/core/types/color4.h>
 #include <gfx/math/vec2.h>
 
 namespace gfx::core
@@ -18,7 +18,7 @@ class Shader2D
 
 public:
 
-    virtual types::Color3 frag(const shader_input_2D input) const = 0;
+    virtual types::Color4 frag(const shader_input_2D input) const = 0;
 
 
 private:

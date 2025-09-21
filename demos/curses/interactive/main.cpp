@@ -1,47 +1,19 @@
 #include <ncurses.h>
 #include <string>
-#include <locale.h>
 #include <gfx/core/gfx-render-2D.h>
 #include <gfx/surfaces/curses-render-surface.h>
+#include <curses/curses-utils.h>
+#include <gfx-demo.h>
 
-
-enum class default_color
+namespace demos
 {
-    BLACK = 1,
-    RED,
-    GREEN,
-    YELLOW,
-    BLUE,
-    MAGENTA,
-    CYAN,
-    WHITE,
-};
 
 using namespace gfx::core;
 using namespace gfx::core::types;
 using namespace gfx::primitives;
 using namespace gfx::math;
 
-void gfx_test();
-void circle_test();
-
-Vec2i get_screen_size();
-char get_input();
-void set_bold(const bool enable);
-void set_color(const enum default_color color);
-void add_str(const Vec2i pos, const std::string pixel);
-
-void init();
-void end();
-
-int main()
-{
-    std::srand(std::time(0));
-    init();
-    gfx_test();
-    end();
-    return 0;
-}
+void run();
 
 void select(int index, std::shared_ptr<GfxPrimitive2D>& selected, std::vector<std::shared_ptr<GfxPrimitive2D>> items, std::shared_ptr<GfxRender2D> renderer)
 {
@@ -60,7 +32,7 @@ void select(int index, std::shared_ptr<GfxPrimitive2D>& selected, std::vector<st
     selected->set_depth(0);
 }
 
-void gfx_test()
+void run()
 {
     set_bold(true);
     bool run = true;
@@ -251,65 +223,13 @@ void gfx_test()
     }
 }
 
-Vec2i get_screen_size()
-{
-    int width, height;
-    getmaxyx(stdscr, height, width);
-    return { width, height };
 }
 
-char get_input()
+int main()
 {
-    return getch();
-}
-
-void set_bold(const bool enable)
-{
-    if (enable)
-    {
-        attron(A_BOLD);
-    }
-    else
-    {
-        attroff(A_BOLD);
-    }
-}
-
-void set_color(const enum default_color color)
-{
-    attron(COLOR_PAIR(color));
-}
-
-void add_str(const Vec2i pos, const std::string pixel)
-{
-    mvaddstr(pos.y, pos.x, pixel.data());
-}
-
-void init()
-{
-    setlocale(LC_ALL, "");
-
-    initscr();
-    timeout(0);
-    nocbreak();
-    noecho();
-    curs_set(0);
-
-    start_color();
-    use_default_colors();
-
-    init_pair(1, COLOR_BLACK, -1);
-    init_pair(2, COLOR_RED, -1);
-    init_pair(3, COLOR_GREEN, -1);
-    init_pair(4, COLOR_YELLOW, -1);
-    init_pair(5, COLOR_BLUE, -1);
-    init_pair(6, COLOR_MAGENTA, -1);
-    init_pair(7, COLOR_CYAN, -1);
-    init_pair(8, COLOR_WHITE, -1);
-}
-
-void end()
-{
-    endwin();
-    exit(0);
+    std::srand(std::time(0));
+    demos::init();
+    demos::run();
+    demos::end();
+    return 0;
 }

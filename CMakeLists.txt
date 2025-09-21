@@ -5,35 +5,18 @@ project(gfx LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-add_library(gfx STATIC
-    src/gfx/core/gfx-render-2D.cpp
-    src/gfx/core/gfx-primitive-2D.cpp
-    src/gfx/core/scene-graph-2D.cpp
-    src/gfx/core/render-surface.cpp
+option(USE_CURSES "Use curses library as rendering backend" ON)
+option(BUILD_DEMOS "Build demo applications" ON)
 
-    src/gfx/surfaces/curses-render-surface.cpp
+set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
-    src/gfx/utils/rasterize.cpp
-    src/gfx/utils/transform.cpp
+add_subdirectory(src/gfx)
 
-    src/gfx/primitives/ellipse-2D.cpp
-    src/gfx/primitives/polyline-2D.cpp
-)
-
-target_include_directories(gfx
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/inc
-)
-
-find_package(Curses REQUIRED)
-set(CURSES_NEED_NCURSES TRUE)
-set(CURSES_NEED_WIDE TRUE)
-
-add_executable(demo demo.cpp)
-
-target_link_libraries(demo PRIVATE ${CURSES_LIBRARIES})
-target_link_libraries(demo PRIVATE gfx)
+if(BUILD_DEMOS)
+add_subdirectory(demos)
+endif()
 
