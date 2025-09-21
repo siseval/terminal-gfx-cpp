@@ -79,16 +79,24 @@ void gfx_test()
     std::shared_ptr<Ellipse2D> ellipse;
     std::shared_ptr<Polyline2D> polyline;
 
+    double fps;
+
     while (run)
     {
+        double t0 = static_cast<double>(clock());
         renderer->draw_frame();
+        double t1 = static_cast<double>(clock());
+
+        fps = CLOCKS_PER_SEC / (t1 - t0);
+
         set_color(default_color::WHITE);
 
-        if (selected != nullptr)
+        if (selected != nullptr && renderer->num_items() > 0)
         {
             add_str({ 0, 0 }, "resolution: " + std::to_string(renderer->get_resolution().round().x) + "x" + std::to_string(renderer->get_resolution().round().y));
-            add_str({ 0, 1 }, "items: " + std::to_string(renderer->num_items()));
-            add_str({ 0, 2 }, "pos: " + std::to_string(selected->get_pos().round().x) + "x" + std::to_string(selected->get_pos().round().y));
+            add_str({ 0, 1 }, "fps: " + std::to_string(static_cast<int>(fps)));
+            add_str({ 0, 2 }, "items: " + std::to_string(renderer->num_items()));
+            add_str({ 0, 3 }, "pos: " + std::to_string(selected->get_pos().round().x) + "." + std::to_string(selected->get_pos().round().y));
         }
 
         switch (get_input())
@@ -187,6 +195,14 @@ void gfx_test()
                 if (selected == nullptr) { break; }
                 renderer->remove_item(selected);
                 items.erase(std::remove(items.begin(), items.end(), selected));
+                for (int i = 0; i < items.size(); i++)
+                {
+                    if (!renderer->contains_item(items[i]))
+                    {
+                        items.erase(items.begin() + i);
+                        i--;
+                    }
+                }
                 select((index -= 1) %= items.size(), selected, items, renderer);
                 break;
                 

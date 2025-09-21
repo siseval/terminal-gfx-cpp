@@ -10,6 +10,35 @@ using namespace gfx::primitives;
 using namespace gfx::math;
 
 
+void GfxRender2D::draw_frame() const
+{
+    surface->clear_frame_buffer();
+
+    std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, Matrix3x3d>> draw_queue = get_draw_queue();
+    for (auto& [primitive, transform] : draw_queue)
+    {
+        primitive->rasterize(surface, transform);
+
+        if (primitive->get_draw_aabb())
+        {
+            Box2d bounds = primitive->get_axis_aligned_bounding_box(transform);
+            utils::rasterize_aabb(surface, bounds, GFX_BOUNDS_COLOR);
+        }
+        if (primitive->get_draw_obb())
+        {
+            OBB2D obb = primitive->get_oriented_bounding_box(transform);
+            utils::rasterize_obb(surface, obb, GFX_BOUNDS_COLOR);
+        }
+        if (primitive->get_draw_anchor())
+        {
+            Vec2d anchor_pos = utils::transform_point(primitive->get_pos(), get_global_transform());
+            utils::rasterize_cross(surface, anchor_pos, 1.0, GFX_ANCHOR_COLOR);
+        }
+    }
+
+    surface->present();
+}
+
 std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, Matrix3x3d>> GfxRender2D::get_draw_queue() const
 {
     std::stack<std::pair<std::shared_ptr<SceneNode2D>, Matrix3x3d>> stack;
@@ -42,35 +71,6 @@ std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, Matrix3x3d>> GfxRender2D:
     });
 
     return draw_queue;
-}
-
-void GfxRender2D::draw_frame() const
-{
-    surface->clear_frame_buffer();
-
-    std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, Matrix3x3d>> draw_queue = get_draw_queue();
-    for (auto& [primitive, transform] : draw_queue)
-    {
-        primitive->rasterize(surface, transform);
-
-        if (primitive->get_draw_aabb())
-        {
-            Box2d bounds = primitive->get_axis_aligned_bounding_box(transform);
-            utils::rasterize_aabb(surface, bounds, GFX_BOUNDS_COLOR);
-        }
-        if (primitive->get_draw_obb())
-        {
-            OBB2D obb = primitive->get_oriented_bounding_box(transform);
-            utils::rasterize_obb(surface, obb, GFX_BOUNDS_COLOR);
-        }
-        if (primitive->get_draw_anchor())
-        {
-            Vec2d anchor_pos = utils::transform_point(primitive->get_pos(), get_global_transform());
-            utils::rasterize_cross(surface, anchor_pos, 1.0, GFX_ANCHOR_COLOR);
-        }
-    }
-
-    surface->present();
 }
 
 gfx::math::Matrix3x3d GfxRender2D::get_global_transform() const

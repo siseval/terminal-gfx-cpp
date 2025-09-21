@@ -7,14 +7,6 @@
 namespace gfx::core
 {
 
-// struct compare_primitive_by_depth
-// {
-//     bool operator()(const std::shared_ptr<GfxPrimitive2D>& a, const std::shared_ptr<GfxPrimitive2D>& b) const
-//     {
-//         return a->get_depth() > b->get_depth();
-//     }
-// };
-
 struct SceneNode2D
 {
     SceneNode2D(std::shared_ptr<GfxPrimitive2D> item) : primitive(item) {}
@@ -59,6 +51,7 @@ public:
     }
 
     inline int num_items() const { return item_count; }
+    inline bool contains_item(const std::shared_ptr<GfxPrimitive2D> item) const { return nodes.contains(item->get_id()); }
 
 private:
     std::shared_ptr<SceneNode2D> root;

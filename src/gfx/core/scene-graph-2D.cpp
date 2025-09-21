@@ -1,3 +1,4 @@
+#include <stack>
 #include <gfx/core/scene-graph-2D.h>
 
 namespace gfx::core
@@ -30,7 +31,6 @@ void SceneGraph2D::remove_item(const std::shared_ptr<GfxPrimitive2D> item)
     {
         return;
     }
-    item_count--;
 
     nodes[item->get_id()]->parent->children.erase(std::remove_if(
         nodes[item->get_id()]->parent->children.begin(), 
@@ -38,7 +38,21 @@ void SceneGraph2D::remove_item(const std::shared_ptr<GfxPrimitive2D> item)
         [item](const std::shared_ptr<SceneNode2D> node) { return node->get_id() == item->get_id(); }
     ), nodes[item->get_id()]->parent->children.end());
 
-    nodes.erase(item->get_id());
+    std::stack<std::shared_ptr<SceneNode2D>> stack;
+    stack.push(nodes[item->get_id()]);
+    while (!stack.empty())
+    {
+        auto node = stack.top();
+        stack.pop();
+
+        for (const auto& child : node->children)
+        {
+            stack.push(child);
+        }
+
+        nodes.erase(node->get_id());
+        item_count--;
+    }
 }
 
 }

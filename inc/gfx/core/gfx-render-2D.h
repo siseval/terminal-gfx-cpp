@@ -36,7 +36,9 @@ public:
     inline void add_item(const std::shared_ptr<GfxPrimitive2D> item) { scene_graph->add_item(item); }
     inline void add_item(const std::shared_ptr<GfxPrimitive2D> item, const std::shared_ptr<GfxPrimitive2D> parent) { scene_graph->add_item(item, parent); }
     inline void remove_item(const std::shared_ptr<GfxPrimitive2D> item) { scene_graph->remove_item(item); }
+
     inline int num_items() const { return scene_graph->num_items(); }
+    inline bool contains_item(const std::shared_ptr<GfxPrimitive2D> item) const { return scene_graph->contains_item(item); }
 
     inline gfx::math::Vec2d get_viewport_scaling() const { return viewport_scaling; }
     inline void set_viewport_scaling(const gfx::math::Vec2d scaling) { viewport_scaling = scaling; }
