@@ -13,6 +13,7 @@ Currently only supports a terminal based rendering backend using **ncurses**
 
 ### Demo app
 - `e` and `t` to create an ellipse or triangle polyline respectively
+- `E` and `T` to create and item as a child of the selected item
 - `n` to cycle selected object
 - `r` to remove selected object
 - `wasd` to move selected object

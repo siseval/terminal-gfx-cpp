@@ -2,6 +2,7 @@
 #define GFX_PRIMITIVE_2D_H
 
 #include <gfx/core/types/color4.h>
+#include <gfx/utils/uuid.h>
 #include <gfx/utils/rasterize.h>
 #include <gfx/utils/transform.h>
 #include <gfx/math/box2.h>
@@ -15,6 +16,8 @@ class GfxPrimitive2D
 {
 
 public:
+
+    GfxPrimitive2D() : id(gfx::utils::UUID::generate()) {}
         
     virtual void rasterize(std::shared_ptr<RenderSurface> surface, const gfx::math::Matrix3x3d transform) const = 0;
 
@@ -23,6 +26,8 @@ public:
     virtual gfx::math::Box2d get_relative_extent() const = 0;
 
     gfx::math::Matrix3x3d get_transform() const;
+
+    inline gfx::utils::UUID get_id() const { return id; }
 
     inline types::Color4 get_color() const { return color; }
     inline void set_color(const types::Color4 col) { color = col; }
@@ -62,6 +67,8 @@ public:
 
 protected:
 
+    gfx::utils::UUID id;
+
     types::Color4 color;
     gfx::math::Box2d bounds;
     gfx::math::Vec2d position;
@@ -79,7 +86,21 @@ protected:
 
 };
 
-
 };
+
+template <>
+struct std::hash<gfx::core::GfxPrimitive2D>
+{
+    size_t operator()(const gfx::core::GfxPrimitive2D& item) const
+    {
+        int64_t hash = std::hash<gfx::math::Vec2d>()(item.get_pos());
+        hash ^= (std::hash<gfx::math::Vec2d>()(item.get_scale()) << 1);
+        hash ^= (std::hash<double>()(item.get_rotation()) << 1);
+        hash ^= (std::hash<int>()(item.get_depth()) << 1);
+
+        return hash;
+    }
+};
+
 
 #endif // GFX_PRIMITIVE_2D_H

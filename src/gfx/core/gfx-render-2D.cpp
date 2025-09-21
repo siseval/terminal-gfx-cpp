@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <stack>
 #include <gfx/core/gfx-render-2D.h>
 
 namespace gfx::core
@@ -8,24 +10,57 @@ using namespace gfx::primitives;
 using namespace gfx::math;
 
 
+std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, Matrix3x3d>> GfxRender2D::get_draw_queue() const
+{
+    std::stack<std::pair<std::shared_ptr<SceneNode2D>, Matrix3x3d>> stack;
+    std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, Matrix3x3d>> draw_queue;
+
+    stack.push({ scene_graph->get_root(), get_global_transform() });
+
+    while (!stack.empty())
+    {
+        auto [node, parent_transform] = stack.top();
+        stack.pop();
+
+        if (node->primitive)
+        {
+            draw_queue.push_back({ node->primitive, parent_transform });
+        }
+
+        for (const auto& child : node->children)
+        {
+            if (child->primitive == nullptr) 
+            {
+                stack.push({ child, parent_transform });
+                continue; 
+            }
+            stack.push({ child, parent_transform * child->primitive->get_transform() });
+        }
+    }
+    std::sort(draw_queue.begin(), draw_queue.end(), [](const auto& a, const auto& b) {
+        return a.first->get_depth() > b.first->get_depth();
+    });
+
+    return draw_queue;
+}
+
 void GfxRender2D::draw_frame() const
 {
     surface->clear_frame_buffer();
 
-    primitives->sort_by_depth();
-    for (auto primitive : primitives->get_items())
+    std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, Matrix3x3d>> draw_queue = get_draw_queue();
+    for (auto& [primitive, transform] : draw_queue)
     {
-        Matrix3x3d full_transform = get_global_transform() * primitive->get_transform();
-        primitive->rasterize(surface, full_transform);
+        primitive->rasterize(surface, transform);
 
         if (primitive->get_draw_aabb())
         {
-            Box2d bounds = primitive->get_axis_aligned_bounding_box(full_transform);
+            Box2d bounds = primitive->get_axis_aligned_bounding_box(transform);
             utils::rasterize_aabb(surface, bounds, GFX_BOUNDS_COLOR);
         }
         if (primitive->get_draw_obb())
         {
-            OBB2D obb = primitive->get_oriented_bounding_box(full_transform);
+            OBB2D obb = primitive->get_oriented_bounding_box(transform);
             utils::rasterize_obb(surface, obb, GFX_BOUNDS_COLOR);
         }
         if (primitive->get_draw_anchor())

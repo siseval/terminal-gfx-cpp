@@ -200,7 +200,7 @@ void gfx_test()
                 break;
 
             case 't':
-                Color4 color = { std::rand() % 255, std::rand() % 255, std::rand() % 255 };
+                color = { std::rand() % 255, std::rand() % 255, std::rand() % 255 };
                 polyline = renderer->create_polyline(center, { { 0, 0 }, { 20, 0 }, { 10, 10} }, color, 3);
                 polyline->set_close(true);
                 polyline->set_rounded_corners(true);
@@ -208,6 +208,26 @@ void gfx_test()
                 items.push_back(polyline);
                 select(index = items.size() - 1, selected, items, renderer);
                 renderer->add_item(polyline);
+                break;
+
+            case 'E':
+                color = { std::rand() % 255, std::rand() % 255, std::rand() % 255 };
+                ellipse = renderer->create_ellipse({ 0, 0 }, { 10, 10 }, color, 3);
+                ellipse->set_anchor({ 0.5, 0.5 });
+                items.push_back(ellipse);
+                renderer->add_item(ellipse, selected);
+                select(index = items.size() - 1, selected, items, renderer);
+                break;
+
+            case 'T':
+                color = { std::rand() % 255, std::rand() % 255, std::rand() % 255 };
+                polyline = renderer->create_polyline({ 0, 0 }, { { 0, 0 }, { 20, 0 }, { 10, 10} }, color, 3);
+                polyline->set_close(true);
+                polyline->set_rounded_corners(true);
+                polyline->set_anchor({ 0.5, 0.5 });
+                items.push_back(polyline);
+                renderer->add_item(polyline, selected);
+                select(index = items.size() - 1, selected, items, renderer);
                 break;
 
 
