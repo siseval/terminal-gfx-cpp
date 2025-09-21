@@ -7,7 +7,7 @@
 #include <gfx/core/gfx-render-2D.h>
 #include <gfx/math/vec2.h>
 
-namespace demos
+namespace demos::curses
 {
 
 enum class default_color

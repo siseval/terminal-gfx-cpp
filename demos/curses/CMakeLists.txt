@@ -1,5 +1,3 @@
-find_package(Curses REQUIRED)
-
 add_subdirectory(interactive)
 
 add_library(demos_curses INTERFACE)

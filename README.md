@@ -10,7 +10,7 @@ Currently only supports a terminal based rendering backend using **ncurses**
 5. `cmake ..`
 6. `make`
 7. `cd bin`
-7. `./interactive` to launch the demo app
+7. `./curses-interactive-demo` to launch the demo app
 
 ### Demo app
 - `e` and `t` to create an ellipse or triangle polyline respectively
