@@ -13,7 +13,7 @@ void PolylineDemo::init()
 {
     Vec2d resolution = get_resolution();
     Vec2d center = resolution / 2;
-    double distance_ratio = 9;
+    double distance_ratio = 7;
     double progress;
 
     for (int i = 0; i < num_polylines; i++)
@@ -25,7 +25,7 @@ void PolylineDemo::init()
 
         auto polyline = renderer->create_polyline(center, points, color);
         polyline->set_close(true);
-        polyline->set_fill(1.0);
+        polyline->set_fill(true);
         polyline->set_rounded_corners(true);
         polyline->set_anchor({ 0.5, 0.5 });
 
@@ -50,7 +50,7 @@ void PolylineDemo::render_frame()
 
         polyline->set_scale(Vec2d { 1.0 + progress * (1.4 + sin_t * 0.8), 1.0 + progress * (1 + cos_t) });
         polyline->set_rotation(t * (1.0 + progress));
-        polyline->set_line_thickness(1 + progress * 2 + (1 + sin_t) * 2);
+        polyline->set_line_thickness(1 + progress * 1 + (1 + sin_t) * 1);
     }
 
     renderer->draw_frame();

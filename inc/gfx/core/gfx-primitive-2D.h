@@ -62,8 +62,8 @@ public:
     inline double get_line_thickness() const { return line_thickness; }
     inline void set_line_thickness(const double thickness) { line_thickness = thickness; }
 
-    inline double get_fill() const { return fill; }
-    inline void set_fill(const double f) { fill = f; }
+    inline bool get_fill() const { return fill; }
+    inline void set_fill(const bool f) { fill = f; }
 
 protected:
 
@@ -75,7 +75,7 @@ protected:
     gfx::math::Vec2d anchor = { 0.0, 0.0 };
     gfx::math::Vec2d scale = { 1.0, 1.0 };
     double line_thickness = 1.0;
-    double fill = 0;
+    bool fill = false;
     double rotation = 0.0;
     int depth = 0;
     bool draw_aabb = false;

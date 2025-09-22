@@ -20,6 +20,13 @@ public:
 
     virtual void clear_frame_buffer() = 0;
     virtual void write_pixel(const gfx::math::Vec2i pos, const types::Color4 color) = 0;
+    inline void write_pixels(const std::vector<gfx::math::Vec2i> positions, const types::Color4 color)
+    {
+        for (auto pos : positions)
+        {
+            write_pixel(pos, color);
+        }
+    }
 
     inline gfx::math::Vec2i get_resolution() const { return resolution; }
 

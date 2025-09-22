@@ -22,7 +22,7 @@ Box2d Polyline2D::get_relative_extent() const
 
 void Polyline2D::rasterize_rounded_corner(std::shared_ptr<RenderSurface> surface, const Vec2d pos, const double angle0, const double angle1, const Matrix3x3d transform) const
 {
-    std::vector<Vec2d> vertices = { utils::transform_point(pos, transform) };
+    std::vector<Vec2d> vertices;
 
     for (int i = 0; i <= CORNER_SEGMENTS; i++)
     {
@@ -34,8 +34,12 @@ void Polyline2D::rasterize_rounded_corner(std::shared_ptr<RenderSurface> surface
         vertex.y = pos.y + (line_thickness / 2.0) * std::sin(theta);
         vertices.push_back(utils::transform_point(vertex, transform));
     }
+    Vec2d transformed_pos = utils::transform_point(pos, transform);
 
-    utils::rasterize_filled_polygon(surface, vertices, color);
+    for (int i = 0; i < vertices.size() - 1; i++)
+    {
+        utils::rasterize_filled_triangle(surface, transformed_pos, vertices[i], vertices[i + 1], color);
+    }
 }
 
 void Polyline2D::rasterize_rounded_corners(std::shared_ptr<RenderSurface> surface, const Matrix3x3d transform) const
