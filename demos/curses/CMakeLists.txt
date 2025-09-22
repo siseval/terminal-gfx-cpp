@@ -1,4 +1,5 @@
 add_subdirectory(interactive)
+add_subdirectory(animations)
 
 add_library(demos_curses INTERFACE)
 

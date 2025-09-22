@@ -20,6 +20,14 @@ public:
 
     inline void add_point(const gfx::math::Vec2d point) { points.push_back(point); }
     inline void add_points(const std::vector<gfx::math::Vec2d>& new_points) { points.insert(points.end(), new_points.begin(), new_points.end()); }
+
+    inline void set_point(const size_t index, const gfx::math::Vec2d point) 
+    { 
+        if (index < points.size()) 
+        { 
+            points[index] = point; 
+        } 
+    }
     inline void set_points(const std::vector<gfx::math::Vec2d>& new_points) { points = new_points; }
     inline void clear_points() { points.clear(); }
 

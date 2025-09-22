@@ -18,6 +18,8 @@ public:
     Color4(uint8_t r, uint8_t g, uint8_t b) : r(r), g(g), b(b), a(255) {}
     Color4(int r, int g, int b) : r(r), g(g), b(b), a(255) {}
 
+    Color4(double r, double g, double b, double a) : r(static_cast<uint8_t>(r * 255.0)), g(static_cast<uint8_t>(g * 255.0)), b(static_cast<uint8_t>(b * 255.0)), a(static_cast<uint8_t>(a * 255.0)) {}
+
     Color4() : Color4(0, 0, 0, 0) {}
 
     Color4(int32_t color) : r(color >> 24 & 0xFF), g(color >> 16 & 0xFF), b(color >> 8 & 0xFF), a(color & 0xFF) {}

@@ -1,15 +1,14 @@
-set(DEMOS_CURSES_ANIMATIONS_SOURCES
-    polylines-demo.cpp
+set(DEMOS_COMMON_ANIMATIONS_SOURCES
+    polyline-demo.cpp
 )
 
-add_executable(animations ${DEMOS_CURSES_ANIMATIONS_SOURCES})
+add_library(demos_common_animations STATIC ${DEMOS_COMMON_ANIMATIONS_SOURCES})
 
-target_link_libraries(animations PRIVATE
+target_link_libraries(demos_common_animations PRIVATE
     gfx
-    demos_curses
 )
 
-target_include_directories(animations PRIVATE
+target_include_directories(demos_common_animations PUBLIC
     ${INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/demos
 )

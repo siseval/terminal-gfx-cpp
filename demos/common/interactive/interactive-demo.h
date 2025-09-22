@@ -13,23 +13,17 @@ class InteractiveDemo : public GfxDemo
 public:
 
     InteractiveDemo(const std::shared_ptr<gfx::core::GfxRender2D> renderer)
-        : GfxDemo(renderer) 
-    {
-        init();
-    }
+        : GfxDemo(renderer) {}
 
     void init() override;
     void render_frame() override;
-    void handle_input(const char input) override;
     void end() override;
-    std::vector<std::string> info_text() override;
+    void handle_input(const char input) override;
 
 private:
 
     std::vector<std::shared_ptr<gfx::core::GfxPrimitive2D>> items;
     int selected_index = -1;
-
-    double last_frame_time = 0.0;
 
     void select(int index);
     void remove_selected();
@@ -44,7 +38,6 @@ private:
         }
         return items[selected_index]; 
     }
-    
 
 };
 

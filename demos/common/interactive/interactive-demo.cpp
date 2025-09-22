@@ -1,4 +1,3 @@
-#include <string>
 #include <common/interactive/interactive-demo.h>
 
 namespace demos::common::interactive
@@ -12,23 +11,6 @@ using namespace gfx::math;
 
 void InteractiveDemo::init()
 {
-}
-
-std::vector<std::string> InteractiveDemo::info_text()
-{
-    std::vector<std::string> info;
-
-    double fps = CLOCKS_PER_SEC / last_frame_time;
-
-    auto selected = get_selected();
-    if (selected != nullptr && renderer->num_items() > 0)
-    {
-        info.push_back("resolution: " + std::to_string(renderer->get_resolution().round().x) + "x" + std::to_string(renderer->get_resolution().round().y));
-        info.push_back("fps: " + std::to_string(static_cast<int>(fps)));
-        info.push_back("items: " + std::to_string(renderer->num_items()));
-        info.push_back("pos: " + std::to_string(selected->get_pos().round().x) + "." + std::to_string(selected->get_pos().round().y));
-    }
-    return info;
 }
 
 void InteractiveDemo::render_frame()
