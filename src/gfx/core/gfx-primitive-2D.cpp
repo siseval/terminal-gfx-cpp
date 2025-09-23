@@ -5,7 +5,7 @@ namespace gfx::core
 
 using namespace gfx::math;
 
-Box2d GfxPrimitive2D::get_axis_aligned_bounding_box(const Matrix3x3d transform) const
+Box2d GfxPrimitive2D::get_axis_aligned_bounding_box(const Matrix3x3d &transform) const
 {
     Box2d extent = get_relative_extent();
     double line_extent = get_line_thickness() / 2;
@@ -26,7 +26,7 @@ Box2d GfxPrimitive2D::get_axis_aligned_bounding_box(const Matrix3x3d transform) 
     return bounds;
 }
 
-OBB2D GfxPrimitive2D::get_oriented_bounding_box(const Matrix3x3d transform) const
+OBB2D GfxPrimitive2D::get_oriented_bounding_box(const Matrix3x3d &transform) const
 {
     Box2d extent = get_relative_extent();
 

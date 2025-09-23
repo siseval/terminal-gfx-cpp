@@ -26,7 +26,7 @@ public:
     gfx::math::Matrix3x3d get_global_transform() const;
 
     std::shared_ptr<gfx::primitives::Ellipse2D> create_ellipse(const gfx::math::Vec2d position, const gfx::math::Vec2d radius, const types::Color4 color, const double line_thickness = 1.0) const;
-    std::shared_ptr<gfx::primitives::Polyline2D> create_polyline(const gfx::math::Vec2d position, const std::vector<gfx::math::Vec2d> points, const types::Color4 color, const double line_thickness = 1.0) const;
+    std::shared_ptr<gfx::primitives::Polyline2D> create_polyline(const gfx::math::Vec2d position, const std::vector<gfx::math::Vec2d> &points, const types::Color4 color, const double line_thickness = 1.0) const;
 
     inline gfx::math::Vec2i get_resolution() const { return surface->get_resolution() / get_viewport_scaling(); }
     inline gfx::math::Vec2d center() const { return get_resolution() / 2; };

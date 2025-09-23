@@ -20,7 +20,7 @@ Box2d Polyline2D::get_relative_extent() const
     return bounds;
 }
 
-void Polyline2D::rasterize_rounded_corner(std::shared_ptr<RenderSurface> surface, const Vec2d pos, const double angle0, const double angle1, const Matrix3x3d transform) const
+void Polyline2D::rasterize_rounded_corner(std::shared_ptr<RenderSurface> surface, const Vec2d pos, const double angle0, const double angle1, const Matrix3x3d &transform) const
 {
     std::vector<Vec2d> vertices;
 
@@ -38,11 +38,11 @@ void Polyline2D::rasterize_rounded_corner(std::shared_ptr<RenderSurface> surface
 
     for (int i = 0; i < vertices.size() - 1; i++)
     {
-        utils::rasterize_filled_triangle(surface, transformed_pos, vertices[i], vertices[i + 1], color);
+        utils::rasterize_filled_triangle(surface, Triangle { transformed_pos, vertices[i], vertices[i + 1] }, color);
     }
 }
 
-void Polyline2D::rasterize_rounded_corners(std::shared_ptr<RenderSurface> surface, const Matrix3x3d transform) const
+void Polyline2D::rasterize_rounded_corners(std::shared_ptr<RenderSurface> surface, const Matrix3x3d &transform) const
 {
     for (int i = 0; i < points.size(); i++)
     {
@@ -71,7 +71,7 @@ void Polyline2D::rasterize_rounded_corners(std::shared_ptr<RenderSurface> surfac
     }
 }
 
-void Polyline2D::rasterize_edge(std::shared_ptr<RenderSurface> surface, const Vec2d start, const Vec2d end, const Matrix3x3d transform) const
+void Polyline2D::rasterize_edge(std::shared_ptr<RenderSurface> surface, const Vec2d start, const Vec2d end, const Matrix3x3d &transform) const
 {
     double line_extent = line_thickness / 2.0;
     Vec2d normal = (end - start).normal().normalize();
@@ -88,11 +88,11 @@ void Polyline2D::rasterize_edge(std::shared_ptr<RenderSurface> surface, const Ve
     v2 = utils::transform_point(v2, transform);
     v3 = utils::transform_point(v3, transform);
 
-    utils::rasterize_filled_triangle(surface, v0, v1, v2, color);
-    utils::rasterize_filled_triangle(surface, v1, v3, v2, color);
+    utils::rasterize_filled_triangle(surface, Triangle { v0, v1, v2 }, color);
+    utils::rasterize_filled_triangle(surface, Triangle { v1, v3, v2 }, color);
 }
 
-void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3d transform) const
+void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3d &transform) const
 {
     if (points.size() < 2)
     {
@@ -111,13 +111,33 @@ void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3
     if (get_fill())
     {
         std::vector<Vec2d> transformed_points = utils::transform_points(points, transform);
-        utils::rasterize_filled_polygon(surface, transformed_points, get_color());
+        if (points.size() == 3)
+        {
+            utils::rasterize_filled_triangle(surface, Triangle { transformed_points[0], transformed_points[1], transformed_points[2] }, get_color());
+        }
+        else 
+        {
+            utils::rasterize_filled_polygon(surface, transformed_points, get_color(), is_clockwise_cached);
+        }
     }
 
     if (do_rounded_corners)
     {
         rasterize_rounded_corners(surface, transform);
     }
+}
+
+bool Polyline2D::is_clockwise() const
+{
+    double sum = 0.0;
+    for (int i = 0; i < points.size(); i++)
+    {
+        Vec2d p0 = points[i];
+        Vec2d p1 = points[(i + 1) % points.size()];
+        sum += Vec2d::cross({ p1.x - p0.x }, { p1.y + p0.y }); 
+    }
+    bool clockwise_cached = sum < 0.0;
+    return clockwise_cached;
 }
 
 

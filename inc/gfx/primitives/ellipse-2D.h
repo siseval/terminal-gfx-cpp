@@ -15,7 +15,7 @@ class Ellipse2D : public gfx::core::GfxPrimitive2D
 
 public:
 
-    void rasterize(std::shared_ptr<gfx::core::RenderSurface> surface, const math::Matrix3x3d transform) const override;
+    void rasterize(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Matrix3x3d &transform) const override;
     gfx::math::Box2d get_relative_extent() const override;
 
     inline gfx::math::Vec2d get_radius() const { return radius; }
@@ -25,6 +25,9 @@ private:
 
     gfx::math::Vec2d radius;
     static constexpr int SEGMENTS = 64;
+
+    void rasterize_filled(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Matrix3x3d &transform) const;
+    void rasterize_polygon_ring(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Matrix3x3d &transform) const;
 };
 
 };

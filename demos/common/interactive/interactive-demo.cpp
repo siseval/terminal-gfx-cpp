@@ -90,7 +90,7 @@ void InteractiveDemo::add_polyline(const bool child)
     Vec2d center = get_resolution() / 2.0;
     Color4 color = { std::rand() % 255, std::rand() % 255, std::rand() % 255 };
 
-    auto polyline = renderer->create_polyline(center, { { 0, 0 }, { 20, 0 }, { 10, 10} }, color, 3);
+    auto polyline = renderer->create_polyline(center, { { 0, 0 }, { 20, 0 }, { 10, 10 }, { 5, 30 } }, color, 3);
     polyline->set_close(true);
     polyline->set_rounded_corners(true);
     polyline->set_anchor({ 0.5, 0.5 });
@@ -122,6 +122,35 @@ void InteractiveDemo::handle_input(const char input)
         case 'q':
             end();
             break;
+
+        // case 'k':
+        //     {
+        //         if (selected == nullptr) { break; }
+        //         auto ellipse = std::dynamic_pointer_cast<Ellipse2D>(selected);
+        //         ellipse->set_radius(ellipse->get_radius() + Vec2d { 0, 1 });
+        //         break;
+        //     }
+        // case 'j':
+        //     {
+        //         if (selected == nullptr) { break; }
+        //         auto ellipse = std::dynamic_pointer_cast<Ellipse2D>(selected);
+        //         ellipse->set_radius(ellipse->get_radius() - Vec2d { 0, 1 });
+        //         break;
+        //     }
+        // case 'l':
+        //     {
+        //         if (selected == nullptr) { break; }
+        //         auto ellipse = std::dynamic_pointer_cast<Ellipse2D>(selected);
+        //         ellipse->set_radius(ellipse->get_radius() + Vec2d { 1, });
+        //         break;
+        //     }
+        // case 'h':
+        //     {
+        //         if (selected == nullptr) { break; }
+        //         auto ellipse = std::dynamic_pointer_cast<Ellipse2D>(selected);
+        //         ellipse->set_radius(ellipse->get_radius() - Vec2d { 1, 0 });
+        //         break;
+        //     }
 
         case 'k':
             if (selected == nullptr) { break; }

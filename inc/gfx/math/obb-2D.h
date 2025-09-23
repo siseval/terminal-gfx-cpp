@@ -1,5 +1,5 @@
-#ifndef OBB2_H
-#define OBB2_H
+#ifndef OBB_2D_H
+#define OBB_2D_H
 
 #include <gfx/math/vec2.h>
 
@@ -17,4 +17,4 @@ struct OBB2D
 
 }
 
-#endif // OBB2_H
+#endif // OBB_2D_H

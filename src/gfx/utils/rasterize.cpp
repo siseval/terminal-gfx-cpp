@@ -1,4 +1,5 @@
 #include <gfx/utils/rasterize.h>
+#include <gfx/utils/triangulate.h>
 
 namespace gfx::utils
 {
@@ -24,64 +25,40 @@ void rasterize_circle(std::shared_ptr<RenderSurface> surface, const Vec2d center
     }
 }
 
-void rasterize_filled_polygon(std::shared_ptr<RenderSurface> surface, const std::vector<Vec2d> vertices, const Color4 color)
+void rasterize_filled_ellipse(std::shared_ptr<RenderSurface> surface, const Vec2d center, const Vec2d radius, const Color4 color)
+{
+    for (int y = -radius.y; y <= radius.y; y++)
+    {
+        for (int x = -radius.x; x <= radius.x; x++)
+        {
+            if ((x * x) / (radius.x * radius.x) + (y * y) / (radius.y * radius.y) <= 1.0)
+            {
+                surface->write_pixel(center.round() + Vec2i { x, y }, color);
+            }
+        }
+    }
+}
+
+void rasterize_filled_polygon(std::shared_ptr<RenderSurface> surface, const std::vector<Vec2d> &vertices, const Color4 color, const bool clockwise)
 {
     if (vertices.size() < 3)
     {
         return;
     }
 
-    std::vector<Box2d> edges;
-    for (int i = 0; i < vertices.size() - 1; i++)
-    {
-        edges.push_back({ vertices[i], vertices[i + 1] });
-    }
-    edges.push_back({ vertices.back(), vertices.front() });
+    std::vector<Triangle> triangles = triangulate_polygon(vertices, clockwise);
 
-    Box2d bounds = Box2d { vertices[0], vertices[0] };
-    bounds.expand(vertices);
-
-    Box2i rounded_bounds = { bounds.min.round(), bounds.max.round() };
-
-    std::vector<Vec2i> to_draw;
-    for (int y = rounded_bounds.min.y; y < rounded_bounds.max.y; y++)
+    for (auto triangle : triangles)
     {
-        for (int x = rounded_bounds.min.x; x < rounded_bounds.max.x; x++)
-        {
-            Vec2d pixel = Vec2d { static_cast<double>(x), static_cast<double>(y) };
-            bool inside = false;
-            for (auto edge : edges)
-            {
-                bool intersects_y = (edge.min.y > pixel.y) != (edge.max.y > pixel.y);
-                if (!intersects_y)
-                {
-                    continue;
-                }
-                double progress = (pixel.y - edge.min.y) / (edge.max.y - edge.min.y);
-                bool intersects = pixel.x < (edge.max.x - edge.min.x) * progress + edge.min.x;
-                if (intersects)
-                {
-                    inside = !inside;
-                }
-            }
-            if (inside)
-            {
-                to_draw.push_back(Vec2i { x, y });
-                // surface->write_pixel(Vec2i { x, y }, color);
-            }
-        }
-    }
-    for (auto pixel : to_draw)
-    {
-        surface->write_pixel(pixel, color);
+        rasterize_filled_triangle(surface, triangle, color);
     }
 }
 
-void rasterize_filled_triangle(std::shared_ptr<RenderSurface> surface, const Vec2d v0, const Vec2d v1, const Vec2d v2, const Color4 color)
+void rasterize_filled_triangle(std::shared_ptr<RenderSurface> surface, const Triangle triangle, const Color4 color)
 {
     Box2d bounds;
-    bounds.min = Vec2d { std::min({ v0.x, v1.x, v2.x }), std::min({ v0.y, v1.y, v2.y }) };
-    bounds.max = Vec2d { std::max({ v0.x, v1.x, v2.x }), std::max({ v0.y, v1.y, v2.y }) };
+    bounds.min = Vec2d { std::min({triangle.v0.x,triangle.v1.x,triangle.v2.x }), std::min({triangle.v0.y,triangle.v1.y,triangle.v2.y }) };
+    bounds.max = Vec2d { std::max({triangle.v0.x,triangle.v1.x,triangle.v2.x }), std::max({triangle.v0.y,triangle.v1.y,triangle.v2.y }) };
 
     for (int y = bounds.min.y; y <= bounds.max.y; y++)
     {
@@ -89,11 +66,7 @@ void rasterize_filled_triangle(std::shared_ptr<RenderSurface> surface, const Vec
         {
             Vec2d pos = Vec2d { static_cast<double>(x), static_cast<double>(y) };
 
-            double area = 0.5 * (-v1.y * v2.x + v0.y * (-v1.x + v2.x) + v0.x * (v1.y - v2.y) + v1.x * v2.y);
-            double s = 1 / (2 * area) * (v0.y * v2.x - v0.x * v2.y + (v2.y - v0.y) * pos.x + (v0.x - v2.x) * pos.y);
-            double t = 1 / (2 * area) * (v0.x * v1.y - v0.y * v1.x + (v0.y - v1.y) * pos.x + (v1.x - v0.x) * pos.y);
-
-            if (s >= 0 && t >= 0 && (s + t) <= 1)
+            if (triangle.point_inside(pos))
             {
                 surface->write_pixel(pos.round(), color);
             }
@@ -111,8 +84,8 @@ void rasterize_line(std::shared_ptr<RenderSurface> surface, const Vec2d start, c
     Vec2d v2 = end + normal * line_extent;
     Vec2d v3 = end - normal * line_extent;
 
-    rasterize_filled_triangle(surface, v0, v1, v2, color);
-    rasterize_filled_triangle(surface, v1, v3, v2, color);
+    rasterize_filled_triangle(surface, Triangle { v0, v1, v2 }, color);
+    rasterize_filled_triangle(surface, Triangle { v1, v3, v2 }, color);
 }
 
 void rasterize_aabb(std::shared_ptr<RenderSurface> surface, const Box2d bounds, const Color4 color)

@@ -7,7 +7,7 @@
 #include <gfx/utils/transform.h>
 #include <gfx/math/box2.h>
 #include <gfx/math/matrix.h>
-#include <gfx/math/obb2.h>
+#include <gfx/math/obb-2D.h>
 
 namespace gfx::core
 {
@@ -19,10 +19,10 @@ public:
 
     GfxPrimitive2D() : id(gfx::utils::UUID::generate()) {}
         
-    virtual void rasterize(std::shared_ptr<RenderSurface> surface, const gfx::math::Matrix3x3d transform) const = 0;
+    virtual void rasterize(std::shared_ptr<RenderSurface> surface, const gfx::math::Matrix3x3d &transform) const = 0;
 
-    gfx::math::Box2d get_axis_aligned_bounding_box(const gfx::math::Matrix3x3d transform) const;
-    gfx::math::OBB2D get_oriented_bounding_box(const gfx::math::Matrix3x3d transform) const;
+    gfx::math::Box2d get_axis_aligned_bounding_box(const gfx::math::Matrix3x3d &transform) const;
+    gfx::math::OBB2D get_oriented_bounding_box(const gfx::math::Matrix3x3d &transform) const;
     virtual gfx::math::Box2d get_relative_extent() const = 0;
 
     gfx::math::Matrix3x3d get_transform() const;
