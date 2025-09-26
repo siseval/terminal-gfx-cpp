@@ -19,6 +19,7 @@ public:
     Color4(int r, int g, int b) : r(r), g(g), b(b), a(255) {}
 
     Color4(double r, double g, double b, double a) : r(static_cast<uint8_t>(r * 255.0)), g(static_cast<uint8_t>(g * 255.0)), b(static_cast<uint8_t>(b * 255.0)), a(static_cast<uint8_t>(a * 255.0)) {}
+    Color4(double r, double g, double b) : r(static_cast<uint8_t>(r * 255.0)), g(static_cast<uint8_t>(g * 255.0)), b(static_cast<uint8_t>(b * 255.0)), a(255) {}
 
     Color4() : Color4(0, 0, 0, 0) {}
 
@@ -38,6 +39,17 @@ public:
     inline float a_float() const { return a / 255.0f; }
 
     inline int32_t to_int() const { return (r << 24) | (g << 16) | (b << 8) | (a); }
+
+    inline static Color4 lerp(const Color4 &a, const Color4 &b, double t)
+    {
+        t = t < 0 ? 0 : (t > 1 ? 1 : t);
+        return Color4(
+            static_cast<uint8_t>(a.r + (b.r - a.r) * t),
+            static_cast<uint8_t>(a.g + (b.g - a.g) * t),
+            static_cast<uint8_t>(a.b + (b.b - a.b) * t),
+            static_cast<uint8_t>(a.a + (b.a - a.a) * t)
+        );
+    }
 };
 
 

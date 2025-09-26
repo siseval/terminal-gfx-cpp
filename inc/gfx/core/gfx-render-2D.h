@@ -3,6 +3,7 @@
 
 #include <gfx/core/scene-graph-2D.h>
 #include <gfx/core/render-surface.h>
+#include <gfx/primitives/circle-2D.h>
 #include <gfx/primitives/ellipse-2D.h>
 #include <gfx/primitives/polyline-2D.h>
 
@@ -25,6 +26,7 @@ public:
 
     gfx::math::Matrix3x3d get_global_transform() const;
 
+    std::shared_ptr<gfx::primitives::Circle2D> create_circle(const gfx::math::Vec2d position, const double radius, const types::Color4 color, const double line_thickness = 1.0) const;
     std::shared_ptr<gfx::primitives::Ellipse2D> create_ellipse(const gfx::math::Vec2d position, const gfx::math::Vec2d radius, const types::Color4 color, const double line_thickness = 1.0) const;
     std::shared_ptr<gfx::primitives::Polyline2D> create_polyline(const gfx::math::Vec2d position, const std::vector<gfx::math::Vec2d> &points, const types::Color4 color, const double line_thickness = 1.0) const;
 
@@ -32,6 +34,7 @@ public:
     inline gfx::math::Vec2d center() const { return get_resolution() / 2; };
 
     inline std::shared_ptr<SceneGraph2D> get_scene_graph() const { return scene_graph; };
+    inline std::shared_ptr<RenderSurface> get_render_surface() const { return surface; };
 
     inline void add_item(const std::shared_ptr<GfxPrimitive2D> item) { scene_graph->add_item(item); }
     inline void add_item(const std::shared_ptr<GfxPrimitive2D> item, const std::shared_ptr<GfxPrimitive2D> parent) { scene_graph->add_item(item, parent); }
@@ -46,7 +49,6 @@ public:
 
 private:
 
-    
     std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, gfx::math::Matrix3x3d>> get_draw_queue() const;
 
     std::shared_ptr<RenderSurface> surface;

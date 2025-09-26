@@ -27,6 +27,8 @@ private:
 
     void select(int index);
     void remove_selected();
+
+    void add_circle(const bool child);
     void add_ellipse(const bool child = false);
     void add_polyline(const bool child = false);
 

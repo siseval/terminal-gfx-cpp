@@ -20,6 +20,8 @@ public:
     virtual void handle_input(const char input) = 0;
     virtual void end() = 0;
 
+    virtual std::vector<std::string> debug_text() { return {}; }
+
     inline void set_speed(const double s) { speed = s; }
     inline double get_speed() const { return speed; }
 
@@ -34,6 +36,7 @@ public:
         info.push_back("resolution: " + std::to_string(renderer->get_resolution().round().x) + "x" + std::to_string(renderer->get_resolution().round().y));
         info.push_back("fps: " + std::to_string(static_cast<int>(get_fps())));
         info.push_back("items: " + std::to_string(renderer->num_items()));
+
         return info;
     }
 

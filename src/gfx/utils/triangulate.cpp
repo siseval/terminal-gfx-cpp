@@ -10,7 +10,7 @@ bool is_convex(const Triangle &triangle, const bool clockwise)
     Vec2d ab = triangle.v1 - triangle.v0;
     Vec2d ac = triangle.v2 - triangle.v0;
     double cross = ab.x * ac.y - ab.y * ac.x;
-    return clockwise ? cross < 0 : cross > 0;
+    return clockwise ? cross > 0 : cross < 0;
 }
 
 bool is_ear(const int index, const std::vector<int> &indices, const std::vector<Vec2d> &vertices, const bool clockwise)

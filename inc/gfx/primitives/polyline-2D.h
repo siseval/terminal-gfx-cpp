@@ -18,7 +18,7 @@ public:
     void rasterize(std::shared_ptr<gfx::core::RenderSurface> surface, const math::Matrix3x3d &transform) const override;
     gfx::math::Box2d get_relative_extent() const override;
 
-    bool is_clockwise() const;
+    bool is_clockwise();
 
     inline void add_point(const gfx::math::Vec2d point) { points.push_back(point); is_clockwise(); }
     inline void add_points(const std::vector<gfx::math::Vec2d> &new_points) { points.insert(points.end(), new_points.begin(), new_points.end()); is_clockwise(); }
@@ -28,8 +28,8 @@ public:
         if (index < points.size()) 
         { 
             points[index] = point; 
+            is_clockwise();
         } 
-        is_clockwise();
     }
     inline void set_points(const std::vector<gfx::math::Vec2d> &new_points) { points = new_points; is_clockwise(); }
     inline void clear_points() { points.clear(); }
@@ -52,7 +52,7 @@ private:
     std::vector<gfx::math::Vec2d> points = std::vector<gfx::math::Vec2d>();
     bool do_close = false;
     bool do_rounded_corners = false;
-    bool is_clockwise_cached = false;
+    bool clockwise_cached = false;
     static constexpr int CORNER_SEGMENTS = 8;
 };
 

@@ -19,6 +19,8 @@ public:
     virtual void clear() const = 0;
 
     virtual void clear_frame_buffer() = 0;
+    virtual void clear_palette() = 0;
+
     virtual void write_pixel(const gfx::math::Vec2i pos, const types::Color4 color) = 0;
     inline void write_pixels(const std::vector<gfx::math::Vec2i> &positions, const types::Color4 color)
     {

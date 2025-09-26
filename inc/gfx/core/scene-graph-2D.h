@@ -50,13 +50,12 @@ public:
         nodes.clear();
     }
 
-    inline int num_items() const { return item_count; }
+    inline int num_items() const { return nodes.size(); }
     inline bool contains_item(const std::shared_ptr<GfxPrimitive2D> item) const { return nodes.contains(item->get_id()); }
 
 private:
     std::shared_ptr<SceneNode2D> root;
     std::unordered_map<gfx::utils::UUID, std::shared_ptr<SceneNode2D>> nodes;
-    int item_count = 0;
 
 };
 

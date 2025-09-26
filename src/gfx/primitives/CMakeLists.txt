@@ -1,4 +1,5 @@
 set(GFX_PRIMITIVES_SOURCES
+    circle-2D.cpp
     ellipse-2D.cpp
     polyline-2D.cpp
 )

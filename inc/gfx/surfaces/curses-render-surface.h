@@ -24,6 +24,8 @@ public:
     void clear_frame_buffer() override;
     void write_pixel(const gfx::math::Vec2i pos, const gfx::core::types::Color4 color) override;
 
+    void clear_palette() override;
+
 private:
 
     void set_color(const gfx::core::types::Color4 color);
@@ -33,7 +35,7 @@ private:
     std::unique_ptr<std::unordered_map<gfx::core::types::Color4, uint8_t, std::hash<gfx::core::types::Color4>>> palette;
     int color_index = 0;
 
-    static constexpr uint8_t DEDICATED_CURSES_COLOR_START_INDEX = 128;
+    static constexpr uint8_t DEDICATED_CURSES_COLOR_START_INDEX = 127;
 
     const std::string pixel_tree[2][2][2][2] =
     {

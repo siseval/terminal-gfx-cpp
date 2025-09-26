@@ -67,6 +67,12 @@ void CursesRenderSurface::write_pixel(const gfx::math::Vec2i pos, const gfx::cor
         bit_masks[top_in_pixel][left_in_pixel];
 }
 
+void CursesRenderSurface::clear_palette()
+{
+    palette->clear();
+    color_index = 0;
+}
+
 void CursesRenderSurface::set_color(const Color4 color)
 {
     auto iterator = palette->find(color);

@@ -117,7 +117,7 @@ void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3
         }
         else 
         {
-            utils::rasterize_filled_polygon(surface, transformed_points, get_color(), is_clockwise_cached);
+            utils::rasterize_filled_polygon(surface, transformed_points, get_color(), clockwise_cached);
         }
     }
 
@@ -127,16 +127,16 @@ void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3
     }
 }
 
-bool Polyline2D::is_clockwise() const
+bool Polyline2D::is_clockwise()
 {
     double sum = 0.0;
     for (int i = 0; i < points.size(); i++)
     {
         Vec2d p0 = points[i];
         Vec2d p1 = points[(i + 1) % points.size()];
-        sum += Vec2d::cross({ p1.x - p0.x }, { p1.y + p0.y }); 
+        sum += (p1.x - p0.x) * (p1.y + p0.y);
     }
-    bool clockwise_cached = sum < 0.0;
+    clockwise_cached = sum < 0.0;
     return clockwise_cached;
 }
 

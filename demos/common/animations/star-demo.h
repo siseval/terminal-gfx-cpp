@@ -1,5 +1,5 @@
-#ifndef POLYLINE_DEMO_H
-#define POLYLINE_DEMO_H
+#ifndef STAR_DEMO_H
+#define STAR_DEMO_H
 
 #include <gfx/core/gfx-render-2D.h>
 #include <common/gfx-demo.h>
@@ -7,18 +7,18 @@
 namespace demos::common::animations
 {
 
-class PolylineDemo : public GfxDemo
+class StarDemo : public GfxDemo
 {
 
 public:
 
-    PolylineDemo(const std::shared_ptr<gfx::core::GfxRender2D> renderer)
+    StarDemo(const std::shared_ptr<gfx::core::GfxRender2D> renderer)
         : GfxDemo(renderer) {}
 
     void init() override;
     void render_frame() override;
     void end() override;
-    void handle_input(const char input) override {}
+    void handle_input(const char input) override;
 
 private:
 
@@ -29,4 +29,4 @@ private:
 
 }
 
-#endif // POLYLINE_DEMO_H
+#endif // STAR_DEMO_H

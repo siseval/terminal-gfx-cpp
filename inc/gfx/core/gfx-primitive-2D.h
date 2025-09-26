@@ -55,6 +55,7 @@ public:
     
     inline gfx::math::Vec2f get_scale() const { return scale; }
     inline void set_scale(const gfx::math::Vec2d s) { scale = s; }
+    inline void set_scale(const double s) { scale = gfx::math::Vec2d { s, s }; }
 
     inline double get_rotation() const { return rotation; }
     inline void set_rotation(const double r) { rotation = r; }
@@ -65,17 +66,23 @@ public:
     inline bool get_fill() const { return fill; }
     inline void set_fill(const bool f) { fill = f; }
 
+    inline bool is_visible() const { return visible; }
+    inline void set_visible(const bool v) { visible = v; }
+
 protected:
 
     gfx::utils::UUID id;
 
     types::Color4 color;
+
     gfx::math::Box2d bounds;
     gfx::math::Vec2d position;
     gfx::math::Vec2d anchor = { 0.0, 0.0 };
     gfx::math::Vec2d scale = { 1.0, 1.0 };
+
     double line_thickness = 1.0;
     bool fill = false;
+    bool visible = true;
     double rotation = 0.0;
     int depth = 0;
     bool draw_aabb = false;

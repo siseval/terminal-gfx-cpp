@@ -1,5 +1,6 @@
 set(DEMOS_COMMON_ANIMATIONS_SOURCES
-    polyline-demo.cpp
+    star-demo.cpp
+    snake-demo.cpp
 )
 
 add_library(demos_common_animations STATIC ${DEMOS_COMMON_ANIMATIONS_SOURCES})

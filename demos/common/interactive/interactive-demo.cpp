@@ -66,6 +66,25 @@ void InteractiveDemo::remove_selected()
     select(selected_index);
 }
 
+void InteractiveDemo::add_circle(const bool child)
+{
+    Vec2d center = get_resolution() / 2.0;
+    Color4 color = { std::rand() % 255, std::rand() % 255, std::rand() % 255 };
+
+    auto circle = renderer->create_circle(center, 10, color, 3);
+    circle->set_anchor({ 0.5, 0.5 });
+
+    items.push_back(circle);
+
+    if (child && get_selected() != nullptr)
+    {
+        circle->set_pos({ 0, 0 });
+        renderer->add_item(circle, get_selected());
+        return;
+    }
+    renderer->add_item(circle);
+}
+
 void InteractiveDemo::add_ellipse(const bool child)
 {
     Vec2d center = get_resolution() / 2.0;
@@ -227,6 +246,18 @@ void InteractiveDemo::handle_input(const char input)
             if (selected == nullptr) { break; }
             remove_selected();
             break;
+
+        case 'R':
+            renderer->clear_items();
+            for (int i = 0; i < items.size(); i++)
+            {
+                if (!renderer->contains_item(items[i]))
+                {
+                    items.erase(items.begin() + i);
+                    i--;
+                }
+            }
+            break;
             
         case 'e':
             add_ellipse(false);
@@ -238,6 +269,11 @@ void InteractiveDemo::handle_input(const char input)
             select(items.size() - 1);
             break;
 
+        case 'c':
+            add_circle(false);
+            select(items.size() - 1);
+            break;
+
         case 'E':
             add_ellipse(true);
             select(items.size() - 1);
@@ -245,6 +281,11 @@ void InteractiveDemo::handle_input(const char input)
 
         case 'T':
             add_polyline(true);
+            select(items.size() - 1);
+            break;
+
+        case 'C':
+            add_circle(true);
             select(items.size() - 1);
             break;
        }

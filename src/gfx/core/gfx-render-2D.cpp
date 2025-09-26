@@ -17,6 +17,10 @@ void GfxRender2D::draw_frame() const
     std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, Matrix3x3d>> draw_queue = get_draw_queue();
     for (auto& [primitive, transform] : draw_queue)
     {
+        if (!primitive->is_visible())
+        {
+            continue;
+        }
         primitive->rasterize(surface, transform);
 
         if (primitive->get_draw_aabb())
@@ -77,6 +81,18 @@ gfx::math::Matrix3x3d GfxRender2D::get_global_transform() const
 {
     Matrix3x3d scale = utils::scale(viewport_scaling);
     return scale;
+}
+
+std::shared_ptr<Circle2D> GfxRender2D::create_circle(const Vec2d position, const double radius, const Color4 color, const double line_thickness) const
+{
+    auto circle = std::make_shared<Circle2D>();
+
+    circle->set_pos(position);
+    circle->set_radius(radius);
+    circle->set_line_thickness(line_thickness);
+    circle->set_color(color);
+
+    return circle;
 }
 
 std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(const Vec2d position, const Vec2d radius, const Color4 color, const double line_thickness) const

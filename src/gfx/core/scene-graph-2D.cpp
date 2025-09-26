@@ -12,7 +12,6 @@ void SceneGraph2D::add_item(const std::shared_ptr<GfxPrimitive2D> item, const st
         return;
     }
     nodes[new_node->get_id()] = new_node;
-    item_count++;
 
     if (parent != nullptr && nodes.contains(parent->get_id()))
     {
@@ -51,7 +50,6 @@ void SceneGraph2D::remove_item(const std::shared_ptr<GfxPrimitive2D> item)
         }
 
         nodes.erase(node->get_id());
-        item_count--;
     }
 }
 
