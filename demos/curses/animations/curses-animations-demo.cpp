@@ -104,7 +104,7 @@ private:
             case 'u':
                 show_info = !show_info;
                 break;
-            case 'd':
+            case '3':
                 show_debug = !show_debug;
                 break;
             case 'n':

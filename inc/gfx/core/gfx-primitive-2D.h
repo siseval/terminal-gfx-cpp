@@ -60,6 +60,9 @@ public:
     inline double get_rotation() const { return rotation; }
     inline void set_rotation(const double r) { rotation = r; }
 
+    inline double get_rotation_degrees() const { return rotation * 180 / M_PI; }
+    inline void set_rotation_degrees(const double r) { rotation = r * M_PI / 180; }
+
     inline double get_line_thickness() const { return line_thickness; }
     inline void set_line_thickness(const double thickness) { line_thickness = thickness; }
 

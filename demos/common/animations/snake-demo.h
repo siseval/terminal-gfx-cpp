@@ -31,6 +31,9 @@ private:
     void move_head(const double dt);
     void move_segments();
 
+    void die();
+    void do_dead();
+
     void remove_food();
     void add_food();
     gfx::math::Vec2d closest_food();
@@ -39,6 +42,11 @@ private:
     void add_segment();
     void remove_segment();
     void update_scale(const double s);
+
+    bool control = false;
+    bool dead = true;
+    double explode_speed = 100;
+    double dead_time = 0.0;
 
     double delta_time = 0.0;
 

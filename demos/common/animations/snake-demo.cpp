@@ -42,15 +42,21 @@ void SnakeDemo::init()
     target_marker = renderer->create_circle(head_target, 1.0, Color4(1.0, 0.0, 0.0, 1.0), 1.0);
     target_marker->set_fill(true);
     renderer->add_item(target_marker);
+
+    dead = false;
 }
 
 void SnakeDemo::move_target(const double dt)
 {
     head_target += target_direction * target_speed  * dt;
-    target_direction += Vec2d {
-        (static_cast<double>(rand()) / RAND_MAX - 0.5) * 0.1, 
-        (static_cast<double>(rand()) / RAND_MAX - 0.5) * 0.1
-    };
+
+    if (!control)
+    {
+        target_direction += Vec2d {
+            (static_cast<double>(rand()) / RAND_MAX - 0.5) * 0.1, 
+            (static_cast<double>(rand()) / RAND_MAX - 0.5) * 0.1
+        };
+    }
     target_direction = target_direction.normalize();
     if (head_target.x < target_bounds_margin.x || 
         head_target.x > get_resolution().x - target_bounds_margin.x)
@@ -81,6 +87,9 @@ void SnakeDemo::move_head(const double dt)
         {
             renderer->remove_item(food[i]);
             food.erase(food.begin() + i);
+            update_scale(scale + 0.02);
+            add_segment();
+            num_segments += 1;
         }
     }
 }
@@ -97,14 +106,52 @@ void SnakeDemo::move_segments()
     }
 }
 
+void SnakeDemo::die()
+{
+    dead_time = 0.0;
+    head->set_rotation_degrees(Vec2d::from_angle(std::rand() % 360).angle_degrees());
+    for (int i = 0; i < segments.size(); i++)
+    {
+        segments[i]->set_rotation_degrees(Vec2d::from_angle(std::rand() % 360).angle_degrees());
+    }
+    dead = true;
+}
+
+void SnakeDemo::do_dead()
+{
+    head->set_pos(head->get_pos() + Vec2d::from_angle(head->get_rotation(), explode_speed * delta_time));
+    head->set_scale(Vec2d::lerp(Vec2d::create(scale), { 0.001, 0.001 }, dead_time * 3));
+    if (head->get_scale().x <= 0.01)
+    {
+        head->set_visible(false);
+    }
+    for (int i = 0; i < segments.size(); i++)
+    {
+        segments[i]->set_pos(segments[i]->get_pos() + Vec2d::from_angle(segments[i]->get_rotation(), explode_speed * delta_time));
+        segments[i]->set_scale(Vec2d::lerp(Vec2d::create(scale), { 0.001, 0.001 }, dead_time * 3));
+        if (segments[i]->get_scale().x <= 0.01)
+        {
+            segments[i]->set_visible(false);
+        }
+    }
+    dead_time += delta_time;
+}
+
 void SnakeDemo::render_frame()
 {
     double t0 = static_cast<double>(clock());
     delta_time = last_frame_time / CLOCKS_PER_SEC;
 
-    move_target(delta_time);
-    move_head(delta_time);
-    move_segments();
+    if (dead)
+    {
+        do_dead();
+    }
+    else 
+    {
+        move_target(delta_time);
+        move_head(delta_time);
+        move_segments();
+    }
 
     renderer->draw_frame();
     last_frame_time = static_cast<double>(clock()) - t0;
@@ -173,7 +220,8 @@ void SnakeDemo::add_segment()
     segment->set_anchor({ 0.5, 0.5 });
     if (!segments.empty())
     {
-        segment->set_pos(segments.back()->get_pos());
+        Vec2d pos = dead ? static_cast<Vec2d>(renderer->get_resolution() / 2.0) : segments.back()->get_pos();
+        segment->set_pos(pos);
         segment->set_rotation(segments.back()->get_rotation());
     }
     segment->set_scale(scale);
@@ -231,6 +279,32 @@ void SnakeDemo::handle_input(const char input)
             {
                 update_scale(scale - 0.1);
             }
+            break;
+
+        case 'w':
+            target_direction = { 0, -1 };
+            break;
+        case 's':
+            target_direction = { 0, 1 };
+            break;
+        case 'a':
+            target_direction = { -1, 0 };
+            break;
+        case 'd':
+            target_direction = { 1, 0 };
+            break;
+
+        case 'm':
+            if (dead)
+            {
+                init();
+                break;
+            }
+            die();
+            break;
+
+        case 'c':
+            control = !control;
             break;
 
         case 'f':

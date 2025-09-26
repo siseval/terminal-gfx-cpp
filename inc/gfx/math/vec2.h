@@ -52,6 +52,12 @@ public:
         return Vec2<T>{ static_cast<T>(std::cos(angle) * length), static_cast<T>(std::sin(angle) * length) }; 
     }
 
+    static Vec2<T> lerp(const Vec2<T> &a, const Vec2<T> &b, double t) 
+    { 
+        t = t < 0 ? 0 : (t > 1 ? 1 : t);
+        return Vec2<T>{ static_cast<T>(a.x + (b.x - a.x) * t), static_cast<T>(a.y + (b.y - a.y) * t) }; 
+    }
+
     Vec2<T> rotate_towards(Vec2<T> &target, double max_angle) 
     { 
         double current_angle = angle();
@@ -75,6 +81,11 @@ public:
     double angle() 
     { 
         return std::atan2(y, x);
+    }
+
+    double angle_degrees() 
+    { 
+        return angle() * 180.0 / M_PI; 
     }
 
     Vec2<double> normalize() 
