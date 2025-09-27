@@ -1,3 +1,4 @@
+#include <numbers>
 #include <gfx/primitives/polyline-2D.h>
 
 namespace gfx::primitives
@@ -61,7 +62,7 @@ void Polyline2D::rasterize_rounded_corners(std::shared_ptr<RenderSurface> surfac
         double angle_diff = angle1 - angle0;
         if (angle_diff <= 0) 
         {
-            angle_diff += 2 * M_PI;
+            angle_diff += 2 * std::numbers::pi;
         }
 
         double angle_overlap = 0.1;

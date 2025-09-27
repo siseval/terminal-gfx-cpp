@@ -1,6 +1,7 @@
 #ifndef VEC2_H
 #define VEC2_H
 
+#include <numbers>
 #include <cstdint>
 #include <cmath>
 #include <functional>
@@ -64,8 +65,8 @@ public:
         double target_angle = target.angle();
         double angle_diff = target_angle - current_angle;
 
-        if (angle_diff > M_PI) angle_diff -= 2 * M_PI;
-        if (angle_diff < -M_PI) angle_diff += 2 * M_PI;
+        if (angle_diff > std::numbers::pi) angle_diff -= 2 * std::numbers::pi;
+        if (angle_diff < -std::numbers::pi) angle_diff += 2 * std::numbers::pi;
 
         if (std::fabs(angle_diff) <= max_angle) 
         {
@@ -85,7 +86,7 @@ public:
 
     double angle_degrees() 
     { 
-        return angle() * 180.0 / M_PI; 
+        return angle() * 180.0 / std::numbers::pi;
     }
 
     Vec2<double> normalize() 

@@ -1,0 +1,93 @@
+#include <demos/common/core/demo-player.h>
+#include <demos/common/animations/star/star-demo.h>
+#include <demos/common/animations/snake/snake-demo.h>
+#include <demos/common/animations/fireworks/fireworks-demo.h>
+
+namespace demos::common::core
+{
+
+using namespace gfx::core;
+using namespace gfx::core::types;
+using namespace gfx::primitives;
+using namespace gfx::math;
+using namespace demos::common::animations;
+using namespace demos::common;
+
+void DemoPlayer::init()
+{
+    demos.push_back(std::make_shared<star::StarDemo>(renderer));
+    demos.push_back(std::make_shared<snake::SnakeDemo>(renderer));
+    demos.push_back(std::make_shared<fireworks::FireworksDemo>(renderer));
+
+    demos[current_demo]->init();
+}
+
+void DemoPlayer::run()
+{
+    while (running)
+    {
+        demos[current_demo]->render_frame();
+
+        if (show_info)
+        {
+            draw_info();
+        }
+
+        char input = get_input();
+        handle_input(input);
+        demos[current_demo]->handle_input(input);
+    }
+}
+
+void DemoPlayer::handle_input(const char input)
+{
+    switch (input)
+    {
+        case 'q':
+            running = false;
+            break;
+        case 'u':
+            show_info = !show_info;
+            break;
+        case '3':
+            show_debug = !show_debug;
+            break;
+        case 'n':
+            cycle_demo(1);
+            break;
+        case 'p':
+            cycle_demo(-1);
+            break;
+    }
+
+}
+
+std::vector<std::string> DemoPlayer::get_info()
+{
+    std::vector<std::string> info = demos[current_demo]->info_text();
+
+    if (show_debug)
+    {
+        info.push_back("");
+        for (const auto &line : demos[current_demo]->debug_text())
+        {
+            info.push_back(line);
+        }
+    }
+
+    info.push_back("");
+    info.push_back("[p/n] to cycle (" + std::to_string(current_demo + 1) + "/" + std::to_string(demos.size()) + ")");
+    info.push_back("[q] to quit");
+
+    return info;
+}
+
+void DemoPlayer::cycle_demo(const int direction)
+{
+    demos[current_demo]->end();
+    current_demo = (current_demo + direction + demos.size()) % demos.size();
+    renderer->clear_items();
+    demos[current_demo]->init();
+}
+
+}

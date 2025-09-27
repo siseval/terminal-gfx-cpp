@@ -15,6 +15,6 @@ target_link_libraries(gfx INTERFACE
 )
 
 target_include_directories(gfx INTERFACE
-        ${INCLUDE_DIR}
+    ${INCLUDE_DIR}
 )
 

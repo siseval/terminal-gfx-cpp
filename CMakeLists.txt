@@ -14,9 +14,4 @@ option(BUILD_DEMOS "Build demo applications" ON)
 
 set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
-add_subdirectory(src/gfx)
-
-if(BUILD_DEMOS)
-add_subdirectory(demos)
-endif()
-
+add_subdirectory(src)
