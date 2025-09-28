@@ -117,9 +117,9 @@ void SnakeDemo::die()
     dead = true;
 }
 
-void SnakeDemo::do_dead()
+void SnakeDemo::do_dead(const double dt)
 {
-    head->set_pos(head->get_pos() + Vec2d::from_angle(head->get_rotation(), explode_speed * delta_time));
+    head->set_pos(head->get_pos() + Vec2d::from_angle(head->get_rotation(), explode_speed * dt));
     head->set_scale(Vec2d::lerp(Vec2d::create(scale), { 0.001, 0.001 }, dead_time * 3));
     if (head->get_scale().x <= 0.01)
     {
@@ -127,14 +127,14 @@ void SnakeDemo::do_dead()
     }
     for (int i = 0; i < segments.size(); i++)
     {
-        segments[i]->set_pos(segments[i]->get_pos() + Vec2d::from_angle(segments[i]->get_rotation(), explode_speed * delta_time));
+        segments[i]->set_pos(segments[i]->get_pos() + Vec2d::from_angle(segments[i]->get_rotation(), explode_speed * dt));
         segments[i]->set_scale(Vec2d::lerp(Vec2d::create(scale), { 0.001, 0.001 }, dead_time * 3));
         if (segments[i]->get_scale().x <= 0.01)
         {
             segments[i]->set_visible(false);
         }
     }
-    dead_time += delta_time;
+    dead_time += dt;
 }
 
 void SnakeDemo::render_frame()
@@ -144,7 +144,7 @@ void SnakeDemo::render_frame()
 
     if (dead)
     {
-        do_dead();
+        do_dead(dt_sec);
     }
     else 
     {

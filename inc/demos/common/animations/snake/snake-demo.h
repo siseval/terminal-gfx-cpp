@@ -32,7 +32,7 @@ private:
     void move_segments();
 
     void die();
-    void do_dead();
+    void do_dead(const double dt);
 
     void remove_food();
     void add_food();

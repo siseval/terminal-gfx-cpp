@@ -48,12 +48,13 @@ void FireworksDemo::spawn_firework()
 {
     Vec2d position = { 
         get_resolution().x * margins.x + static_cast<double>(rand()) / (static_cast<double>(RAND_MAX / (get_resolution().x * (1.0 - 2.0 * margins.x)))),
-        get_resolution().y * (1.0 - margins.y)
+        static_cast<double>(get_resolution().y)
     };
-    Vec2d velocity = Vec2d { 0.0, - (0.5 + static_cast<double>(rand()) / (static_cast<double>(RAND_MAX / (1.0)))) } * 20;
-    Color4 color = { rand() % 256, rand() % 256, rand() % 256 };
+    double angle = (90.0 + (static_cast<double>(rand() % static_cast<int>(angle_variation * 2)) - angle_variation)) * (std::numbers::pi / 180.0);
+    Vec2d velocity = Vec2d::from_angle(angle, -((firework_speed / 4) + (static_cast<double>(rand() % 1000)) / 1000) * (firework_speed));
 
-    fireworks.emplace_back(renderer, position, velocity, color);
+    std::vector<Color4> colors = color_combinations[rand() % color_combinations.size()];
+    fireworks.emplace_back(renderer, position, velocity, colors);
 }
 
 void FireworksDemo::handle_input(const char input)
