@@ -7,7 +7,7 @@
 namespace demos::common::interactive
 {
 
-class InteractiveDemo : public GfxDemo
+class InteractiveDemo : public demos::common::core::GfxDemo
 {
 
 public:

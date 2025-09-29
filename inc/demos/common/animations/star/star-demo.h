@@ -7,7 +7,7 @@
 namespace demos::common::animations::star
 {
 
-class StarDemo : public GfxDemo
+class StarDemo : public demos::common::core::GfxDemo
 {
 
 public:

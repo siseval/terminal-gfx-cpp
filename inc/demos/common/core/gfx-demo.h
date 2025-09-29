@@ -4,7 +4,7 @@
 #include <string>
 #include <gfx/core/gfx-render-2D.h>
 
-namespace demos::common
+namespace demos::common::core
 {
 
 class GfxDemo
@@ -30,7 +30,7 @@ public:
 
     inline double get_fps() const 
     { 
-        return CLOCKS_PER_SEC / delta_time; 
+        return 1000000 / delta_us; 
     }
 
     inline std::vector<std::string> info_text()
@@ -46,7 +46,7 @@ public:
 protected:
 
     std::shared_ptr<gfx::core::GfxRender2D> renderer;
-    double delta_time = 0.0;
+    double delta_us = 0.0;
     double speed = 1.0;
 };
 

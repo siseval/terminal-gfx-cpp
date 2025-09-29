@@ -7,7 +7,7 @@
 namespace demos::common::animations::snake
 {
 
-class SnakeDemo : public GfxDemo
+class SnakeDemo : public demos::common::core::GfxDemo
 {
 
 public:
@@ -22,7 +22,7 @@ public:
 
     virtual std::vector<std::string> debug_text() override
     {
-        return { "dt: " + std::to_string(delta_time / CLOCKS_PER_SEC) };
+        return { "dt: " + std::to_string(delta_us / CLOCKS_PER_SEC) };
     }
 
 private:
@@ -54,24 +54,25 @@ private:
     double scale = 1.0;
 
     double segment_length = 2.0;
-    double segment_width = 1.5;
+    double segment_width = 1.0;
     double segment_spacing = 1.0;
 
     gfx::math::Vec2d head_target;
     gfx::math::Vec2d head_dir;
-    gfx::math::Vec2d head_dimensions = { 5, 2.5 };
+    gfx::math::Vec2d head_dimensions { 5, 2.5 };
 
     double speed = 30;
     double turn_speed = 5;
 
     double target_speed = 30;
     gfx::math::Vec2d target_direction;
-    gfx::math::Vec2d target_bounds_margin = { 10, 10 };
+    gfx::math::Vec2d target_bounds_margin;
     bool target_visible = false;
 
     double food_radius = 0.5;
     std::vector<std::shared_ptr<gfx::primitives::Circle2D>> food;
 
+    std::shared_ptr<gfx::primitives::Polyline2D> tongue;
     std::shared_ptr<gfx::primitives::Polyline2D> head;
     std::vector<std::shared_ptr<gfx::primitives::Ellipse2D>> segments;
     std::shared_ptr<gfx::primitives::Circle2D> target_marker;

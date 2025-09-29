@@ -9,7 +9,7 @@ using namespace gfx::math;
 
 Box2d Ellipse2D::get_relative_extent() const
 {
-    return { { 0, 0 }, { radius * 2 } };
+    return Box2d { { 0, 0 }, { radius * 2 } };
 }
 
 
@@ -20,19 +20,19 @@ void Ellipse2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x
         return;
     }
 
-    double line_extent = line_thickness / 2.0;
-    Box2d AABB = get_axis_aligned_bounding_box(transform);
-    Matrix3x3d inverse_transform = utils::invert_affine(transform);
+    double line_extent { line_thickness / 2.0 };
+    Box2d AABB { get_axis_aligned_bounding_box(transform) };
+    Matrix3x3d inverse_transform { utils::invert_affine(transform) };
     for (int y = AABB.min.y; y <= AABB.max.y; y++)
     {
         for (int x = AABB.min.x; x <= AABB.max.x; x++)
         {
-            Vec2d pos = utils::transform_point(Vec2d { static_cast<double>(x) , static_cast<double>(y) }, inverse_transform) - radius;
-            Vec2d r_outer = radius + Vec2d::create(line_extent);
-            Vec2d r_inner = radius - Vec2d::create(line_extent);
+            Vec2d pos { utils::transform_point(Vec2d { static_cast<double>(x) , static_cast<double>(y) }, inverse_transform) - radius };
+            Vec2d r_outer { radius + Vec2d(line_extent) };
+            Vec2d r_inner { radius - Vec2d(line_extent) };
 
-            double sdf_outer = (pos.x * pos.x) / (r_outer.x * r_outer.x) + (pos.y * pos.y) / (r_outer.y * r_outer.y);
-            double sdf_inner = (pos.x * pos.x) / (r_inner.x * r_inner.x) + (pos.y * pos.y) / (r_inner.y * r_inner.y);
+            double sdf_outer { (pos.x * pos.x) / (r_outer.x * r_outer.x) + (pos.y * pos.y) / (r_outer.y * r_outer.y) };
+            double sdf_inner { (pos.x * pos.x) / (r_inner.x * r_inner.x) + (pos.y * pos.y) / (r_inner.y * r_inner.y) };
 
             if (sdf_outer <= 1.0 && (get_fill() || sdf_inner >= 1.0))
             {
@@ -52,7 +52,7 @@ void Ellipse2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x
 //     for (int i = 0; i < SEGMENTS; ++i)
 //     {
 //         double progress = static_cast<double>(i) / static_cast<double>(SEGMENTS);
-//         double theta = 2.0 * M_PI * progress;
+//         double theta = 2.0 * std::numbers::pi * progress;
 //
 //         double outer_x = (radius.x + line_extent) * std::cos(theta) + radius.x;
 //         double outer_y = (radius.y + line_extent) * std::sin(theta) + radius.y;

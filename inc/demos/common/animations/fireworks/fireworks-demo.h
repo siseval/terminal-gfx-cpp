@@ -8,7 +8,7 @@
 namespace demos::common::animations::fireworks
 {
 
-class FireworksDemo : public GfxDemo
+class FireworksDemo : public demos::common::core::GfxDemo
 {
 
 public:
@@ -24,7 +24,7 @@ public:
     virtual std::vector<std::string> debug_text() override
     {
         return { 
-            "dt: " + std::to_string(delta_time / CLOCKS_PER_SEC),
+            "dt: " + std::to_string(delta_us / 1000),
             "num fireworks: " + std::to_string(fireworks.size()),
             "velocity: " + std::to_string(fireworks.empty() ? 0.0 : fireworks.back().velocity.y)
         };
@@ -34,14 +34,18 @@ private:
 
     void spawn_firework();
 
+    Firework::firework_options options;
+
     double firework_speed = 10.0;
     double angle_variation = 8.0;
+
     int max_fireworks = 10;
-    double last_spawn_time = 0.0;
-    gfx::math::Vec2d margins = { 0.1, 0.1 };
+    double last_spawn_time_ms = 0.0;
+    double spawn_interval_ms = 500.0;
+    gfx::math::Vec2d spawn_margins;
     std::vector<Firework> fireworks;
 
-    std::vector<std::vector<gfx::core::types::Color4>> color_combinations = {
+    std::vector<std::vector<gfx::core::types::Color4>> color_combinations {
         { { 240, 40, 40 }, { 255, 90, 90 } },
         { { 240, 140, 0 }, { 255, 210, 0 } },
         { { 255, 255, 0 }, { 220, 220, 0 } },

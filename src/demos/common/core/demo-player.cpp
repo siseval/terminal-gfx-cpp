@@ -15,9 +15,9 @@ using namespace demos::common;
 
 void DemoPlayer::init()
 {
-    demos.push_back(std::make_shared<star::StarDemo>(renderer));
-    demos.push_back(std::make_shared<snake::SnakeDemo>(renderer));
-    demos.push_back(std::make_shared<fireworks::FireworksDemo>(renderer));
+    demos.emplace_back(std::make_shared<star::StarDemo>(renderer));
+    demos.emplace_back(std::make_shared<snake::SnakeDemo>(renderer));
+    demos.emplace_back(std::make_shared<fireworks::FireworksDemo>(renderer));
 
     demos[current_demo]->init();
 }
@@ -26,6 +26,11 @@ void DemoPlayer::run()
 {
     while (running)
     {
+        if (screen_size_changed())
+        {
+            resize(get_screen_size());
+        }
+
         demos[current_demo]->render_frame();
 
         if (show_info)
@@ -33,10 +38,16 @@ void DemoPlayer::run()
             draw_info();
         }
 
-        char input = get_input();
+        char input { get_input() };
         handle_input(input);
         demos[current_demo]->handle_input(input);
     }
+}
+
+void DemoPlayer::resize(const gfx::math::Vec2i new_resolution)
+{
+    renderer->set_resolution(new_resolution);
+    demos[current_demo]->init();
 }
 
 void DemoPlayer::handle_input(const char input)
@@ -64,7 +75,7 @@ void DemoPlayer::handle_input(const char input)
 
 std::vector<std::string> DemoPlayer::get_info()
 {
-    std::vector<std::string> info = demos[current_demo]->info_text();
+    std::vector<std::string> info { demos[current_demo]->info_text() };
 
     if (show_debug)
     {

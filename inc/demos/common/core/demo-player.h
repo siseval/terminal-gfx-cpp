@@ -17,11 +17,16 @@ public:
     void init();
     void run();
 
+    void resize(const gfx::math::Vec2i new_resolution);
+    bool screen_size_changed() { return get_screen_size() != renderer->get_render_surface()->get_resolution(); }
+
 protected:
 
     void cycle_demo(const int direction);
     void handle_input(const char input);
     std::vector<std::string> get_info();
+
+    virtual gfx::math::Vec2i get_screen_size() = 0;
 
     virtual char get_input() = 0;
     virtual void draw_info() = 0;

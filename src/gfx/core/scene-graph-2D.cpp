@@ -6,7 +6,7 @@ namespace gfx::core
 
 void SceneGraph2D::add_item(const std::shared_ptr<GfxPrimitive2D> item, const std::shared_ptr<GfxPrimitive2D> parent)
 {
-    auto new_node = std::make_shared<SceneNode2D>(item);
+    auto new_node { std::make_shared<SceneNode2D>(item) };
     if (nodes.contains(new_node->get_id()))
     {
         return;
@@ -15,7 +15,7 @@ void SceneGraph2D::add_item(const std::shared_ptr<GfxPrimitive2D> item, const st
 
     if (parent != nullptr && nodes.contains(parent->get_id()))
     {
-        auto parent_node = nodes[parent->get_id()];
+        auto parent_node { nodes[parent->get_id()] };
         new_node->parent = parent_node;
         parent_node->children.push_back(new_node);
         return;
@@ -41,7 +41,7 @@ void SceneGraph2D::remove_item(const std::shared_ptr<GfxPrimitive2D> item)
     stack.push(nodes[item->get_id()]);
     while (!stack.empty())
     {
-        auto node = stack.top();
+        auto node { stack.top() };
         stack.pop();
 
         for (const auto& child : node->children)

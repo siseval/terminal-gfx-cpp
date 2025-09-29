@@ -18,7 +18,7 @@ void run()
     init();
     set_bold(true);
 
-    auto surface = std::make_shared<CursesRenderSurface>(get_screen_size() * 2);
+    auto surface { std::make_shared<CursesRenderSurface>(get_screen_size() * 2) };
     InteractiveDemo demo(std::make_shared<gfx::core::GfxRender2D>(surface, Vec2d { 2, 1 }));
 
     bool running = true;
@@ -28,14 +28,14 @@ void run()
         clear();
         demo.render_frame();
         set_color(default_color::WHITE);
-        std::vector<std::string> info = demo.info_text();
-        for (int i = 0; i < info.size(); i++)
+        std::vector<std::string> info { demo.info_text() };
+        for (int i = 0; i < info.size(); ++i)
         {
             add_str({ 0, i }, info[i]);
         }
         refresh();
 
-        char input = get_input();
+        char input { get_input() };
         if (input == 'q')
         {
             running = false;

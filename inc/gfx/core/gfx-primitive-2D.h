@@ -81,8 +81,8 @@ protected:
 
     gfx::math::Box2d bounds;
     gfx::math::Vec2d position;
-    gfx::math::Vec2d anchor = { 0.0, 0.0 };
-    gfx::math::Vec2d scale = { 1.0, 1.0 };
+    gfx::math::Vec2d anchor { 0.0, 0.0 };
+    gfx::math::Vec2d scale { 1.0, 1.0 };
 
     double line_thickness = 1.0;
     bool fill = false;

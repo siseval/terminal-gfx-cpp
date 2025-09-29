@@ -14,8 +14,8 @@ void GfxRender2D::draw_frame() const
 {
     surface->clear_frame_buffer();
 
-    std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, Matrix3x3d>> draw_queue = get_draw_queue();
-    for (auto& [primitive, transform] : draw_queue)
+    std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, Matrix3x3d>> draw_queue { get_draw_queue() };
+    for (const auto& [primitive, transform] : draw_queue)
     {
         if (!primitive->is_visible())
         {
@@ -25,7 +25,7 @@ void GfxRender2D::draw_frame() const
 
         if (primitive->get_draw_aabb())
         {
-            Box2d bounds = primitive->get_axis_aligned_bounding_box(transform);
+            Box2d bounds { primitive->get_axis_aligned_bounding_box(transform) };
             utils::rasterize_aabb(surface, bounds, GFX_BOUNDS_COLOR);
         }
         if (primitive->get_draw_obb())
@@ -40,6 +40,7 @@ void GfxRender2D::draw_frame() const
         }
     }
 
+    surface->clear();
     surface->present();
 }
 
@@ -52,7 +53,7 @@ std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, Matrix3x3d>> GfxRender2D:
 
     while (!stack.empty())
     {
-        auto [node, parent_transform] = stack.top();
+        auto [node, parent_transform] { stack.top() };
         stack.pop();
 
         if (node->primitive)
@@ -79,13 +80,13 @@ std::vector<std::pair<std::shared_ptr<GfxPrimitive2D>, Matrix3x3d>> GfxRender2D:
 
 gfx::math::Matrix3x3d GfxRender2D::get_global_transform() const
 {
-    Matrix3x3d scale = utils::scale(viewport_scaling);
+    Matrix3x3d scale { utils::scale(viewport_scaling) };
     return scale;
 }
 
 std::shared_ptr<Circle2D> GfxRender2D::create_circle(const Vec2d position, const double radius, const Color4 color, const double line_thickness) const
 {
-    auto circle = std::make_shared<Circle2D>();
+    auto circle { std::make_shared<Circle2D>() };
 
     circle->set_pos(position);
     circle->set_radius(radius);
@@ -97,7 +98,7 @@ std::shared_ptr<Circle2D> GfxRender2D::create_circle(const Vec2d position, const
 
 std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(const Vec2d position, const Vec2d radius, const Color4 color, const double line_thickness) const
 {
-    auto ellipse = std::make_shared<Ellipse2D>();
+    auto ellipse { std::make_shared<Ellipse2D>() };
 
     ellipse->set_pos(position);
     ellipse->set_radius(radius);
@@ -109,7 +110,7 @@ std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(const Vec2d position, con
 
 std::shared_ptr<Polyline2D> GfxRender2D::create_polyline(const Vec2d position, const std::vector<Vec2d> &points, const Color4 color, const double line_thickness) const
 {
-    auto polyline = std::make_shared<Polyline2D>();
+    auto polyline { std::make_shared<Polyline2D>() };
 
     polyline->set_pos(position);
     polyline->set_points(points);

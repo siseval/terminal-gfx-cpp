@@ -1,11 +1,12 @@
-#include <numbers>
 #include <demos/common/animations/fireworks/firework.h>
+#include <demos/common/core/demo-utils.h>
 
 namespace demos::common::animations::fireworks
 {
 
 using namespace gfx::core::types;
 using namespace gfx::math;
+using namespace demos::common::core;
 
 void Firework::process(const double dt)
 {
@@ -29,17 +30,18 @@ void Firework::explode()
     state = State::Exploding;
     renderer->remove_item(shape);
 
-    int num_particles = max_particles / 2 + rand() % (max_particles / 2);
+    int num_particles { utils::random_int(max_particles / 2, max_particles) };
     for (int i = 0; i < num_particles; ++i)
     {
-        double angle = (std::rand() % 360) * (std::numbers::pi / 180.0);
-        double speed = 0.5 + 10 * static_cast<double>(rand()) / (static_cast<double>(RAND_MAX / (2.0 - 0.5)));
-        Vec2d velocity = Vec2d::from_angle(angle, speed) - Vec2d { 0, 5 };
-        Vec2d size = Vec2d::create(static_cast<double>(std::rand() % 1000) / 1000 * particle_size);
+        double angle { utils::random_double(0, 360) };
+        double speed { utils::random_double(particle_speed * 0.1, particle_speed * 1.25) };
+        Vec2d velocity { Vec2d::from_angle_degrees(angle, speed) - Vec2d { 0, particle_speed / 10 } };
 
-        double lifespan = 1.0 + static_cast<double>(rand()) / (static_cast<double>(RAND_MAX / (3.0 - 1.0)));
-        std::vector<Color4> color = gradient ? colors : std::vector<Color4> { colors[rand() % colors.size()] };
-        particles.emplace_back(renderer, position, velocity, size, color, lifespan);
+        double size { utils::random_double(particle_size * 0.5, particle_size * 1.5) };
+        double lifespan { utils::random_double(particle_lifespan_ms * 0.75, particle_lifespan_ms * 1.25) };
+
+        std::vector<Color4> color { colors[rand() % colors.size()] };
+        particles.emplace_back(renderer, position, velocity, Vec2d { size * particle_x_factor, size / particle_x_factor }, color, lifespan);
     }
 }
 
@@ -72,11 +74,11 @@ void Firework::do_exploding(const double dt)
     {
         particle.process(dt);
     }
-    double time_now = clock() / static_cast<double>(CLOCKS_PER_SEC);
 
     particles.erase(std::remove_if(particles.begin(), particles.end(), 
                                    [](const Particle& p) { return p.done; }),
                     particles.end());
+
     smoke_particles.erase(std::remove_if(smoke_particles.begin(), smoke_particles.end(), 
                                           [](const Particle& p) { return p.done; }),
                           smoke_particles.end());
@@ -89,15 +91,17 @@ void Firework::do_exploding(const double dt)
 
 void Firework::do_smoke(const double dt)
 {
-    if (static_cast<double>(std::clock()) / CLOCKS_PER_SEC - last_smoke_time > smoke_trail_interval_sec)
+    if (utils::time_ms() - last_smoke_time_ms > smoke_trail_interval_ms)
     {
-        double angle = -velocity.angle() + (std::rand() % 30) * (std::numbers::pi / 180.0);
-        double speed = (smoke_speed / 2) + (static_cast<double>(std::rand() % 1000) / 1000) * smoke_speed / 2;
-        Vec2d velocity = Vec2d::from_angle(angle, speed);
-        Vec2d size = Vec2d::create(smoke_size * (0.5 + static_cast<double>(std::rand() % 1000) / 2000.0));
-        double lifespan = 1.0 + static_cast<double>(rand()) / (static_cast<double>(RAND_MAX / (3.0 - 1.0)));
-        smoke_particles.emplace_back(renderer, position, velocity, size, std::vector<Color4> { smoke_color }, lifespan);
-        last_smoke_time = static_cast<double>(std::clock()) / CLOCKS_PER_SEC;
+        double angle { utils::random_double(-smoke_angle_variation_degrees, smoke_angle_variation_degrees) + 90 };
+        double speed { utils::random_double(smoke_speed * 0.75, smoke_speed * 1.25) };
+        Vec2d velocity { Vec2d::from_angle_degrees(angle, speed) };
+
+        double size { utils::random_double(smoke_size * 0.5, smoke_size * 1.5) };
+        double lifespan { utils::random_double(particle_lifespan_ms, particle_lifespan_ms * 2.0) };
+
+        smoke_particles.emplace_back(renderer, position + Vec2d { 0, size }, velocity, Vec2d { size * smoke_x_factor, size / smoke_x_factor }, std::vector<Color4> { smoke_color }, lifespan);
+        last_smoke_time_ms = utils::time_ms();
     }
 
 }

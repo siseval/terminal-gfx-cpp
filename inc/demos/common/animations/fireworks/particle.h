@@ -5,6 +5,7 @@
 #include <gfx/primitives/ellipse-2D.h>
 #include <gfx/math/vec2.h>
 #include <gfx/core/types/color4.h>
+#include <demos/common/core/demo-utils.h>
 
 namespace demos::common::animations::fireworks
 {
@@ -15,12 +16,12 @@ class Particle
 public:
 
     Particle(std::shared_ptr<gfx::core::GfxRender2D> renderer, const gfx::math::Vec2d position, const gfx::math::Vec2d velocity, const gfx::math::Vec2d size, const std::vector<gfx::core::types::Color4> &colors, const double lifespan)
-    : renderer(renderer), position(position), velocity(velocity), size(size), colors(colors), lifespan(lifespan)
+    : renderer(renderer), position(position), velocity(velocity), size(size), colors(colors), lifespan_ms(lifespan)
     {
         shape = renderer->create_ellipse(position, size, colors[0]);
         shape->set_fill(true);
         renderer->add_item(shape);
-        creation_time = clock() / static_cast<double>(CLOCKS_PER_SEC);
+        creation_time_ms = demos::common::core::utils::time_ms();
     }
 
     void process(const double dt);
@@ -38,8 +39,8 @@ private:
     gfx::math::Vec2d velocity;
     std::vector<gfx::core::types::Color4> colors;
 
-    double lifespan = 0.0;
-    double creation_time = 0.0;
+    double lifespan_ms = 0.0;
+    double creation_time_ms = 0.0;
 
 };
 

@@ -28,6 +28,7 @@ public:
 
 private:
 
+    void render_multithreaded();
     void set_color(const gfx::core::types::Color4 color);
     uint8_t add_color(const gfx::core::types::Color4 color);
 
