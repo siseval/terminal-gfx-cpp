@@ -39,6 +39,17 @@ inline double time_us()
         std::chrono::steady_clock::now().time_since_epoch()).count());
 }
 
+inline double lerp(double a, double b, double t)
+{
+    t = t < 0 ? 0 : (t > 1 ? 1 : t);
+    return a + (b - a) * t;
+}
+
+inline double inv_lerp(int a, int b, double v)
+{
+    return (v - a) / (b - a);
+}
+
 }
 
 #endif // DEMO_UTILS_H

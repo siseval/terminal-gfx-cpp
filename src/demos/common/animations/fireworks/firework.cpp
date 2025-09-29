@@ -91,16 +91,19 @@ void Firework::do_exploding(const double dt)
 
 void Firework::do_smoke(const double dt)
 {
-    if (utils::time_ms() - last_smoke_time_ms > smoke_trail_interval_ms)
+    double slowdown = utils::inv_lerp(start_velocity.y, 0, velocity.y);
+    double interval = utils::lerp(smoke_trail_interval_ms, smoke_trail_interval_ms * 3, slowdown);
+    if (utils::time_ms() - last_smoke_time_ms > interval)
     {
-        double angle { utils::random_double(-smoke_angle_variation_degrees, smoke_angle_variation_degrees) + 90 };
+        double angle { velocity.angle_degrees() + utils::random_double(-smoke_angle_variation_degrees, smoke_angle_variation_degrees) };
         double speed { utils::random_double(smoke_speed * 0.75, smoke_speed * 1.25) };
-        Vec2d velocity { Vec2d::from_angle_degrees(angle, speed) };
+        Vec2d velocity { Vec2d::from_angle_degrees(angle, -speed) };
 
-        double size { utils::random_double(smoke_size * 0.5, smoke_size * 1.5) };
+        double avg_size = utils::lerp(smoke_size, smoke_size * 0.1, slowdown);
+        double size { utils::random_double(avg_size * 0.5, avg_size * 1.5) };
         double lifespan { utils::random_double(particle_lifespan_ms, particle_lifespan_ms * 2.0) };
 
-        smoke_particles.emplace_back(renderer, position + Vec2d { 0, size }, velocity, Vec2d { size * smoke_x_factor, size / smoke_x_factor }, std::vector<Color4> { smoke_color }, lifespan);
+        smoke_particles.emplace_back(renderer, position + Vec2d { 0, avg_size }, velocity, Vec2d { avg_size * smoke_x_factor, avg_size / smoke_x_factor }, std::vector<Color4> { smoke_color }, lifespan);
         last_smoke_time_ms = utils::time_ms();
     }
 

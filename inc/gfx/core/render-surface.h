@@ -30,6 +30,8 @@ public:
         }
     }
 
+    virtual void resize(const gfx::math::Vec2i new_resolution) = 0;
+
     inline void set_resolution(const gfx::math::Vec2i new_resolution) { resolution = new_resolution; }
     inline gfx::math::Vec2i get_resolution() const { return resolution; }
 

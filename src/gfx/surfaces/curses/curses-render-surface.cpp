@@ -77,6 +77,12 @@ void CursesRenderSurface::write_pixel(const gfx::math::Vec2i pos, const gfx::cor
         bit_masks[top_in_pixel][left_in_pixel];
 }
 
+void CursesRenderSurface::resize(const gfx::math::Vec2i new_resolution)
+{
+    resolution = new_resolution;
+    frame_buffer->resize((resolution.x * resolution.y / 2), 0);
+}
+
 void CursesRenderSurface::clear_palette()
 {
     palette->clear();

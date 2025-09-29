@@ -43,6 +43,7 @@ public:
         renderer(renderer), 
         position(position), 
         velocity(velocity), 
+        start_velocity(velocity),
         size(options.size),
         max_particles(options.max_particles),
         particle_size(options.particle_size),
@@ -81,6 +82,8 @@ public:
 
         creation_time_ms = demos::common::core::utils::time_ms();
     }
+
+    gfx::math::Vec2d start_velocity;
 
     int max_particles;
     double particle_size;

@@ -26,7 +26,7 @@ void FireworksDemo::init()
 
     options.smoke_size = resolution.x * 0.001;
     options.smoke_speed = firework_speed * 0.4;
-    options.smoke_trail_interval_ms = 50;
+    options.smoke_trail_interval_ms = 25;
 }
 
 void FireworksDemo::render_frame()
