@@ -2,6 +2,7 @@
 #include <demos/common/animations/star/star-demo.h>
 #include <demos/common/animations/snake/snake-demo.h>
 #include <demos/common/animations/fireworks/fireworks-demo.h>
+#include <demos/common/animations/space/space-demo.h>
 
 namespace demos::common::core
 {
@@ -18,12 +19,14 @@ void DemoPlayer::init()
     demos.emplace_back(std::make_shared<star::StarDemo>(renderer));
     demos.emplace_back(std::make_shared<snake::SnakeDemo>(renderer));
     demos.emplace_back(std::make_shared<fireworks::FireworksDemo>(renderer));
+    demos.emplace_back(std::make_shared<space::SpaceDemo>(renderer));
 
     demos[current_demo]->init();
 }
 
 void DemoPlayer::run()
 {
+    double last_frame_timestamp_ms { utils::time_ms() };
     while (running)
     {
         if (screen_size_changed())
@@ -31,7 +34,11 @@ void DemoPlayer::run()
             resize(get_screen_size());
         }
 
-        demos[current_demo]->render_frame();
+        double now_ms { utils::time_ms() };
+        double dt_sec = (now_ms - last_frame_timestamp_ms) / 1000.0;
+
+        demos[current_demo]->render_frame(dt_sec);
+        last_frame_timestamp_ms = now_ms;
 
         if (show_info)
         {

@@ -1,11 +1,9 @@
 #ifndef GFX_PRIMITIVE_2D_H
 #define GFX_PRIMITIVE_2D_H
 
-#include <numbers>
 #include <gfx/core/types/color4.h>
+#include <gfx/core/render-surface.h>
 #include <gfx/utils/uuid.h>
-#include <gfx/utils/rasterize.h>
-#include <gfx/utils/transform.h>
 #include <gfx/math/box2.h>
 #include <gfx/math/matrix.h>
 #include <gfx/math/obb-2D.h>

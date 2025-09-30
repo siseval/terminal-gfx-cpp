@@ -1,4 +1,5 @@
 #include <gfx/core/gfx-primitive-2D.h>
+#include <gfx/utils/transform.h>
 
 namespace gfx::core
 {

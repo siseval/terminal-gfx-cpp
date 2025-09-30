@@ -1,5 +1,7 @@
 #include <numbers>
 #include <gfx/primitives/polyline-2D.h>
+#include <gfx/utils/transform.h>
+#include <gfx/utils/triangulate.h>
 
 namespace gfx::primitives
 {
@@ -19,6 +21,27 @@ Box2d Polyline2D::get_relative_extent() const
     }
 
     return bounds;
+}
+
+void Polyline2D::rasterize_filled_triangle(std::shared_ptr<RenderSurface> surface, const Triangle &triangle) const
+{
+    Box2d bounds {
+        { std::min({triangle.v0.x,triangle.v1.x,triangle.v2.x }), std::min({triangle.v0.y,triangle.v1.y,triangle.v2.y }) },
+        { std::max({triangle.v0.x,triangle.v1.x,triangle.v2.x }), std::max({triangle.v0.y,triangle.v1.y,triangle.v2.y }) }
+    };
+
+    for (int y = bounds.min.y; y <= bounds.max.y; y++)
+    {
+        for (int x = bounds.min.x; x <= bounds.max.x; x++)
+        {
+            Vec2d pos { static_cast<double>(x), static_cast<double>(y) };
+
+            if (triangle.point_inside(pos))
+            {
+                surface->write_pixel(pos.round(), get_color(), get_depth());
+            }
+        }
+    }
 }
 
 void Polyline2D::rasterize_rounded_corner(std::shared_ptr<RenderSurface> surface, const Vec2d pos, const double angle0, const double angle1, const Matrix3x3d &transform) const
@@ -41,7 +64,7 @@ void Polyline2D::rasterize_rounded_corner(std::shared_ptr<RenderSurface> surface
 
     for (int i = 0; i < vertices.size() - 1; ++i)
     {
-        utils::rasterize_filled_triangle(surface, { transformed_pos, vertices[i], vertices[i + 1] }, color);
+        rasterize_filled_triangle(surface, { transformed_pos, vertices[i], vertices[i + 1] });
     }
 }
 
@@ -91,8 +114,8 @@ void Polyline2D::rasterize_edge(std::shared_ptr<RenderSurface> surface, const Ve
     v2 = utils::transform_point(v2, transform);
     v3 = utils::transform_point(v3, transform);
 
-    utils::rasterize_filled_triangle(surface, { v0, v1, v2 }, color);
-    utils::rasterize_filled_triangle(surface, { v1, v3, v2 }, color);
+    rasterize_filled_triangle(surface, { v0, v1, v2 });
+    rasterize_filled_triangle(surface, { v1, v3, v2 });
 }
 
 void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3d &transform) const
@@ -116,11 +139,15 @@ void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3
         std::vector<Vec2d> transformed_points { utils::transform_points(points, transform) };
         if (points.size() == 3)
         {
-            utils::rasterize_filled_triangle(surface, { transformed_points[0], transformed_points[1], transformed_points[2] }, get_color());
+            rasterize_filled_triangle(surface, { transformed_points[0], transformed_points[1], transformed_points[2] });
         }
-        else 
+        else
         {
-            utils::rasterize_filled_polygon(surface, transformed_points, get_color(), clockwise_cached);
+            std::vector<Triangle> triangles { utils::triangulate_polygon(transformed_points, clockwise) };
+            for (auto triangle : triangles)
+            {
+                rasterize_filled_triangle(surface, triangle);
+            }
         }
     }
 
@@ -130,7 +157,7 @@ void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3
     }
 }
 
-bool Polyline2D::is_clockwise()
+bool Polyline2D::cache_clockwise()
 {
     double sum = 0.0;
     for (int i = 0; i < points.size(); ++i)
@@ -139,8 +166,8 @@ bool Polyline2D::is_clockwise()
         Vec2d p1 { points[(i + 1) % points.size()] };
         sum += (p1.x - p0.x) * (p1.y + p0.y);
     }
-    clockwise_cached = sum < 0.0;
-    return clockwise_cached;
+    clockwise = sum < 0.0;
+    return clockwise;
 }
 
 

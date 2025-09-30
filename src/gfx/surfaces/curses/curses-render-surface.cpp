@@ -26,7 +26,7 @@ void CursesRenderSurface::present()
                 continue;
             }
 
-            std::string pixel { 
+            std::string_view pixel {
                 pixel_tree[(pixel_value & 0b1000) >> 3]
                 [(pixel_value & 0b0100) >> 2]
                 [(pixel_value & 0b0010) >> 1]
@@ -53,7 +53,7 @@ void CursesRenderSurface::clear_frame_buffer()
     }
 }
 
-void CursesRenderSurface::write_pixel(const gfx::math::Vec2i pos, const gfx::core::types::Color4 color)
+void CursesRenderSurface::write_pixel(const gfx::math::Vec2i pos, const gfx::core::types::Color4 color, const int depth)
 {
     bool left_in_pixel { pos.x % 2 == 0 };
     bool top_in_pixel { pos.y % 2 == 0 };
@@ -68,7 +68,7 @@ void CursesRenderSurface::write_pixel(const gfx::math::Vec2i pos, const gfx::cor
     frame_buffer->at(frame_buffer_index) &= 0x00000000000000FF;
     frame_buffer->at(frame_buffer_index) |= color_mask;
 
-    int8_t bit_masks[2][2] {
+    static constexpr int8_t bit_masks[2][2] {
         { 0b0001, 0b0010 },
         { 0b0100, 0b1000 }
     };

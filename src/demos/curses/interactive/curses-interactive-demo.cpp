@@ -2,6 +2,7 @@
 #include <gfx/surfaces/curses-render-surface.h>
 #include <demos/curses/curses-utils.h>
 #include <demos/common/interactive/interactive-demo.h>
+#include <demos/common/core/demo-utils.h>
 
 namespace demos::curses::interactive
 {
@@ -26,7 +27,7 @@ void run()
     while (running)
     {
         clear();
-        demo.render_frame();
+        demo.render_frame(0);
         set_color(default_color::WHITE);
         std::vector<std::string> info { demo.info_text() };
         for (int i = 0; i < info.size(); ++i)

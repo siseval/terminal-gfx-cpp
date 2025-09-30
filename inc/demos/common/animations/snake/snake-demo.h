@@ -16,13 +16,13 @@ public:
         : GfxDemo(renderer) {}
 
     void init() override;
-    void render_frame() override;
+    void render_frame(const double dt) override;
     void end() override;
     void handle_input(const char input) override;
 
     virtual std::vector<std::string> debug_text() override
     {
-        return { "dt: " + std::to_string(delta_us / CLOCKS_PER_SEC) };
+        return { "dt: " + std::to_string(last_frame_us / CLOCKS_PER_SEC) };
     }
 
 private:

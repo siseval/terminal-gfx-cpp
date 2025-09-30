@@ -16,7 +16,7 @@ public:
         : GfxDemo(renderer) {}
 
     void init() override;
-    void render_frame() override;
+    void render_frame(const double dt) override;
     void end() override;
     void handle_input(const char input) override;
 

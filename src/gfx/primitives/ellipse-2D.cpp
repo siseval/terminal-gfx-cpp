@@ -1,4 +1,5 @@
 #include <gfx/primitives/ellipse-2D.h>
+#include <gfx/utils/transform.h>
 
 namespace gfx::primitives
 {
@@ -36,7 +37,7 @@ void Ellipse2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x
 
             if (sdf_outer <= 1.0 && (get_fill() || sdf_inner >= 1.0))
             {
-                surface->write_pixel({ x, y }, get_color());
+                surface->write_pixel({ x, y }, get_color(), get_depth());
                 continue;
             }
         }

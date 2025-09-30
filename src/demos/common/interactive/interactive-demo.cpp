@@ -13,11 +13,11 @@ void InteractiveDemo::init()
 {
 }
 
-void InteractiveDemo::render_frame()
+void InteractiveDemo::render_frame(const double dt)
 {
     double t0 { static_cast<double>(clock()) };
     renderer->draw_frame();
-    delta_us = static_cast<double>(clock()) - t0;
+    last_frame_us = static_cast<double>(clock()) - t0;
 }
 
 void InteractiveDemo::select(int index)

@@ -16,7 +16,7 @@ public:
         : renderer(renderer) {}
 
     virtual void init() = 0;
-    virtual void render_frame() = 0;
+    virtual void render_frame(const double dt) = 0;
     virtual void handle_input(const char input) = 0;
     virtual void end() = 0;
 
@@ -30,7 +30,7 @@ public:
 
     inline double get_fps() const 
     { 
-        return 1000000 / delta_us; 
+        return 1000000 / last_frame_us; 
     }
 
     inline std::vector<std::string> info_text()
@@ -46,7 +46,7 @@ public:
 protected:
 
     std::shared_ptr<gfx::core::GfxRender2D> renderer;
-    double delta_us = 0.0;
+    double last_frame_us = 0.0;
     double speed = 1.0;
 };
 

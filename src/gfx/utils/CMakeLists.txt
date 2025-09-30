@@ -1,5 +1,4 @@
 set(GFX_UTILS_SOURCES
-    rasterize.cpp
     transform.cpp
     triangulate.cpp
 )

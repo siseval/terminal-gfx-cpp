@@ -17,14 +17,14 @@ public:
     : GfxDemo(renderer) {}
 
     void init() override;
-    void render_frame() override;
+    void render_frame(const double dt) override;
     void end() override;
     void handle_input(const char input) override;
 
     virtual std::vector<std::string> debug_text() override
     {
         return { 
-            "dt: " + std::to_string(delta_us / 1000),
+            "dt: " + std::to_string(last_frame_us / 1000),
             "num fireworks: " + std::to_string(fireworks.size()),
             "velocity: " + std::to_string(fireworks.empty() ? 0.0 : fireworks.back().velocity.y)
         };

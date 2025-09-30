@@ -8,6 +8,7 @@ add_executable(curses-interactive-demo
 
 target_link_libraries(curses-interactive-demo PUBLIC
     demos_common_interactive
+    demos_common_core
     gfx
 )
 

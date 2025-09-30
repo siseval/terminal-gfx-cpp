@@ -1,4 +1,5 @@
 #include <gfx/primitives/circle-2D.h>
+#include <gfx/utils/transform.h>
 
 namespace gfx::primitives
 {
@@ -35,7 +36,7 @@ void Circle2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3
 
             if (distance <= r_outer && (get_fill() || distance >= r_inner))
             {
-                surface->write_pixel({ x, y }, get_color());
+                surface->write_pixel({ x, y }, get_color(), get_depth());
                 continue;
             }
         }

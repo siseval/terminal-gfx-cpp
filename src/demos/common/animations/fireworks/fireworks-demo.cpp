@@ -29,11 +29,10 @@ void FireworksDemo::init()
     options.smoke_trail_interval_ms = 25;
 }
 
-void FireworksDemo::render_frame()
+void FireworksDemo::render_frame(const double dt)
 {
     double t0 { utils::time_us() };
     double time_ms { t0 / 1000.0 };
-    double dt_sec { delta_us / 1000000 };
 
     if (fireworks.size() < max_fireworks && (fireworks.empty() || (time_ms - last_spawn_time_ms) >= spawn_interval_ms))
     {
@@ -44,7 +43,7 @@ void FireworksDemo::render_frame()
     std::vector<int> to_remove;
     for (int i = 0; i < fireworks.size(); ++i)
     {
-        fireworks[i].process(dt_sec);
+        fireworks[i].process(dt);
         auto& firework { fireworks[i] };
         if (firework.state == Firework::State::Done)
         {
@@ -57,7 +56,7 @@ void FireworksDemo::render_frame()
     }
 
     renderer->draw_frame();
-    delta_us = utils::time_us() - t0;
+    last_frame_us = utils::time_us() - t0;
 }
 
 void FireworksDemo::spawn_firework()

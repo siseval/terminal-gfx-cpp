@@ -82,16 +82,19 @@ void SnakeDemo::move_target(const double dt)
         target_direction += Vec2d { utils::random_double(-0.1, 0.1), utils::random_double(-0.1, 0.1) };
     }
     target_direction = target_direction.normalize();
+
     if (head_target.x < target_bounds_margin.x || 
         head_target.x > get_resolution().x - target_bounds_margin.x)
     {
         target_direction.x = -target_direction.x;
     }
+
     if (head_target.y < target_bounds_margin.y || 
         head_target.y > get_resolution().y - target_bounds_margin.y)
     {
         target_direction.y = -target_direction.y;
     }
+
     target_marker->set_pos(head_target);
     target_marker->set_visible(target_visible);
 }
@@ -161,26 +164,25 @@ void SnakeDemo::do_dead(const double dt)
     dead_time += dt;
 }
 
-void SnakeDemo::render_frame()
+void SnakeDemo::render_frame(const double dt)
 {
     double t0 { utils::time_us() };
     double time_ms { t0 / 1000.0 };
-    double dt_sec { delta_us / 1000000 };
 
     tongue->set_scale(std::sin(std::sin(time_ms / 1000) * 8));
     if (dead)
     {
-        do_dead(dt_sec);
+        do_dead(dt);
     }
     else 
     {
-        move_target(dt_sec);
-        move_head(dt_sec);
+        move_target(dt);
+        move_head(dt);
         move_segments();
     }
 
     renderer->draw_frame();
-    delta_us = utils::time_us() - t0;
+    last_frame_us = utils::time_us() - t0;
 }
 
 Vec2d SnakeDemo::closest_food()

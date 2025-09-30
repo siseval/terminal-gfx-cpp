@@ -6,6 +6,7 @@
 #include <gfx/math/box2.h>
 #include <gfx/math/vec2.h>
 #include <gfx/math/matrix.h>
+#include <gfx/math/triangle-2D.h>
 
 namespace gfx::primitives
 {
@@ -18,20 +19,20 @@ public:
     void rasterize(std::shared_ptr<gfx::core::RenderSurface> surface, const math::Matrix3x3d &transform) const override;
     gfx::math::Box2d get_relative_extent() const override;
 
-    bool is_clockwise();
+    bool cache_clockwise();
 
-    inline void add_point(const gfx::math::Vec2d point) { points.push_back(point); is_clockwise(); }
-    inline void add_points(const std::vector<gfx::math::Vec2d> &new_points) { points.insert(points.end(), new_points.begin(), new_points.end()); is_clockwise(); }
+    inline void add_point(const gfx::math::Vec2d point) { points.push_back(point); cache_clockwise(); }
+    inline void add_points(const std::vector<gfx::math::Vec2d> &new_points) { points.insert(points.end(), new_points.begin(), new_points.end()); cache_clockwise(); }
 
     inline void set_point(const size_t index, const gfx::math::Vec2d point) 
     { 
         if (index < points.size()) 
         { 
             points[index] = point; 
-            is_clockwise();
+            cache_clockwise();
         } 
     }
-    inline void set_points(const std::vector<gfx::math::Vec2d> &new_points) { points = new_points; is_clockwise(); }
+    inline void set_points(const std::vector<gfx::math::Vec2d> &new_points) { points = new_points; cache_clockwise(); }
     inline void clear_points() { points.clear(); }
 
     inline const std::vector<gfx::math::Vec2d> get_points() const { return points; }
@@ -45,6 +46,7 @@ public:
 
 private:
 
+    void rasterize_filled_triangle(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Triangle &triangle) const;
     void rasterize_rounded_corners(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Matrix3x3d &transform) const;
     void rasterize_rounded_corner(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Vec2d pos, const double angle0, const double angle1, const gfx::math::Matrix3x3d &transform) const;
     void rasterize_edge(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Vec2d start, const gfx::math::Vec2d end, const gfx::math::Matrix3x3d &transform) const;
@@ -52,7 +54,7 @@ private:
     std::vector<gfx::math::Vec2d> points = std::vector<gfx::math::Vec2d>();
     bool do_close = false;
     bool do_rounded_corners = false;
-    bool clockwise_cached = false;
+    bool clockwise = false;
     static constexpr int CORNER_SEGMENTS = 8;
 };
 
