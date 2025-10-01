@@ -36,7 +36,7 @@ protected:
     int current_demo = 0;
 
     bool show_info = true;
-    bool show_debug = false;
+    bool show_debug = true;
 
     bool running = true;
 

@@ -78,7 +78,7 @@ void InteractiveDemo::add_circle(const bool child)
 
     if (child && get_selected() != nullptr)
     {
-        circle->set_pos({ 0, 0 });
+        circle->set_position({ 0, 0 });
         renderer->add_item(circle, get_selected());
         return;
     }
@@ -97,7 +97,7 @@ void InteractiveDemo::add_ellipse(const bool child)
 
     if (child && get_selected() != nullptr)
     {
-        ellipse->set_pos({ 0, 0 });
+        ellipse->set_position({ 0, 0 });
         renderer->add_item(ellipse, get_selected());
         return;
     }
@@ -118,7 +118,7 @@ void InteractiveDemo::add_polyline(const bool child)
 
     if (child && get_selected() != nullptr)
     {
-        polyline->set_pos({ 0, 0 });
+        polyline->set_position({ 0, 0 });
         renderer->add_item(polyline, get_selected());
         return;
     }
@@ -191,19 +191,19 @@ void InteractiveDemo::handle_input(const char input)
 
         case 'w':
             if (selected == nullptr) { break; }
-            selected->set_pos(selected->get_pos() + Vec2d { 0, -1 });
+            selected->set_position(selected->get_position() + Vec2d { 0, -1 });
             break;
         case 'a':
             if (selected == nullptr) { break; }
-            selected->set_pos(selected->get_pos() + Vec2d { -1, 0 });
+            selected->set_position(selected->get_position() + Vec2d { -1, 0 });
             break;
         case 's':
             if (selected == nullptr) { break; }
-            selected->set_pos(selected->get_pos() + Vec2d { 0, 1 });
+            selected->set_position(selected->get_position() + Vec2d { 0, 1 });
             break;
         case 'd':
             if (selected == nullptr) { break; }
-            selected->set_pos(selected->get_pos() + Vec2d { 1, 0 });
+            selected->set_position(selected->get_position() + Vec2d { 1, 0 });
             break;
 
         case 'L':

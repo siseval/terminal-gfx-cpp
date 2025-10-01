@@ -37,7 +37,7 @@ void Particle::process(const double dt)
 void Particle::update_position(const double dt)
 {
     position += velocity * dt;
-    shape->set_pos(position);
+    shape->set_position(position);
 }
 
 void Particle::apply_gravity(const double dt)

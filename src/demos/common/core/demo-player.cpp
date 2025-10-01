@@ -16,10 +16,10 @@ using namespace demos::common;
 
 void DemoPlayer::init()
 {
+    demos.emplace_back(std::make_shared<space::SpaceDemo>(renderer));
     demos.emplace_back(std::make_shared<star::StarDemo>(renderer));
     demos.emplace_back(std::make_shared<snake::SnakeDemo>(renderer));
     demos.emplace_back(std::make_shared<fireworks::FireworksDemo>(renderer));
-    demos.emplace_back(std::make_shared<space::SpaceDemo>(renderer));
 
     demos[current_demo]->init();
 }
@@ -64,16 +64,16 @@ void DemoPlayer::handle_input(const char input)
         case 'q':
             running = false;
             break;
-        case 'u':
+        case 'U':
             show_info = !show_info;
             break;
         case '3':
             show_debug = !show_debug;
             break;
-        case 'n':
+        case 'N':
             cycle_demo(1);
             break;
-        case 'p':
+        case 'P':
             cycle_demo(-1);
             break;
     }

@@ -49,8 +49,8 @@ public:
     inline void set_depth(const int d) { depth = d; }
     inline int get_depth() const { return depth; }
 
-    inline gfx::math::Vec2d get_pos() const { return position; }
-    void set_pos(const gfx::math::Vec2d pos) { position = pos; }
+    inline gfx::math::Vec2d get_position() const { return position; }
+    void set_position(const gfx::math::Vec2d pos) { position = pos; }
     
     inline gfx::math::Vec2f get_scale() const { return scale; }
     inline void set_scale(const gfx::math::Vec2d s) { scale = s; }
@@ -102,7 +102,7 @@ struct std::hash<gfx::core::GfxPrimitive2D>
 {
     size_t operator()(const gfx::core::GfxPrimitive2D& item) const
     {
-        int64_t hash = std::hash<gfx::math::Vec2d>()(item.get_pos());
+        int64_t hash = std::hash<gfx::math::Vec2d>()(item.get_position());
         hash ^= (std::hash<gfx::math::Vec2d>()(item.get_scale()) << 1);
         hash ^= (std::hash<double>()(item.get_rotation()) << 1);
         hash ^= (std::hash<int>()(item.get_depth()) << 1);

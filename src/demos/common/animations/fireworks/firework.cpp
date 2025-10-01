@@ -112,7 +112,7 @@ void Firework::do_smoke(const double dt)
 void Firework::update_position(const double dt)
 {
     position += velocity * dt;
-    shape->set_pos(position);
+    shape->set_position(position);
 }
 
 void Firework::apply_gravity(const double dt)

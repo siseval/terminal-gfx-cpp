@@ -73,7 +73,7 @@ std::shared_ptr<Circle2D> GfxRender2D::create_circle(const Vec2d position, const
 {
     auto circle { std::make_shared<Circle2D>() };
 
-    circle->set_pos(position);
+    circle->set_position(position);
     circle->set_radius(radius);
     circle->set_line_thickness(line_thickness);
     circle->set_color(color);
@@ -85,7 +85,7 @@ std::shared_ptr<Ellipse2D> GfxRender2D::create_ellipse(const Vec2d position, con
 {
     auto ellipse { std::make_shared<Ellipse2D>() };
 
-    ellipse->set_pos(position);
+    ellipse->set_position(position);
     ellipse->set_radius(radius);
     ellipse->set_line_thickness(line_thickness);
     ellipse->set_color(color);
@@ -97,7 +97,7 @@ std::shared_ptr<Polyline2D> GfxRender2D::create_polyline(const Vec2d position, c
 {
     auto polyline { std::make_shared<Polyline2D>() };
 
-    polyline->set_pos(position);
+    polyline->set_position(position);
     polyline->set_points(points);
     polyline->set_line_thickness(line_thickness);
     polyline->set_color(color);

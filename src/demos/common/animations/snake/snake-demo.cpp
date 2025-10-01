@@ -95,7 +95,7 @@ void SnakeDemo::move_target(const double dt)
         target_direction.y = -target_direction.y;
     }
 
-    target_marker->set_pos(head_target);
+    target_marker->set_position(head_target);
     target_marker->set_visible(target_visible);
 }
 
@@ -103,14 +103,14 @@ void SnakeDemo::move_head(const double dt)
 {
     Vec2d goal { food.empty() ? head_target : closest_food() };
 
-    Vec2d to_target { (goal - head->get_pos()).normalize() };
+    Vec2d to_target { (goal - head->get_position()).normalize() };
 
     head->set_rotation(Vec2d::from_angle(head->get_rotation()).rotate_towards(to_target, turn_speed * dt).angle());
-    head->set_pos(head->get_pos() + Vec2d::from_angle(head->get_rotation(), speed * dt));
+    head->set_position(head->get_position() + Vec2d::from_angle(head->get_rotation(), speed * dt));
 
     for (int i = 0; i < food.size(); ++i)
     {
-        if (Vec2d::distance(head->get_pos(), food[i]->get_pos()) < segment_length * 0.8)
+        if (Vec2d::distance(head->get_position(), food[i]->get_position()) < segment_length * 0.8)
         {
             renderer->remove_item(food[i]);
             food.erase(food.begin() + i);
@@ -123,13 +123,13 @@ void SnakeDemo::move_head(const double dt)
 
 void SnakeDemo::move_segments()
 {
-    segments[0]->set_pos(head->get_pos() - Vec2d::from_angle(head->get_rotation(), segment_spacing));
+    segments[0]->set_position(head->get_position() - Vec2d::from_angle(head->get_rotation(), segment_spacing));
     segments[0]->set_rotation(head->get_rotation());
     for (int i = 1; i < num_segments; ++i)
     {
-        Vec2d direction { segments[i - 1]->get_pos() - segments[i]->get_pos() };
+        Vec2d direction { segments[i - 1]->get_position() - segments[i]->get_position() };
         segments[i]->set_rotation(direction.angle());
-        segments[i]->set_pos(segments[i - 1]->get_pos() - Vec2d::from_angle(segments[i]->get_rotation(), segment_spacing * scale));
+        segments[i]->set_position(segments[i - 1]->get_position() - Vec2d::from_angle(segments[i]->get_rotation(), segment_spacing * scale));
     }
 }
 
@@ -146,7 +146,7 @@ void SnakeDemo::die()
 
 void SnakeDemo::do_dead(const double dt)
 {
-    head->set_pos(head->get_pos() + Vec2d::from_angle(head->get_rotation(), explode_speed * dt));
+    head->set_position(head->get_position() + Vec2d::from_angle(head->get_rotation(), explode_speed * dt));
     head->set_scale(Vec2d::lerp(Vec2d(scale), { 0.001, 0.001 }, dead_time * 3));
     if (head->get_scale().x <= 0.01)
     {
@@ -154,7 +154,7 @@ void SnakeDemo::do_dead(const double dt)
     }
     for (int i = 0; i < segments.size(); ++i)
     {
-        segments[i]->set_pos(segments[i]->get_pos() + Vec2d::from_angle(segments[i]->get_rotation(), explode_speed * dt));
+        segments[i]->set_position(segments[i]->get_position() + Vec2d::from_angle(segments[i]->get_rotation(), explode_speed * dt));
         segments[i]->set_scale(Vec2d::lerp(Vec2d(scale), { 0.001, 0.001 }, dead_time * 3));
         if (segments[i]->get_scale().x <= 0.01)
         {
@@ -187,15 +187,15 @@ void SnakeDemo::render_frame(const double dt)
 
 Vec2d SnakeDemo::closest_food()
 {
-    double closest_dist { Vec2d::distance(head->get_pos(), food[0]->get_pos()) };
-    Vec2d closest_pos { food[0]->get_pos() };
+    double closest_dist { Vec2d::distance(head->get_position(), food[0]->get_position()) };
+    Vec2d closest_pos { food[0]->get_position() };
     for (int i = 1; i < food.size(); ++i)
     {
-        double dist { Vec2d::distance(head->get_pos(), food[i]->get_pos()) };
+        double dist { Vec2d::distance(head->get_position(), food[i]->get_position()) };
         if (dist < closest_dist)
         {
             closest_dist = dist;
-            closest_pos = food[i]->get_pos();
+            closest_pos = food[i]->get_position();
         }
     }
     return closest_pos;
@@ -245,8 +245,8 @@ void SnakeDemo::add_segment()
     segment->set_anchor({ 0.5, 0.5 });
     if (!segments.empty())
     {
-        Vec2d pos { dead ? static_cast<Vec2d>(renderer->get_resolution() / 2.0) : segments.back()->get_pos() };
-        segment->set_pos(pos);
+        Vec2d pos { dead ? static_cast<Vec2d>(renderer->get_resolution() / 2.0) : segments.back()->get_position() };
+        segment->set_position(pos);
         segment->set_rotation(segments.back()->get_rotation());
     }
     segment->set_scale(scale);

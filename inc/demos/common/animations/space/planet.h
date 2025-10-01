@@ -12,17 +12,6 @@ class Planet : public Body
 
 public:
 
-    Planet(const gfx::math::Vec2d position, const double radius, const double mass, const gfx::core::types::Color4 color) :
-    Body(position, radius, mass, color)
-    {
-        velocity = gfx::math::Vec2d::zero();
-    }
-
-    Planet(const gfx::math::Vec2d position, const double radius, const double mass, const gfx::core::types::Color4 color, const gfx::math::Vec2d velocity) :
-    Planet(position, radius, mass, color)
-    {
-        this->velocity = velocity;
-    }
 
 };
 

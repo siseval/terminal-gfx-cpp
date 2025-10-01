@@ -52,7 +52,7 @@ Matrix3x3d GfxPrimitive2D::get_transform() const
     Matrix3x3d anchor_translation_matrix { utils::translate(-anchor_offset) };
     Matrix3x3d scale_matrix { utils::scale(scale) };
     Matrix3x3d rotation_matrix { utils::rotate(rotation) };
-    Matrix3x3d position_translation_matrix { utils::translate(get_pos()) };
+    Matrix3x3d position_translation_matrix { utils::translate(get_position()) };
 
     return position_translation_matrix * rotation_matrix * scale_matrix * anchor_translation_matrix;
 }
