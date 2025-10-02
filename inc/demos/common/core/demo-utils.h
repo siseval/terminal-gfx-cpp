@@ -7,6 +7,18 @@
 namespace demos::common::core::utils
 {
 
+inline double ease_in_out_cubic(double t)
+{
+    return t < 0.5
+        ? 4.0 * t * t * t
+        : 1.0 - pow(-2.0 * t + 2.0, 3) / 2.0;
+}
+
+inline double smoothstep(const double d)
+{
+    return d * d * (3 - 2 * d);
+}
+
 inline double random_double(const double min, const double max)
 {
     static std::mt19937 rng(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));

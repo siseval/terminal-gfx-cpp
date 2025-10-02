@@ -9,10 +9,48 @@ using namespace gfx::core::types;
 using namespace gfx::math;
 using namespace demos::common::animations::space::units;
 
+void three_body_problem(SpaceDemo &demo)
+{
+    demo.set_view_pos({ 0, 0 });
+    demo.set_view_size(4.0e11);
+    demo.set_zoom_out_pos(4.0e11 * 0.5);
+
+    demo.spawn_body(
+        "body 1",
+        { -1.0e11, 0.0 },
+        { 0.0, -1.2e4 },
+        1.0e10,
+        2.0e30,
+        true,
+        { 1.0, 0.5, 0.5, 1.0 }
+    );
+
+    demo.spawn_body(
+        "body 2",
+        { 1.0e11, 0.0 },
+        { 0.0, 1.2e4 },
+        1.0e10,
+        2.0e30,
+        true,
+        { 0.5, 1.0, 0.5, 1.0 }
+    );
+
+    demo.spawn_body(
+        "body 3",
+        { 0.0, 1.5e11 },
+        { -1.5e4, 0.0 },
+        1.0e10,
+        2.0e30,
+        true,
+        { 0.5, 0.5, 1.0, 1.0 }
+    );
+}
+
 void solar_system(SpaceDemo &demo)
 {
     demo.set_view_pos({ 0, 0 });
     demo.set_view_size(1.0e13);
+    demo.set_zoom_out_pos(1.0e13 * 0.5);
 
     demo.spawn_body(
         "the sun",
@@ -20,6 +58,7 @@ void solar_system(SpaceDemo &demo)
         { 0.0, 0.0 },
         6.9634e8,
         1.98847e30,
+        true,
         { 1.0, 1.0, 0.0, 1.0 }
     );
 

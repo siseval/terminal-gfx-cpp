@@ -13,12 +13,13 @@ class Body
 
 public:
 
-    Body(std::string name, const gfx::math::Vec2d position, const gfx::math::Vec2d velocity, const double radius, const double mass, const gfx::core::types::Color4 color) :
+    Body(std::string name, const gfx::math::Vec2d position, const gfx::math::Vec2d velocity, const double radius, const double mass, const bool locked, const gfx::core::types::Color4 color) :
         name(name),
         position(position),
         velocity(velocity),
         radius(radius),
         mass(mass),
+        locked(locked),
         color(color) {}
 
     void update_position(const double dt);
@@ -39,6 +40,8 @@ public:
     void set_mass(const double m) { mass = m; }
     double get_mass() const { return mass; }
 
+    bool is_locked() const { return locked; }
+
     void set_color(const gfx::core::types::Color4 col) { color = col; }
     gfx::core::types::Color4 get_color() const { return color; }
 
@@ -53,6 +56,8 @@ protected:
 
     double radius;
     double mass;
+
+    bool locked { false };
 
     gfx::core::types::Color4 color;
 };

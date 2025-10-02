@@ -13,6 +13,7 @@ namespace demos::common::animations::space::simulations
 {
 
 void solar_system(SpaceDemo &demo);
+void three_body_problem(SpaceDemo &demo);
 
 }
 

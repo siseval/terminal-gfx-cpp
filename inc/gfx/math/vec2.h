@@ -53,6 +53,16 @@ public:
         return from_angle(angle * std::numbers::pi / 180.0, length); 
     }
 
+    static Vec2<T> bezier(const Vec2<T> &p0, const Vec2<T> &p1, const Vec2<T> &p2, double t) 
+    { 
+        t = t < 0 ? 0 : (t > 1 ? 1 : t);
+        double u = 1 - t;
+        return { 
+            static_cast<T>(u * u * p0.x + 2 * u * t * p1.x + t * t * p2.x), 
+            static_cast<T>(u * u * p0.y + 2 * u * t * p1.y + t * t * p2.y) 
+        }; 
+    }
+
     static Vec2<T> lerp(const Vec2<T> &a, const Vec2<T> &b, double t) 
     { 
         t = t < 0 ? 0 : (t > 1 ? 1 : t);
