@@ -15,7 +15,7 @@ using namespace demos::common::core;
 
 void SpaceDemo::init()
 {
-    time_scale = 50000.0;
+    time_scale = 1.0;
     clear_bodies();
     renderer->get_render_surface()->clear_palette();
 
@@ -37,113 +37,17 @@ void SpaceDemo::render_frame(const double dt)
 
 void SpaceDemo::handle_camera(const double dt)
 {
-    if (camera_state == CameraState::Transitioning)
+    camera.end_pos = get_tracked_body() ? 
+        get_tracked_body()->get_position() : camera.cur_pos;
+
+    if (camera.state == Camera::State::Transitioning)
     {
-        camera_transition(dt);
+        camera.start_pos = previous_tracked_body ? 
+            previous_tracked_body->get_position() : camera.start_pos;
     }
-    else if (camera_state == CameraState::Tracking)
-    {
-        camera_track(dt);
-    }
-    else
-    {
-        camera_free(dt);
-    }
-}
-
-void SpaceDemo::camera_transition(const double dt)
-{
-    track_time += dt;
-    const double t { std::clamp(track_time / track_duration, 0.0, 1.0) };
-
-    if (previous_tracked_body)
-    {
-        previous_track_pos = previous_tracked_body->get_position();
-    }
-    set_view_pos(Vec2d::lerp(previous_track_pos, get_tracked_body()->get_position(), utils::ease_in_out_cubic(t)));
-
-    if (t < 0.5)
-    {
-        const double zoom_t { utils::ease_in_out_cubic(t * 2.0) };
-        set_view_size(std::lerp(previous_view_size.x, zoom_out_size.x, zoom_t));
-    }
-    else
-    {
-        const double zoom_t { utils::ease_in_out_cubic((t - 0.5) * 2.0) };
-        set_view_size(std::lerp(zoom_out_size.x, get_tracked_body()->get_radius() * tracked_body_zoom, zoom_t));
-    }
-    if (t >= 1.0)
-    {
-        camera_state = CameraState::Tracking;
-    }
-}
-
-void SpaceDemo::camera_track(const double dt)
-{
-    if (get_tracked_body())
-    {
-        set_view_pos(get_tracked_body()->get_position());
-    }
-    else
-    {
-        camera_state = CameraState::Free;
-    }
-    zoom_velocity *= std::pow(0.5, dt);
-    zoom(1.0 + zoom_velocity * dt);
-}
-
-void SpaceDemo::camera_free(const double dt)
-{
-    camera_velocity *= std::pow(0.5, dt);
-    set_view_pos(get_anchor_world_pos() + camera_velocity * dt);
-    zoom_velocity *= std::pow(0.5, dt);
-    zoom(1.0 + zoom_velocity * dt);
-}
-
-Vec2d SpaceDemo::predict_orbital_pos(std::shared_ptr<Body> body, const double future_time)
-{
-    if (!body)
-    {
-        return Vec2d { 0, 0 };
-    }
-
-    Vec2d original_pos { body->get_position() };
-    Vec2d original_vel { body->get_velocity() };
-
-    double simulation_dt = 1.0;
-    double elapsed_time = 0.0;
-
-    while (elapsed_time < future_time)
-    {
-        for (const auto& [other_body, item] : body_items)
-        {
-            if (body == other_body || body->is_locked())
-            {
-                continue;
-            }
-            body->apply_gravity(other_body, simulation_dt);
-        }
-        body->update_position(simulation_dt);
-        elapsed_time += simulation_dt;
-    }
-
-    Vec2d predicted_pos = body->get_position();
-
-    body->set_position(original_pos);
-    body->set_velocity(original_vel);
-
-    return predicted_pos;
-}
-
-
-void SpaceDemo::smooth_pan(const Vec2d direction)
-{
-    camera_velocity += direction * pan_speed * view_bounds.size().length();
-}
-
-void SpaceDemo::smooth_zoom(const double factor)
-{
-    zoom_velocity += (factor - 1.0) * 0.1;
+    camera.process(dt);
+    set_view_pos(camera.cur_pos);
+    set_view_size(camera.size_cur.x);
 }
 
 void SpaceDemo::physics_process(const double dt)
@@ -173,22 +77,25 @@ void SpaceDemo::process_bodies(const double dt)
 
 void SpaceDemo::update_render_items()
 {
-    for (const auto& [body, item] : body_items)
+    for (const auto& [body, render] : body_items)
     {
+        auto ellipse = render.ellipse;
+
         Vec2d pos { units::metres_to_pixels(body->get_position() - view_bounds.min, view_bounds.size(), get_resolution()) };
         Vec2d radius { units::metres_to_pixels(body->get_radius(), view_bounds.size(), get_resolution()) };
 
         if (pos.x + radius.x < 0 || pos.x - radius.x > get_resolution().round().x ||
             pos.y + radius.y < 0 || pos.y - radius.y > get_resolution().round().y)
         {
-            item->set_visible(false);
+            ellipse->set_visible(false);
             continue;
         }
 
-        item->set_visible(true);
-        item->set_position(pos);
-        item->set_radius(radius);
-        item->set_color(body->get_color());
+        ellipse->set_rotation(ellipse->get_rotation() + 0.005);
+        ellipse->set_visible(true);
+        ellipse->set_position(pos);
+        ellipse->set_radius({ radius.x, radius.y * 0.985 });
+        ellipse->set_color(body->get_color());
     }
 }
 
@@ -209,9 +116,11 @@ std::shared_ptr<Body> SpaceDemo::spawn_body(const std::string name, const Vec2d 
     circle->set_anchor({ 0.5, 0.5 });
     renderer->add_item(circle);
 
+    RenderBody render_body { circle, nullptr };
+
     auto body = std::make_shared<Body>(name, position, velocity, radius, mass, locked, color);
 
-    body_items.emplace(std::make_pair(body, circle));
+    body_items.emplace(std::make_pair(body, render_body));
     body_list.push_back(body);
     return body_items.begin()->first;
 }
@@ -225,6 +134,8 @@ void SpaceDemo::clear_bodies()
 
 void SpaceDemo::handle_input(const char input)
 {
+    camera.handle_input(input);
+
     switch (input)
     {
         case 'c':
@@ -237,34 +148,6 @@ void SpaceDemo::handle_input(const char input)
 
         case 'J':
             time_scale /= 1.5;
-            break;
-
-        case 'w':
-            camera_state = CameraState::Free;
-            smooth_pan({ 0, -1 });
-            break;
-
-        case 's':
-            camera_state = CameraState::Free;
-            smooth_pan({ 0, 1 });
-            break;
-
-        case 'a':
-            camera_state = CameraState::Free;
-            smooth_pan({ -1, 0 });
-            break;
-
-        case 'd':
-            camera_state = CameraState::Free;
-            smooth_pan({ 1, 0 });
-            break;
-
-        case 'k':
-            smooth_zoom(0.25);
-            break;
-
-        case 'j':
-            smooth_zoom(2.0);
             break;
 
         case 'n':
@@ -331,19 +214,27 @@ std::shared_ptr<Body> SpaceDemo::get_tracked_body()
 
 void SpaceDemo::cycle_tracked_body(const int direction)
 {
-    previous_view_size = view_bounds.size();
-    previous_track_pos = get_anchor_world_pos();
-    previous_tracked_body = get_tracked_body();
+    camera.size0 = view_bounds.size();
+    camera.start_pos = get_anchor_world_pos();
+    camera.size_cur = view_bounds.size();
+    camera.cur_pos = get_anchor_world_pos();
+
+    previous_tracked_body = camera.state == Camera::State::Tracking ? 
+        get_tracked_body() : nullptr;
 
     tracked_body_index = (tracked_body_index + direction) % body_list.size();
 
-    zoom_out_size = std::max(
-        get_tracked_body()->get_radius() * tracked_body_zoom,
-        Vec2d::distance(previous_track_pos, get_tracked_body()->get_position()) * 3.0
+    camera.zoom_out_size = std::max(
+        get_tracked_body()->get_radius() * tracked_body_zoom_level,
+        Vec2d::distance(camera.start_pos, get_tracked_body()->get_position()) * 4.0
     );
 
-    track_time = 0.0;
-    camera_state = CameraState::Transitioning;
+    camera.size1 = get_tracked_body()->get_radius() * tracked_body_zoom_level;
+    camera.end_pos = get_tracked_body()->get_position();
+    camera.state = Camera::State::Transitioning;
+    camera.velocity = { 0.0, 0.0 };
+    camera.zoom_velocity = 0.0;
+    camera.track_time = 0.0;
 }
 
 void SpaceDemo::untrack_body()

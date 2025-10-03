@@ -26,8 +26,14 @@ Box2d Polyline2D::get_relative_extent() const
 void Polyline2D::rasterize_filled_triangle(std::shared_ptr<RenderSurface> surface, const Triangle &triangle) const
 {
     Box2d bounds {
-        { std::min({triangle.v0.x,triangle.v1.x,triangle.v2.x }), std::min({triangle.v0.y,triangle.v1.y,triangle.v2.y }) },
-        { std::max({triangle.v0.x,triangle.v1.x,triangle.v2.x }), std::max({triangle.v0.y,triangle.v1.y,triangle.v2.y }) }
+        { 
+            std::min({triangle.v0.x,triangle.v1.x,triangle.v2.x }), 
+            std::min({triangle.v0.y,triangle.v1.y,triangle.v2.y }) 
+        },
+        { 
+            std::max({triangle.v0.x,triangle.v1.x,triangle.v2.x }), 
+            std::max({triangle.v0.y,triangle.v1.y,triangle.v2.y }) 
+        }
     };
 
     for (int y = bounds.min.y; y <= bounds.max.y; y++)

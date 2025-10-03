@@ -1,6 +1,7 @@
 set(DEMOS_COMMON_ANIMATIONS_SPACE_SOURCES
     space-demo.cpp
     simulations.cpp
+    camera.cpp
     body.cpp
     planet.cpp
     star.cpp
