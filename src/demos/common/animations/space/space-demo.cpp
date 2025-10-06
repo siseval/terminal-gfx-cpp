@@ -15,11 +15,11 @@ using namespace demos::common::core;
 
 void SpaceDemo::init()
 {
-    time_scale = 1.0;
+    time_scale = 0.01;
     clear_bodies();
     renderer->get_render_surface()->clear_palette();
 
-    simulations::solar_system(*this);
+    simulations::binary_system(*this);
 }
 
 void SpaceDemo::render_frame(const double dt)
@@ -28,22 +28,36 @@ void SpaceDemo::render_frame(const double dt)
     double time_ms { t0 / 1000.0 };
 
     physics_process(dt * time_scale);
-    handle_camera(dt);
-    update_render_items();
+
+    double time_lerp { std::min(time_accumulator / PHYSICS_TIME_STEP, 1.0) };
+    handle_camera(dt, time_lerp);
+    update_render_items(time_lerp);
 
     renderer->draw_frame();
     last_frame_us = utils::time_us() - t0;
 }
 
-void SpaceDemo::handle_camera(const double dt)
+void SpaceDemo::handle_camera(const double dt, const double time_lerp)
 {
-    camera.end_pos = get_tracked_body() ? 
-        get_tracked_body()->get_position() : camera.cur_pos;
-
-    if (camera.state == Camera::State::Transitioning)
+    camera.end_pos = camera.cur_pos;
+    if (get_tracked_body())
     {
-        camera.start_pos = previous_tracked_body ? 
-            previous_tracked_body->get_position() : camera.start_pos;
+        RenderBody render_body { body_items.at(get_tracked_body()) };
+        camera.end_pos = 
+            Vec2d::lerp(
+                render_body.previous_pos, get_tracked_body()->get_position(), time_lerp
+            );
+    }
+
+    if (camera.state == Camera::State::Transitioning && previous_tracked_body)
+    {
+        RenderBody previous_render_body { body_items.at(previous_tracked_body) };
+        camera.start_pos =
+            Vec2d::lerp(
+                previous_render_body.previous_pos, 
+                previous_tracked_body->get_position(), 
+                time_lerp
+            );
     }
     camera.process(dt);
     set_view_pos(camera.cur_pos);
@@ -52,7 +66,19 @@ void SpaceDemo::handle_camera(const double dt)
 
 void SpaceDemo::physics_process(const double dt)
 {
-    process_bodies(dt);
+    time_accumulator += dt;
+    int steps { 0 };
+
+    while (time_accumulator >= PHYSICS_TIME_STEP && steps < MAX_STEPS_PER_FRAME)
+    {
+        for (auto& [body, render] : body_items)
+        {
+            render.previous_pos = body->get_position();
+        }
+        process_bodies(PHYSICS_TIME_STEP);
+        time_accumulator -= PHYSICS_TIME_STEP;
+        steps++;
+    }
 }
 
 void SpaceDemo::process_bodies(const double dt)
@@ -75,13 +101,14 @@ void SpaceDemo::process_bodies(const double dt)
     }
 }
 
-void SpaceDemo::update_render_items()
+void SpaceDemo::update_render_items(const double time_lerp)
 {
     for (const auto& [body, render] : body_items)
     {
-        auto ellipse = render.ellipse;
+        auto ellipse { render.ellipse };
 
-        Vec2d pos { units::metres_to_pixels(body->get_position() - view_bounds.min, view_bounds.size(), get_resolution()) };
+        Vec2d pos_lerp { Vec2d::lerp(render.previous_pos, body->get_position(), time_lerp) };
+        Vec2d pos { units::metres_to_pixels(pos_lerp - view_bounds.min, view_bounds.size(), get_resolution()) };
         Vec2d radius { units::metres_to_pixels(body->get_radius(), view_bounds.size(), get_resolution()) };
 
         if (pos.x + radius.x < 0 || pos.x - radius.x > get_resolution().round().x ||

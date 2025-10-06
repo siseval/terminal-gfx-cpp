@@ -3,6 +3,7 @@
 #include <demos/common/animations/snake/snake-demo.h>
 #include <demos/common/animations/fireworks/fireworks-demo.h>
 #include <demos/common/animations/space/space-demo.h>
+#include <demos/common/animations/text/text-demo.h>
 
 namespace demos::common::core
 {
@@ -16,6 +17,7 @@ using namespace demos::common;
 
 void DemoPlayer::init()
 {
+    demos.emplace_back(std::make_shared<text::TextDemo>(renderer));
     demos.emplace_back(std::make_shared<space::SpaceDemo>(renderer));
     demos.emplace_back(std::make_shared<star::StarDemo>(renderer));
     demos.emplace_back(std::make_shared<snake::SnakeDemo>(renderer));

@@ -17,6 +17,8 @@ class SpaceDemo : public demos::common::core::GfxDemo
     {
         std::shared_ptr<gfx::primitives::Ellipse2D> ellipse;
         std::shared_ptr<gfx::primitives::Polyline2D> trail;
+
+        gfx::math::Vec2d previous_pos { 0.0, 0.0 };
     };
 
 public:
@@ -36,8 +38,9 @@ public:
         std::string state_str = (camera.state == Camera::State::Free ? "Free" : (camera.state == Camera::State::Tracking ? "Tracking" : "Transitioning"));
         return { 
             "tracked body: " + (get_tracked_body() ? get_tracked_body()->get_name() : "none"),
-            "world_pos:" + std::to_string(get_anchor_world_pos().x) + ", " + std::to_string(get_anchor_world_pos().y),
+            "world pos:" + std::to_string(get_anchor_world_pos().x) + ", " + std::to_string(get_anchor_world_pos().y),
             "camera state: " + state_str,
+            "time scale: " + std::to_string(time_scale) + "x",
         };
     }
 
@@ -49,9 +52,9 @@ public:
 
     void physics_process(const double dt);
     void process_bodies(const double dt);
-    void handle_camera(const double dt);
+    void handle_camera(const double dt, const double time_lerp);
 
-    void update_render_items();
+    void update_render_items(const double time_lerp = 1.0);
 
     void zoom(const double factor);
 
@@ -77,6 +80,10 @@ private:
 
     gfx::math::Vec2d predict_orbital_pos(std::shared_ptr<Body> body, const double future_time);
     std::shared_ptr<Body> get_largest_body();
+
+    static constexpr double PHYSICS_TIME_STEP { 0.0001 };
+    static constexpr int MAX_STEPS_PER_FRAME { 500 };
+    double time_accumulator { 0.0 };
 
     Camera camera;
 

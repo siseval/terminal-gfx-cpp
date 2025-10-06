@@ -8,8 +8,7 @@ namespace demos::common::animations::space::units
 
 using namespace gfx::math;
 
-static constexpr double G = 6.67430e-11;
-static constexpr double AU = 1.496e11;
+static constexpr double G = 4 * std::numbers::pi * std::numbers::pi;
 
 inline double metres_to_pixels(const double metres, const double view_metres, const double resolution_pixels)
 {
