@@ -7,7 +7,7 @@
 #include <gfx/primitives/ellipse-2D.h>
 #include <gfx/primitives/polyline-2D.h>
 #include <gfx/primitives/text-2D.h>
-#include <gfx/fonts/font-manager-ttf.h>
+#include <gfx/text/font-manager-ttf.h>
 
 namespace gfx::core
 {
@@ -24,7 +24,7 @@ public:
     GfxRender2D(std::shared_ptr<RenderSurface> surface, gfx::math::Vec2d viewport_scaling = gfx::math::Vec2d { 1, 1 }) : 
         surface(surface), 
         scene_graph(std::make_shared<SceneGraph2D>()), 
-        font_manager(std::make_shared<gfx::fonts::FontManagerTTF>()),
+        font_manager(std::make_shared<gfx::text::FontManagerTTF>()),
         viewport_scaling(viewport_scaling) {}
 
     void draw_frame() const;
@@ -41,7 +41,7 @@ public:
 
     inline std::shared_ptr<SceneGraph2D> get_scene_graph() const { return scene_graph; };
     inline std::shared_ptr<RenderSurface> get_render_surface() const { return surface; };
-    inline std::shared_ptr<gfx::fonts::FontManagerTTF> get_font_manager() const { return font_manager; };
+    inline std::shared_ptr<gfx::text::FontManagerTTF> get_font_manager() const { return font_manager; };
 
     inline void add_item(const std::shared_ptr<GfxPrimitive2D> item) { scene_graph->add_item(item); }
     inline void add_item(const std::shared_ptr<GfxPrimitive2D> item, const std::shared_ptr<GfxPrimitive2D> parent) { scene_graph->add_item(item, parent); }
@@ -60,7 +60,7 @@ private:
 
     std::shared_ptr<RenderSurface> surface;
     std::shared_ptr<SceneGraph2D> scene_graph;
-    std::shared_ptr<gfx::fonts::FontManagerTTF> font_manager;
+    std::shared_ptr<gfx::text::FontManagerTTF> font_manager;
 
     math::Vec2d viewport_scaling;
 };

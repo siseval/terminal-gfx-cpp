@@ -19,7 +19,7 @@ void SpaceDemo::init()
     clear_bodies();
     renderer->get_render_surface()->clear_palette();
 
-    simulations::binary_system(*this);
+    simulations::solar_system(*this);
 }
 
 void SpaceDemo::render_frame(const double dt)

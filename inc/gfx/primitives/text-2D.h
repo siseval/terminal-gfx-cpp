@@ -3,7 +3,7 @@
 
 #include <string>
 #include <gfx/core/gfx-primitive-2D.h>
-#include <gfx/fonts/font-ttf.h>
+#include <gfx/text/font-ttf.h>
 
 namespace gfx::primitives
 {
@@ -16,7 +16,7 @@ class Text2D : public gfx::core::GfxPrimitive2D
 private:
 
     std::string text;
-    std::shared_ptr<gfx::fonts::FontTTF> font;
+    std::shared_ptr<gfx::text::FontTTF> font;
 };
 
 }

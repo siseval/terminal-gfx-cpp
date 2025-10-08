@@ -3,7 +3,7 @@ add_subdirectory(primitives)
 add_subdirectory(shaders)
 add_subdirectory(surfaces)
 add_subdirectory(utils)
-add_subdirectory(fonts)
+add_subdirectory(text)
 
 add_library(gfx INTERFACE)
 
@@ -13,7 +13,7 @@ target_link_libraries(gfx INTERFACE
     gfx_shaders
     gfx_surfaces
     gfx_utils
-    gfx_fonts
+    gfx_text
 )
 
 target_include_directories(gfx INTERFACE

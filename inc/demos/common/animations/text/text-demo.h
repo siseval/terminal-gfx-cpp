@@ -20,8 +20,16 @@ public:
     void end() override;
     void handle_input(const char input) override;
 
+    std::vector<std::string> debug_text() override
+    {
+        return { 
+            "num points: " + std::to_string(num_points)
+        };
+    }
+
 private:
 
+    int num_points { 0 };
 
 };
 

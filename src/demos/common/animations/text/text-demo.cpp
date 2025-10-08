@@ -1,59 +1,71 @@
-#include <gfx/fonts/font-manager-ttf.h>
+#include <stack>
+#include <gfx/text/font-manager-ttf.h>
 #include <demos/common/animations/text/text-demo.h>
+#include <demos/common/core/demo-utils.h>
 
 namespace demos::common::animations::text
 {
 
 using namespace gfx::math;
+using namespace demos::common::core;
 
 static std::vector<Vec2d> flatten_bezier(const Vec2d p0, const Vec2d p1, const Vec2d p2, double tolerance = 0.5)
 {
-    std::vector<Vec2d> points;
-
-    double dt { 0.1 };
-
-    Vec2d prev_point { p0 };
-    points.push_back(prev_point);
-
-    for (double t = dt; t <= 1.0 + 1e-6; t += dt)
+    struct BezierSegment
     {
-        double tt { t * t };
-        double u { 1.0 - t };
+        double t0;
+        double t1;
+        Vec2d p0;
+        Vec2d p1;
+    };
 
-        Vec2d point {
-            u * u * p0.x + 2 * u * t * p1.x + tt * p2.x,
-            u * u * p0.y + 2 * u * t * p1.y + tt * p2.y
+    auto bezier_eval { [](const Vec2d &p0, const Vec2d &p1, const Vec2d &p2, const double t) {
+        double u = 1.0 - t;
+        return Vec2d {
+            u * u * p0.x + 2 * u * t * p1.x + t * t * p2.x,
+            u * u * p0.y + 2 * u * t * p1.y + t * t * p2.y
         };
+    } };
 
-        double mid_t { t - dt / 2.0 };
-        double mid_u { 1 - mid_t };
-        Vec2d mid_point {
-            mid_u * mid_u * p0.x + 2 * mid_u * mid_t * p1.x + mid_t * mid_t * p2.x,
-            mid_u * mid_u * p0.y + 2 * mid_u * mid_t * p1.y + mid_t * mid_t * p2.y
-        };
+    std::vector<Vec2d> points;
+    std::stack<BezierSegment> segments;
 
-        Vec2d line_mid_point { (prev_point + point) / 2.0 };
-        double error { (mid_point - line_mid_point).length() };
+    Vec2d start { bezier_eval(p0, p1, p2, 0.0) };
+    Vec2d end { bezier_eval(p0, p1, p2, 1.0) };
 
-        if (error > tolerance)
+    segments.push({ 0.0, 1.0, start, end });
+
+    while (!segments.empty())
+    {
+        BezierSegment segment { segments.top() };
+        segments.pop();
+
+        double mid_t { (segment.t0 + segment.t1) / 2.0 };
+        Vec2d mid_point { bezier_eval(p0, p1, p2, mid_t) };
+
+        Vec2d line_mid { (segment.p0 + segment.p1) / 2.0 };
+        double distance { (mid_point - line_mid).length() };
+
+        if (distance > tolerance)
         {
-            dt /= 2.0;
-            dt = std::max(dt, 1e-5);
-            t -= dt;
-            continue;
+            segments.push({ mid_t, segment.t1, mid_point, segment.p1 });
+            segments.push({ segment.t0, mid_t, segment.p0, mid_point });
         }
-        else if (error < tolerance / 4.0)
+        else
         {
-            dt = std::min(dt * 2.0, 0.1);
+            if (points.empty() || points.back() != segment.p0)
+            {
+                points.push_back(segment.p0);
+            }
+            points.push_back(segment.p1);
         }
-
-        points.push_back(point);
-        prev_point = point;
     }
+
+    points.push_back(end);
     return points;
 }
 
-static std::vector<Vec2d> flatten_contour(const std::vector<gfx::fonts::Point> &points)
+static std::vector<Vec2d> flatten_contour(const std::vector<gfx::text::Point> &points)
 {
     std::vector<Vec2d> flattened_points;
 
@@ -107,27 +119,61 @@ static std::vector<Vec2d> flatten_contour(const std::vector<gfx::fonts::Point> &
 
 void TextDemo::init()
 {
-    auto font_manager = renderer->get_font_manager();
-    auto font = font_manager->load_from_file("/Users/sigurdsevaldrud/documents/code/c++/gfx/assets/fonts/MINGLIU.ttf");
-    // if (!font)
-    // {
-    //     throw std::runtime_error("Failed to load font.");
-    // }
-    //
-    // std::vector<Vec2d> points;
-    //
-    // for (auto point : font->get_glyph('A')->contours[0])
-    // {
-    //     points.push_back({ point.x, point.y });
-    // }
+    renderer->clear_items();
 
-    // auto polyline = renderer->create_polyline({ 100, 300 }, points, { 255, 0, 0 }, 2.0);
-    // renderer->add_item(polyline);
+    auto font_manager = renderer->get_font_manager();
+    auto font = font_manager->load_from_file("/Users/sigurdsevaldrud/documents/code/c++/gfx/assets/fonts/comic-sans.ttf");
+
+    if (!font)
+    {
+        throw std::runtime_error("Failed to load font.");
+    }
+
+
+    std::shared_ptr<gfx::text::GlyphTTF> glyph;
+    // for (auto g : font->get_glyphs())
+    // {
+    //     if (!g.second->contours.empty())
+    //     {
+    //         glyph = g.second;
+    //         break;
+    //     }
+    // }
+    std::string text { "hallo" };
+    for (int i = 0; i < text.length(); i++)
+    {
+        glyph = font->get_glyph(text[i]);
+        for (auto contour : glyph->contours)
+        {
+            std::vector<Vec2d> points;
+            for (auto point : flatten_contour(contour))
+            {
+                points.push_back({ point.x, point.y });
+                num_points++;
+            }
+            Vec2d center { renderer->center() };
+
+            double kerning { 15.0 };
+            Vec2d offset { -(text.length() * kerning / 2) + i * kerning, 0 };
+            auto polyline = renderer->create_polyline(center + offset, points, { 255, 255, 255 }, 75.0);
+            polyline->set_rotation_degrees(180);
+            // polyline->set_anchor({ 0.5, 0.5 });
+            polyline->set_scale({ -0.015, 0.015 });
+            // polyline->set_close(true);
+            // polyline->set_fill(true);
+            renderer->add_item(polyline);
+        }
+    }
 }
 
 void TextDemo::render_frame(const double dt)
 {
+    double t0 { utils::time_us() };
+    double time_ms { t0 / 1000.0 };
+
     renderer->draw_frame();
+
+    last_frame_us = utils::time_us() - t0;
 }
 
 void TextDemo::handle_input(const char input)
