@@ -31,16 +31,20 @@ public:
     void init() override;
     void render_frame(const double dt) override;
     void end() override;
-    void handle_input(const char input) override;
+    void handle_input(const int input) override;
+    void report_mouse(const demos::common::core::MouseEvent event) override;
 
     std::vector<std::string> debug_text() override
     {
         std::string state_str = (camera.state == Camera::State::Free ? "Free" : (camera.state == Camera::State::Tracking ? "Tracking" : "Transitioning"));
+        gfx::math::Vec2d mouse_world_pos = get_world_pos(mouse_pos);
         return { 
             "tracked body: " + (get_tracked_body() ? get_tracked_body()->get_name() : "none"),
             "world pos:" + std::to_string(get_anchor_world_pos().x) + ", " + std::to_string(get_anchor_world_pos().y),
             "camera state: " + state_str,
             "time scale: " + std::to_string(time_scale) + "x",
+            "mouse pos: " + std::to_string(mouse_world_pos.x) + ", " + std::to_string(mouse_world_pos.y),
+            std::to_string(camera.size_cur.x) + " x " + std::to_string(camera.size_cur.y) + " units",
         };
     }
 
@@ -69,8 +73,10 @@ public:
     inline gfx::math::Vec2d get_anchor_world_pos() { return view_bounds.min + view_bounds.size() * view_anchor; }
     inline gfx::math::Vec2d get_anchor_screen_pos() { return view_bounds.size() * view_anchor; }
 
+    std::shared_ptr<Body> get_closest_body(const gfx::math::Vec2d position);
     std::shared_ptr<Body> get_tracked_body();
     void cycle_tracked_body(const int direction = 1);
+    void track_body(const std::shared_ptr<Body> body);
     void untrack_body();
 
 private: 
@@ -84,6 +90,9 @@ private:
     static constexpr double PHYSICS_TIME_STEP { 0.0001 };
     static constexpr int MAX_STEPS_PER_FRAME { 500 };
     double time_accumulator { 0.0 };
+
+    gfx::math::Vec2d mouse_pos { 0.0, 0.0 };
+    bool scroll_zoom_in { true };
 
     Camera camera;
 

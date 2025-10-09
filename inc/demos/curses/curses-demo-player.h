@@ -25,9 +25,21 @@ public:
         return demos::curses::get_screen_size() * 2;
     }
 
-    char get_input() override
+    int get_input() override
     {
-        return demos::curses::get_input();
+        int input { demos::curses::get_input() };
+        if (input == KEY_MOUSE)
+        {
+            MEVENT e;
+            if (getmouse(&e) == OK)
+            {
+                demos::common::core::MouseEvent event { curses_to_mouse_event(e) };
+                demos[current_demo]->report_mouse(event);
+            }
+            refresh();
+            return 0;
+        }
+        return input;
     }
 
     void draw_info() override
@@ -39,6 +51,40 @@ public:
         {
             add_str({ 0, i }, info[i]);
         }
+    }
+
+private:
+
+    demos::common::core::MouseEvent curses_to_mouse_event(const MEVENT e)
+    {
+        demos::common::core::MouseEvent event;
+        switch (e.bstate)
+        {
+            case BUTTON1_PRESSED:
+                event.type = demos::common::core::MouseEventType::LEFT_DOWN;
+                break;
+
+            case BUTTON3_PRESSED:
+                event.type = demos::common::core::MouseEventType::RIGHT_DOWN;
+                break;
+
+            case BUTTON4_PRESSED:
+                event.type = demos::common::core::MouseEventType::SCROLL_UP;
+                break;
+
+            case BUTTON5_PRESSED:
+                event.type = demos::common::core::MouseEventType::SCROLL_DOWN;
+                break;
+
+            case REPORT_MOUSE_POSITION:
+                event.type = demos::common::core::MouseEventType::MOVE;
+                break;
+
+            default:
+                break;
+        }
+        event.position = gfx::math::Vec2i { e.x, e.y } * 2 / renderer->get_viewport_scaling();
+        return event;
     }
 
 };

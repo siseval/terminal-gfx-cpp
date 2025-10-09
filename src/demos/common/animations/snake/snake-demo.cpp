@@ -280,7 +280,7 @@ void SnakeDemo::update_scale(const double s)
     scale = s;
 }
 
-void SnakeDemo::handle_input(const char input)
+void SnakeDemo::handle_input(const int input)
 {
     switch (input)
     {

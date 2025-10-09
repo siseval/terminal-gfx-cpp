@@ -73,7 +73,7 @@ void FireworksDemo::spawn_firework()
     fireworks.emplace_back(renderer, position, velocity, options, colors);
 }
 
-void FireworksDemo::handle_input(const char input)
+void FireworksDemo::handle_input(const int input)
 {
     switch (input)
     {

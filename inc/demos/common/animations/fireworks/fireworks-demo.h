@@ -19,7 +19,8 @@ public:
     void init() override;
     void render_frame(const double dt) override;
     void end() override;
-    void handle_input(const char input) override;
+    void handle_input(const int input) override;
+    void report_mouse(const demos::common::core::MouseEvent event) override {}
 
     virtual std::vector<std::string> debug_text() override
     {

@@ -6,7 +6,7 @@
 #include <gfx/math/box2.h>
 #include <gfx/math/vec2.h>
 #include <gfx/math/matrix.h>
-#include <gfx/math/triangle-2D.h>
+#include <gfx/geometry/triangle.h>
 
 namespace gfx::primitives
 {
@@ -46,7 +46,7 @@ public:
 
 private:
 
-    void rasterize_filled_triangle(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Triangle &triangle) const;
+    void rasterize_filled_triangle(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::geometry::Triangle &triangle) const;
     void rasterize_rounded_corners(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Matrix3x3d &transform) const;
     void rasterize_rounded_corner(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Vec2d pos, const double angle0, const double angle1, const gfx::math::Matrix3x3d &transform) const;
     void rasterize_edge(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Vec2d start, const gfx::math::Vec2d end, const gfx::math::Matrix3x3d &transform) const;

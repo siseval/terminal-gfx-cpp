@@ -36,7 +36,7 @@ void run()
         }
         refresh();
 
-        char input { get_input() };
+        int input { get_input() };
         if (input == 'q')
         {
             running = false;

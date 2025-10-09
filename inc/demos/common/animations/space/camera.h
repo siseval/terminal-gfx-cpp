@@ -20,7 +20,7 @@ public:
 
     void process(const double dt);
 
-    void handle_input(const char input);
+    void handle_input(const int input);
 
     void smooth_pan(const gfx::math::Vec2d direction);
     void smooth_zoom(const double factor);

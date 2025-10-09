@@ -23,12 +23,12 @@ public:
 protected:
 
     void cycle_demo(const int direction);
-    void handle_input(const char input);
+    void handle_input(const int input);
     std::vector<std::string> get_info();
 
     virtual gfx::math::Vec2i get_screen_size() = 0;
 
-    virtual char get_input() = 0;
+    virtual int get_input() = 0;
     virtual void draw_info() = 0;
 
     std::shared_ptr<gfx::core::GfxRender2D> renderer;

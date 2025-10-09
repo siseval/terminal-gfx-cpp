@@ -4,6 +4,7 @@ add_subdirectory(shaders)
 add_subdirectory(surfaces)
 add_subdirectory(utils)
 add_subdirectory(text)
+add_subdirectory(geometry)
 
 add_library(gfx INTERFACE)
 
@@ -14,6 +15,7 @@ target_link_libraries(gfx INTERFACE
     gfx_surfaces
     gfx_utils
     gfx_text
+    gfx_geometry
 )
 
 target_include_directories(gfx INTERFACE

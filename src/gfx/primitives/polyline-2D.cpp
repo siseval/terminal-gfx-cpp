@@ -1,7 +1,7 @@
 #include <numbers>
 #include <gfx/primitives/polyline-2D.h>
 #include <gfx/utils/transform.h>
-#include <gfx/utils/triangulate.h>
+#include <gfx/geometry/triangulate.h>
 
 namespace gfx::primitives
 {
@@ -9,6 +9,7 @@ namespace gfx::primitives
 using namespace gfx::core;
 using namespace gfx::core::types;
 using namespace gfx::math;
+using namespace gfx::geometry;
 
 
 Box2d Polyline2D::get_relative_extent() const
@@ -149,7 +150,7 @@ void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3
         }
         else
         {
-            std::vector<Triangle> triangles { utils::triangulate_polygon(transformed_points, clockwise) };
+            std::vector<Triangle> triangles { geometry::triangulate_polygon(transformed_points, clockwise) };
             for (auto triangle : triangles)
             {
                 rasterize_filled_triangle(surface, triangle);

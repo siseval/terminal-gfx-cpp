@@ -47,7 +47,7 @@ void DemoPlayer::run()
             draw_info();
         }
 
-        char input { get_input() };
+        int input { get_input() };
         handle_input(input);
         demos[current_demo]->handle_input(input);
     }
@@ -59,7 +59,7 @@ void DemoPlayer::resize(const gfx::math::Vec2i new_resolution)
     demos[current_demo]->init();
 }
 
-void DemoPlayer::handle_input(const char input)
+void DemoPlayer::handle_input(const int input)
 {
     switch (input)
     {

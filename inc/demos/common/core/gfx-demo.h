@@ -7,6 +7,21 @@
 namespace demos::common::core
 {
 
+enum class MouseEventType
+{
+    LEFT_DOWN,
+    RIGHT_DOWN,
+    SCROLL_UP,
+    SCROLL_DOWN,
+    MOVE,
+};
+
+struct MouseEvent
+{
+    MouseEventType type;
+    gfx::math::Vec2i position;
+};
+
 class GfxDemo
 {
 
@@ -17,7 +32,8 @@ public:
 
     virtual void init() = 0;
     virtual void render_frame(const double dt) = 0;
-    virtual void handle_input(const char input) = 0;
+    virtual void handle_input(const int input) = 0;
+    virtual void report_mouse(const MouseEvent event) {}
     virtual void end() = 0;
 
     virtual std::vector<std::string> debug_text() { return {}; }

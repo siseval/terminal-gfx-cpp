@@ -7,6 +7,14 @@
 #include <gfx/core/gfx-render-2D.h>
 #include <gfx/math/vec2.h>
 
+#ifndef BUTTON5_PRESSED
+#define BUTTON5_PRESSED NCURSES_MOUSE_MASK(5, NCURSES_BUTTON_PRESSED)
+#endif
+
+#ifndef BUTTON5_RELEASED
+#define BUTTON5_RELEASED NCURSES_MOUSE_MASK(5, NCURSES_BUTTON_RELEASED)
+#endif
+
 namespace demos::curses
 {
 
@@ -30,7 +38,7 @@ inline gfx::math::Vec2i get_screen_size()
     return { width, height };
 }
 
-inline char get_input()
+inline int get_input()
 {
     return getch();
 }
@@ -63,9 +71,15 @@ inline void init()
 
     initscr();
     timeout(0);
-    nocbreak();
+    cbreak();
     noecho();
     curs_set(0);
+
+    keypad(stdscr, TRUE);
+    mouseinterval(0);
+    mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, nullptr);
+    printf("\033[?1003h\n");
+    fflush(stdout);
 
     start_color();
     use_default_colors();
@@ -82,6 +96,7 @@ inline void init()
 
 inline void end()
 {
+    printf("\033[?1003l\n");
     endwin();
     exit(0);
 }

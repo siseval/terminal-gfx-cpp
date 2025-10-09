@@ -24,7 +24,7 @@ void Camera::process(const double dt)
     }
 }
 
-void Camera::handle_input(const char input)
+void Camera::handle_input(const int input)
 {
     switch (input)
     {
@@ -60,7 +60,7 @@ void Camera::handle_input(const char input)
 
 void Camera::smooth_pan(const Vec2d direction)
 {
-    velocity += direction * pan_speed * size_cur.length();
+    velocity += direction * pan_speed * size_cur.x;
 }
 
 void Camera::smooth_zoom(const double factor)
@@ -100,10 +100,10 @@ void Camera::do_track(const double dt)
 
 void Camera::do_free(const double dt)
 {
-    velocity *= std::pow(0.3, dt);
-    cur_pos += velocity * dt;
     zoom_velocity *= std::pow(0.5, dt);
     size_cur.x *= 1 + zoom_velocity * dt;
+    velocity *= std::pow(0.3, dt);
+    cur_pos += velocity * dt;
 }
 
 }

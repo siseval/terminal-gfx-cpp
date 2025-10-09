@@ -159,12 +159,16 @@ void SpaceDemo::clear_bodies()
     renderer->clear_items();
 }
 
-void SpaceDemo::handle_input(const char input)
+void SpaceDemo::handle_input(const int input)
 {
     camera.handle_input(input);
 
     switch (input)
     {
+        case ' ':
+            scroll_zoom_in = !scroll_zoom_in;
+            break;
+
         case 'c':
             clear_bodies();
             break;
@@ -187,6 +191,53 @@ void SpaceDemo::handle_input(const char input)
 
         case 'u':
             tracked_body_index = -1;
+            break;
+
+        default:
+            break;
+    }
+}
+
+void SpaceDemo::report_mouse(const demos::common::core::MouseEvent event)
+{
+    mouse_pos = event.position;
+    switch (event.type)
+    {
+        case MouseEventType::LEFT_DOWN:
+            {
+                auto body { get_closest_body(get_world_pos(mouse_pos)) };
+                if (body == get_tracked_body())
+                {
+                    break;
+                }
+                Vec2d mouse_pos_f { 
+                    static_cast<double>(mouse_pos.x), 
+                    static_cast<double>(mouse_pos.y) 
+                };
+                if (body && Vec2d::distance(mouse_pos_f, get_screen_pos(body->get_position())) < 20.0)
+                {
+                    track_body(body);
+                }
+                else
+                {
+                    untrack_body();
+                }
+                break;
+            }
+
+        case MouseEventType::SCROLL_UP:
+            if (scroll_zoom_in)
+            {
+                camera.smooth_zoom(0.9);
+            }
+            else
+            {
+                camera.smooth_zoom(1.1);
+            }
+            break;
+
+        case MouseEventType::SCROLL_DOWN:
+            zoom(1.1);
             break;
 
         default:
@@ -239,7 +290,30 @@ std::shared_ptr<Body> SpaceDemo::get_tracked_body()
     return body_list[tracked_body_index];
 }
 
+std::shared_ptr<Body> SpaceDemo::get_closest_body(const Vec2d position)
+{
+    std::shared_ptr<Body> closest_body = nullptr;
+    double closest_distance = std::numeric_limits<double>::max();
+
+    for (auto body : body_list)
+    {
+        double distance = Vec2d::distance(position, body->get_position());
+        if (distance < closest_distance)
+        {
+            closest_distance = distance;
+            closest_body = body;
+        }
+    }
+    return closest_body;
+}
+
 void SpaceDemo::cycle_tracked_body(const int direction)
+{
+    auto body { body_list[((tracked_body_index + direction) % body_list.size())] };
+    track_body(body);
+}
+
+void SpaceDemo::track_body(const std::shared_ptr<Body> body)
 {
     camera.size0 = view_bounds.size();
     camera.start_pos = get_anchor_world_pos();
@@ -249,7 +323,13 @@ void SpaceDemo::cycle_tracked_body(const int direction)
     previous_tracked_body = camera.state == Camera::State::Tracking ? 
         get_tracked_body() : nullptr;
 
-    tracked_body_index = (tracked_body_index + direction) % body_list.size();
+    for (int i = 0; i < body_list.size(); ++i)
+    {
+        if (body_list[i] == body)
+        {
+            tracked_body_index = i;
+        }
+    }
 
     camera.zoom_out_size = std::max(
         get_tracked_body()->get_radius() * tracked_body_zoom_level,
@@ -262,6 +342,7 @@ void SpaceDemo::cycle_tracked_body(const int direction)
     camera.velocity = { 0.0, 0.0 };
     camera.zoom_velocity = 0.0;
     camera.track_time = 0.0;
+
 }
 
 void SpaceDemo::untrack_body()

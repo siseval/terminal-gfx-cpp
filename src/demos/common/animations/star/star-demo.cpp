@@ -68,7 +68,7 @@ void StarDemo::render_frame(const double dt)
     last_frame_us = utils::time_us() - t0;
 }
 
-void StarDemo::handle_input(const char input)
+void StarDemo::handle_input(const int input)
 {
     switch (input)
     {

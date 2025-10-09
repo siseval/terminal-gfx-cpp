@@ -23,6 +23,19 @@ inline Vec2d metres_to_pixels(const Vec2d metres, const Vec2d view_metres, const
     };
 }
 
+inline double pixels_to_metres(const double pixels, const double view_metres, const double resolution_pixels)
+{
+    return (pixels / resolution_pixels) * view_metres;
+}
+
+inline Vec2d pixels_to_metres(const Vec2d pixels, const Vec2d view_metres, const Vec2d resolution_pixels)
+{
+    return Vec2d {
+        pixels_to_metres(pixels.x, view_metres.x, resolution_pixels.x),
+        pixels_to_metres(pixels.y, view_metres.y, resolution_pixels.y)
+    };
+}
+
 }
 
 #endif // UNITS_H
