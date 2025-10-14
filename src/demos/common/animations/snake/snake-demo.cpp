@@ -182,7 +182,6 @@ void SnakeDemo::render_frame(const double dt)
     }
 
     renderer->draw_frame();
-    last_frame_us = utils::time_us() - t0;
 }
 
 Vec2d SnakeDemo::closest_food()

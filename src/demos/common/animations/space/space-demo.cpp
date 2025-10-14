@@ -18,6 +18,18 @@ void SpaceDemo::init()
     time_scale = 0.01;
     clear_bodies();
     renderer->get_render_surface()->clear_palette();
+    hovered_body = nullptr;
+
+    std::vector<Vec2d> bracket_points { { 20, 0 }, { 0, 20 }, { 0, 90, }, { 20, 110 } };
+    left_bracket = renderer->create_polyline({ 0, 0 }, bracket_points, Color4 { 255, 255, 255 }, min_bracket_thickness);
+    right_bracket = renderer->create_polyline({ 0, 0 }, bracket_points, Color4 { 255, 255, 255 }, min_bracket_thickness);
+    right_bracket->set_rotation(std::numbers::pi);
+    left_bracket->set_anchor({ 0.5, 0.5 });
+    right_bracket->set_anchor({ 0.5, 0.5 });
+    left_bracket->set_rounded_corners(true);
+    right_bracket->set_rounded_corners(true);
+    renderer->add_item(left_bracket);
+    renderer->add_item(right_bracket);
 
     simulations::solar_system(*this);
 }
@@ -27,11 +39,15 @@ void SpaceDemo::render_frame(const double dt)
     double t0 { utils::time_us() };
     double time_ms { t0 / 1000.0 };
 
+    t_sec += dt;
+
     physics_process(dt * time_scale);
 
     double time_lerp { std::min(time_accumulator / PHYSICS_TIME_STEP, 1.0) };
     handle_camera(dt, time_lerp);
+    update_hovered_brackets(time_lerp);
     update_render_items(time_lerp);
+    handle_hovered_body(dt, time_lerp);
 
     renderer->draw_frame();
     last_frame_us = utils::time_us() - t0;
@@ -40,28 +56,46 @@ void SpaceDemo::render_frame(const double dt)
 void SpaceDemo::handle_camera(const double dt, const double time_lerp)
 {
     camera.end_pos = camera.cur_pos;
+    if (camera.state == Camera::State::Free)
+    {
+        untrack_body();
+    }
+
     if (get_tracked_body())
     {
         RenderBody render_body { body_items.at(get_tracked_body()) };
-        camera.end_pos = 
-            Vec2d::lerp(
-                render_body.previous_pos, get_tracked_body()->get_position(), time_lerp
-            );
+        camera.end_pos = body_interpolated_pos(get_tracked_body(), time_lerp);
     }
 
     if (camera.state == Camera::State::Transitioning && previous_tracked_body)
     {
-        RenderBody previous_render_body { body_items.at(previous_tracked_body) };
-        camera.start_pos =
-            Vec2d::lerp(
-                previous_render_body.previous_pos, 
-                previous_tracked_body->get_position(), 
-                time_lerp
-            );
+        camera.start_pos = body_interpolated_pos(previous_tracked_body, time_lerp);
     }
     camera.process(dt);
     set_view_pos(camera.cur_pos);
     set_view_size(camera.size_cur.x);
+}
+
+void SpaceDemo::handle_hovered_body(const double dt, const double time_lerp)
+{
+    auto previous_render_body { hovered_body };
+    if (hovered_time >= hovered_poll_time)
+    {
+        hovered_body = get_closest_body_screenspace(mouse_pos, 50.0, 2.0, time_lerp);
+    }
+
+    if (hovered_body != previous_render_body)
+    {
+        hovered_time = 0.0;
+    }
+    else if (hovered_time <= 1.0)
+    {
+        hovered_time += dt / bracket_grow_time;
+    }
+    else
+    {
+        hovered_time = 1.0;
+    }
 }
 
 void SpaceDemo::physics_process(const double dt)
@@ -201,26 +235,14 @@ void SpaceDemo::handle_input(const int input)
 void SpaceDemo::report_mouse(const demos::common::core::MouseEvent event)
 {
     mouse_pos = event.position;
+    hover_mouse = true;
     switch (event.type)
     {
         case MouseEventType::LEFT_DOWN:
             {
-                auto body { get_closest_body(get_world_pos(mouse_pos)) };
-                if (body == get_tracked_body())
+                if (hovered_body)
                 {
-                    break;
-                }
-                Vec2d mouse_pos_f { 
-                    static_cast<double>(mouse_pos.x), 
-                    static_cast<double>(mouse_pos.y) 
-                };
-                if (body && Vec2d::distance(mouse_pos_f, get_screen_pos(body->get_position())) < 20.0)
-                {
-                    track_body(body);
-                }
-                else
-                {
-                    untrack_body();
+                    track_body(hovered_body);
                 }
                 break;
             }
@@ -281,6 +303,51 @@ void SpaceDemo::zoom(const double factor)
     view_bounds.max = anchor_pos + (view_bounds.max - anchor_pos) * factor;
 }
 
+void SpaceDemo::update_hovered_brackets(const double time_lerp)
+{
+    if (hovered_body == nullptr)
+    {
+        left_bracket->set_visible(false);
+        right_bracket->set_visible(false);
+        return;
+    }
+    left_bracket->set_visible(true);
+    right_bracket->set_visible(true);
+
+    auto body { hovered_body };
+
+    double body_screen_radius { 
+        units::metres_to_pixels(body->get_radius(), view_bounds.size(), get_resolution()).x 
+    };
+
+    Vec2d pos { get_screen_pos(body_interpolated_pos(body, time_lerp)) };
+
+    double offset { 
+        std::max(body_screen_radius * 3.0, min_bracket_distance) +
+        1 + std::sin(t_sec * std::numbers::pi * 2.0 * bracket_frequency) * bracket_amplitude
+    };
+
+    left_bracket->set_position(pos - Vec2d { offset, 0 });
+    right_bracket->set_position(pos + Vec2d { offset, 0 });
+
+    double scale { 
+        std::lerp(
+            0.0, 
+            std::max(body_screen_radius * 2.5, min_bracket_scale) / 100, 
+            hovered_time
+        ) 
+    };
+
+    left_bracket->set_scale(scale);
+    right_bracket->set_scale(scale);
+
+    double thickness { 
+        std::clamp(body_screen_radius / 3, min_bracket_thickness, max_bracket_thickness) 
+    };
+    left_bracket->set_line_thickness(thickness / left_bracket->get_scale().x);
+    right_bracket->set_line_thickness(thickness / right_bracket->get_scale().x);
+}
+
 std::shared_ptr<Body> SpaceDemo::get_tracked_body()
 {
     if (tracked_body_index < 0 || tracked_body_index >= body_list.size())
@@ -290,10 +357,10 @@ std::shared_ptr<Body> SpaceDemo::get_tracked_body()
     return body_list[tracked_body_index];
 }
 
-std::shared_ptr<Body> SpaceDemo::get_closest_body(const Vec2d position)
+std::shared_ptr<Body> SpaceDemo::get_closest_body(const Vec2d position, const double max_distance)
 {
-    std::shared_ptr<Body> closest_body = nullptr;
-    double closest_distance = std::numeric_limits<double>::max();
+    std::shared_ptr<Body> closest_body { nullptr };
+    double closest_distance { std::numeric_limits<double>::max() };
 
     for (auto body : body_list)
     {
@@ -304,7 +371,43 @@ std::shared_ptr<Body> SpaceDemo::get_closest_body(const Vec2d position)
             closest_body = body;
         }
     }
-    return closest_body;
+    return (max_distance == 0 || closest_distance <= max_distance) ? closest_body : nullptr;
+}
+
+std::shared_ptr<Body> SpaceDemo::get_closest_body_screenspace(const Vec2d screen_pos, const double max_distance, const double euqality_threshold, const double time_lerp)
+{
+    std::shared_ptr<Body> closest_body { nullptr };
+    double closest_distance { std::numeric_limits<double>::max() };
+
+    for (auto body : body_list)
+    {
+        Vec2d pos { get_screen_pos(body_interpolated_pos(body, time_lerp)) };
+        double distance { 
+            Vec2d::distance(screen_pos, pos) -  
+            units::metres_to_pixels(body->get_radius(), view_bounds.size(), get_resolution()).x
+        };
+        if (distance < closest_distance)
+        {
+            bool equal { std::abs(distance - closest_distance) < euqality_threshold };
+            if (equal && body->get_radius() < closest_body->get_radius())
+            {
+                continue;
+            }
+            closest_distance = distance;
+            closest_body = body;
+        }
+    }
+    return (max_distance == 0 || closest_distance <= max_distance) ? closest_body : nullptr;
+}
+
+Vec2d SpaceDemo::body_interpolated_pos(const std::shared_ptr<Body> body, const double time_lerp)
+{
+    RenderBody render_body { body_items.at(body) };
+    return (Vec2d::lerp(
+        render_body.previous_pos, 
+        body->get_position(), 
+        time_lerp
+    ));
 }
 
 void SpaceDemo::cycle_tracked_body(const int direction)
@@ -342,7 +445,6 @@ void SpaceDemo::track_body(const std::shared_ptr<Body> body)
     camera.velocity = { 0.0, 0.0 };
     camera.zoom_velocity = 0.0;
     camera.track_time = 0.0;
-
 }
 
 void SpaceDemo::untrack_body()

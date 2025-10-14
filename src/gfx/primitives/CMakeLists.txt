@@ -2,6 +2,7 @@ set(GFX_PRIMITIVES_SOURCES
     circle-2D.cpp
     ellipse-2D.cpp
     polyline-2D.cpp
+    bitmap-2D.cpp
 )
 
 add_library(gfx_primitives STATIC ${GFX_PRIMITIVES_SOURCES})

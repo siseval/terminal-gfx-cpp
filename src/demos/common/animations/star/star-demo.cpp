@@ -65,7 +65,6 @@ void StarDemo::render_frame(const double dt)
     }
 
     renderer->draw_frame();
-    last_frame_us = utils::time_us() - t0;
 }
 
 void StarDemo::handle_input(const int input)

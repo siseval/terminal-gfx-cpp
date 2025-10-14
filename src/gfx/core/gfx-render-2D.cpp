@@ -105,4 +105,24 @@ std::shared_ptr<Polyline2D> GfxRender2D::create_polyline(const Vec2d position, c
     return polyline;
 }
 
+std::shared_ptr<Bitmap2D> GfxRender2D::create_bitmap(const Vec2d position, const gfx::core::types::Bitmap &bm) const
+{
+    auto bitmap { std::make_shared<Bitmap2D>() };
+
+    bitmap->set_position(position);
+    bitmap->load_bitmap(bm);
+
+    return bitmap;
+}
+
+std::shared_ptr<Bitmap2D> GfxRender2D::create_bitmap(const Vec2d position, const Vec2i resolution) const
+{
+    auto bitmap { std::make_shared<Bitmap2D>() };
+
+    bitmap->set_position(position);
+    bitmap->set_resolution(resolution);
+
+    return bitmap;
+}
+
 }

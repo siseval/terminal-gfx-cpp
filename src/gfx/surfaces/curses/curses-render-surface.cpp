@@ -34,6 +34,10 @@ void CursesRenderSurface::present()
             };
 
             Color4 color { Color4::from_i32(pixel_value >> 32) };
+            if (color.a == 0)
+            {
+                continue;
+            }
             set_color(color);
             mvaddstr(y, x, pixel.data());
         }

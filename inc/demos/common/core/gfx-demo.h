@@ -59,6 +59,8 @@ public:
         return info;
     }
 
+    inline void set_last_frame_us(const double us) { last_frame_us = us; }
+
 protected:
 
     std::shared_ptr<gfx::core::GfxRender2D> renderer;

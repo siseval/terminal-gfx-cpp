@@ -33,6 +33,16 @@ public:
         );
     }
 
+    static double distance(const Color4 &a, const Color4 &b)
+    {
+        return std::sqrt(
+            (a.r - b.r) * (a.r - b.r) +
+            (a.g - b.g) * (a.g - b.g) +
+            (a.b - b.b) * (a.b - b.b) +
+            (a.a - b.a) * (a.a - b.a)
+        );
+    }
+
     uint8_t r;
     uint8_t g;
     uint8_t b;

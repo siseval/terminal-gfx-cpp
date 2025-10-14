@@ -19,6 +19,21 @@ inline double smoothstep(const double d)
     return d * d * (3 - 2 * d);
 }
 
+inline double exponential_step(const double t, const double k = 5.0)
+{
+    return (1.0 - std::exp(-k * t)) / (1.0 - std::exp(-k));
+}
+
+inline double exponential_interp_3(const double a, const double b, const double c, const double t, const double k = 5.0)
+{
+    double exp_t = (1.0 - std::exp(-k * t)) / (1.0 - std::exp(-k));
+
+    double ab = a + (b - a) * exp_t;
+    double bc = b + (c - b) * exp_t;
+
+    return ab + (bc - ab) * exp_t;
+}
+
 inline double random_double(const double min, const double max)
 {
     static std::mt19937 rng(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));

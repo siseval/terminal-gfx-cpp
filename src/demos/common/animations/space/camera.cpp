@@ -49,10 +49,12 @@ void Camera::handle_input(const int input)
             break;
 
         case 'k':
+        case 'W':
             smooth_zoom(0.25);
             break;
 
         case 'j':
+        case 'S':
             smooth_zoom(2.0);
             break;
     }

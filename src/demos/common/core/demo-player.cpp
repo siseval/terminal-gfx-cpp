@@ -4,6 +4,7 @@
 #include <demos/common/animations/fireworks/fireworks-demo.h>
 #include <demos/common/animations/space/space-demo.h>
 #include <demos/common/animations/text/text-demo.h>
+#include <demos/common/animations/fractal/fractal-demo.h>
 
 namespace demos::common::core
 {
@@ -17,7 +18,8 @@ using namespace demos::common;
 
 void DemoPlayer::init()
 {
-    demos.emplace_back(std::make_shared<text::TextDemo>(renderer));
+    // demos.emplace_back(std::make_shared<text::TextDemo>(renderer));
+    demos.emplace_back(std::make_shared<fractal::FractalDemo>(renderer));
     demos.emplace_back(std::make_shared<space::SpaceDemo>(renderer));
     demos.emplace_back(std::make_shared<star::StarDemo>(renderer));
     demos.emplace_back(std::make_shared<snake::SnakeDemo>(renderer));
@@ -28,7 +30,7 @@ void DemoPlayer::init()
 
 void DemoPlayer::run()
 {
-    double last_frame_timestamp_ms { utils::time_ms() };
+    double last_frame_timestamp_us { utils::time_ms() };
     while (running)
     {
         if (screen_size_changed())
@@ -36,11 +38,12 @@ void DemoPlayer::run()
             resize(get_screen_size());
         }
 
-        double now_ms { utils::time_ms() };
-        double dt_sec = (now_ms - last_frame_timestamp_ms) / 1000.0;
+        double now_us { utils::time_us() };
+        double dt_sec = (now_us - last_frame_timestamp_us) / 1000000.0;
 
         demos[current_demo]->render_frame(dt_sec);
-        last_frame_timestamp_ms = now_ms;
+        demos[current_demo]->set_last_frame_us(now_us - last_frame_timestamp_us);
+        last_frame_timestamp_us = now_us;
 
         if (show_info)
         {

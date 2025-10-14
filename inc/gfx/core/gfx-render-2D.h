@@ -3,10 +3,13 @@
 
 #include <gfx/core/scene-graph-2D.h>
 #include <gfx/core/render-surface.h>
+#include <gfx/core/types/color4.h>
+#include <gfx/core/types/bitmap.h>
 #include <gfx/primitives/circle-2D.h>
 #include <gfx/primitives/ellipse-2D.h>
 #include <gfx/primitives/polyline-2D.h>
 #include <gfx/primitives/text-2D.h>
+#include <gfx/primitives/bitmap-2D.h>
 #include <gfx/text/font-manager-ttf.h>
 
 namespace gfx::core
@@ -34,10 +37,13 @@ public:
     std::shared_ptr<gfx::primitives::Circle2D> create_circle(const gfx::math::Vec2d position, const double radius, const types::Color4 color, const double line_thickness = 1.0) const;
     std::shared_ptr<gfx::primitives::Ellipse2D> create_ellipse(const gfx::math::Vec2d position, const gfx::math::Vec2d radius, const types::Color4 color, const double line_thickness = 1.0) const;
     std::shared_ptr<gfx::primitives::Polyline2D> create_polyline(const gfx::math::Vec2d position, const std::vector<gfx::math::Vec2d> &points, const types::Color4 color, const double line_thickness = 1.0) const;
+    std::shared_ptr<gfx::primitives::Bitmap2D> create_bitmap(const gfx::math::Vec2d position, const types::Bitmap &bm) const;
+    std::shared_ptr<gfx::primitives::Bitmap2D> create_bitmap(const gfx::math::Vec2d position, const gfx::math::Vec2i resolution) const;
 
     inline void set_resolution(const gfx::math::Vec2i new_resolution) { surface->resize(new_resolution); }
     inline gfx::math::Vec2i get_resolution() const { return surface->get_resolution() / get_viewport_scaling(); }
     inline gfx::math::Vec2d center() const { return get_resolution() / 2; };
+    inline gfx::math::Vec2d get_aspect_ratio() const { return gfx::math::Vec2d { static_cast<double>(get_resolution().x) / get_resolution().y, 1.0 }; }
 
     inline std::shared_ptr<SceneGraph2D> get_scene_graph() const { return scene_graph; };
     inline std::shared_ptr<RenderSurface> get_render_surface() const { return surface; };

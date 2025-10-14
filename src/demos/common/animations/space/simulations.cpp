@@ -129,7 +129,7 @@ void binary_system(SpaceDemo &demo)
 void solar_system(SpaceDemo &demo)
 {
     demo.set_camera_pos({ 0, 0 });
-    demo.set_camera_size(100.0);
+    demo.set_camera_size(3.0);
 
     demo.spawn_body("sun", { 0.0, 0.0 }, { 0.0, 0.0 }, 0.00465, 1.0, true, { 1.0, 1.0, 0.0, 1.0 });
 

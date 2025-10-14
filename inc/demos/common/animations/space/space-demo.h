@@ -73,13 +73,19 @@ public:
     inline gfx::math::Vec2d get_anchor_world_pos() { return view_bounds.min + view_bounds.size() * view_anchor; }
     inline gfx::math::Vec2d get_anchor_screen_pos() { return view_bounds.size() * view_anchor; }
 
-    std::shared_ptr<Body> get_closest_body(const gfx::math::Vec2d position);
+    std::shared_ptr<Body> get_closest_body(const gfx::math::Vec2d position, const double max_distance = 0.0);
+    std::shared_ptr<Body> get_closest_body_screenspace(const gfx::math::Vec2d screen_pos, const double max_distance = 0.0, const double equality_threshold = 2.0, const double time_lerp = 1.0);
     std::shared_ptr<Body> get_tracked_body();
     void cycle_tracked_body(const int direction = 1);
     void track_body(const std::shared_ptr<Body> body);
     void untrack_body();
 
-private: 
+private:
+
+    void update_hovered_brackets(const double time_lerp = 1.0);
+    void handle_hovered_body(const double dt, const double time_lerp = 1.0);
+
+    gfx::math::Vec2d body_interpolated_pos(const std::shared_ptr<Body> body, const double time_lerp = 1.0);
 
     void set_view_pos(const gfx::math::Vec2d pos);
     void set_view_size(const double width);
@@ -87,12 +93,28 @@ private:
     gfx::math::Vec2d predict_orbital_pos(std::shared_ptr<Body> body, const double future_time);
     std::shared_ptr<Body> get_largest_body();
 
+    double t_sec { 0.0 };
+
     static constexpr double PHYSICS_TIME_STEP { 0.0001 };
     static constexpr int MAX_STEPS_PER_FRAME { 500 };
     double time_accumulator { 0.0 };
 
     gfx::math::Vec2d mouse_pos { 0.0, 0.0 };
     bool scroll_zoom_in { true };
+    bool hover_mouse { false };
+    std::shared_ptr<Body> hovered_body { nullptr };
+
+    std::shared_ptr<gfx::primitives::Polyline2D> left_bracket;
+    std::shared_ptr<gfx::primitives::Polyline2D> right_bracket;
+    double min_bracket_scale { 3.0 };
+    double min_bracket_distance { 2.0 };
+    double max_bracket_thickness { 3.5 };
+    double min_bracket_thickness { 1.0 };
+    double bracket_frequency { 0.5 };
+    double bracket_amplitude { 1.0 };
+    double bracket_grow_time { 0.25 };
+    double hovered_time { 0.0 };
+    double hovered_poll_time { 0.25 };
 
     Camera camera;
 
@@ -101,7 +123,7 @@ private:
 
     int tracked_body_index { -1 };
     std::shared_ptr<Body> previous_tracked_body { nullptr };
-    double tracked_body_zoom_level { 20.0 };
+    double tracked_body_zoom_level { 60.0 };
 
     gfx::math::Box2d view_bounds;
     gfx::math::Vec2d view_anchor { 0.5, 0.5 };
