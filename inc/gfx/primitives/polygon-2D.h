@@ -1,5 +1,5 @@
-#ifndef POLYLINE_2D_H
-#define POLYLINE_2D_H
+#ifndef POLYGON_2D_H
+#define POLYGON_2D_H
 
 #include <gfx/core/render-surface.h>
 #include <gfx/core/gfx-primitive-2D.h>
@@ -11,7 +11,7 @@
 namespace gfx::primitives
 {
 
-class Polyline2D : public gfx::core::GfxPrimitive2D
+class Polygon2D : public gfx::core::GfxPrimitive2D
 {
 
 public:
@@ -39,27 +39,16 @@ public:
 
     inline const std::vector<gfx::math::Vec2d> get_points() const { return points; }
 
-    inline void set_close(const bool close) { do_close = close; }
-    inline bool get_close() const { return do_close; }
-
-    inline void set_rounded_corners(const bool rounded) { do_rounded_corners = rounded; }
-    inline bool get_rounded_corners() const { return do_rounded_corners; }
-
 
 private:
 
     void rasterize_filled_triangle(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::geometry::Triangle &triangle) const;
-    void rasterize_rounded_corners(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Matrix3x3d &transform) const;
-    void rasterize_rounded_corner(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Vec2d pos, const double angle0, const double angle1, const gfx::math::Matrix3x3d &transform) const;
-    void rasterize_edge(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Vec2d start, const gfx::math::Vec2d end, const gfx::math::Matrix3x3d &transform) const;
 
     std::vector<gfx::math::Vec2d> points = std::vector<gfx::math::Vec2d>();
-    bool do_close = false;
-    bool do_rounded_corners = false;
     bool clockwise = false;
     static constexpr int CORNER_SEGMENTS = 8;
 };
 
 };
 
-#endif // POLYLINE_2D_H
+#endif // POLYGON_2D_H

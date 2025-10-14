@@ -13,6 +13,15 @@ Box2d Ellipse2D::get_relative_extent() const
     return Box2d { { 0, 0 }, { radius * 2 } };
 }
 
+bool Ellipse2D::point_collides(const gfx::math::Vec2d point, const gfx::math::Matrix3x3d &transform) const
+{
+    Matrix3x3d inverse_transform { utils::invert_affine(transform) };
+    Vec2d local_point { utils::transform_point(point, inverse_transform) - radius };
+
+    return 
+    (local_point.x * local_point.x) / (radius.x * radius.x) + 
+    (local_point.y * local_point.y) / (radius.y * radius.y) <= 1.0;
+}
 
 void Ellipse2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3d &transform) const
 {

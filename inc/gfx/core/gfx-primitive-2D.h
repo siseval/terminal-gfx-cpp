@@ -24,6 +24,8 @@ public:
     gfx::math::OBB2D get_oriented_bounding_box(const gfx::math::Matrix3x3d &transform) const;
     virtual gfx::math::Box2d get_relative_extent() const = 0;
 
+    virtual bool point_collides(const gfx::math::Vec2d point, const gfx::math::Matrix3x3d &transform) const;
+
     gfx::math::Matrix3x3d get_transform() const;
 
     inline gfx::utils::UUID get_id() const { return id; }

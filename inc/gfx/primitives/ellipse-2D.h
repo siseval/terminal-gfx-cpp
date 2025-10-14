@@ -18,6 +18,8 @@ public:
     void rasterize(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Matrix3x3d &transform) const override;
     gfx::math::Box2d get_relative_extent() const override;
 
+    bool point_collides(const gfx::math::Vec2d point, const gfx::math::Matrix3x3d &transform) const override;
+
     inline gfx::math::Vec2d get_radius() const { return radius; }
     inline void set_radius(const gfx::math::Vec2d r) { radius = r; }
 

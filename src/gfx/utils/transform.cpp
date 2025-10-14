@@ -95,7 +95,7 @@ std::vector<Vec2d> transform_vectors(const std::vector<Vec2d> vectors, const Mat
     return transformed_vectors;
 }
 
-Matrix3x3d invert_affine(const Matrix3x3d m)
+Matrix3x3d invert_affine(const Matrix3x3d &m)
 {
     double a { m(0, 0) }, b { m(0, 1) }, c { m(0, 2) };
     double d { m(1, 0) }, e { m(1, 1) }, f { m(1, 2) };
