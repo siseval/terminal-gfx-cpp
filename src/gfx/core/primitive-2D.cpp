@@ -4,6 +4,7 @@
 namespace gfx::core
 {
 
+using namespace gfx::core::types;
 using namespace gfx::math;
 
 Box2d Primitive2D::get_axis_aligned_bounding_box(const Matrix3x3d &transform) const
