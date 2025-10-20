@@ -67,7 +67,7 @@ void SnakeDemo::init()
     }
 
     target_marker = renderer->create_circle(head_target, 1.0, Color4(1.0, 0.0, 0.0, 1.0), 1.0);
-    target_marker->set_fill(true);
+    target_marker->set_filled(true);
     renderer->add_item(target_marker);
 
     dead = false;
@@ -154,11 +154,14 @@ void SnakeDemo::do_dead(const double dt)
     }
     for (int i = 0; i < segments.size(); ++i)
     {
-        segments[i]->set_position(segments[i]->get_position() + Vec2d::from_angle(segments[i]->get_rotation(), explode_speed * dt));
-        segments[i]->set_scale(Vec2d::lerp(Vec2d(scale), { 0.001, 0.001 }, dead_time * 3));
-        if (segments[i]->get_scale().x <= 0.01)
+        auto segment { segments[i] };
+        Vec2d dir { Vec2d::from_angle(segment->get_rotation()) };
+
+        segment->set_position(segment->get_position() + Vec2d::from_angle(segment->get_rotation(), explode_speed * dt));
+        segment->set_scale(Vec2d::lerp(Vec2d(scale), { 0.001, 0.001 }, dead_time * 3));
+        if (segment->get_scale().x <= 0.01)
         {
-            segments[i]->set_visible(false);
+            segment->set_visible(false);
         }
     }
     dead_time += dt;
@@ -233,14 +236,14 @@ void SnakeDemo::add_food()
         utils::random_int(target_bounds_margin.y, get_resolution().y - target_bounds_margin.y)
     };
     food.push_back(renderer->create_circle(pos, food_radius, Color4(1.0, 0.7, 0.0, 1.0), 1.0));
-    food.back()->set_fill(true);
+    food.back()->set_filled(true);
     renderer->add_item(food.back());
 }
 
 void SnakeDemo::add_segment()
 {
     auto segment { renderer->create_ellipse({ 0, 0 }, { 0, 0 }, Color4(0, 0, 0)) };
-    segment->set_fill(true);
+    segment->set_filled(true);
     segment->set_anchor({ 0.5, 0.5 });
     if (!segments.empty())
     {

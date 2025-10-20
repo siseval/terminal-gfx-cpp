@@ -1,7 +1,7 @@
 #ifndef PLANET_H
 #define PLANET_H
 
-#include <gfx/core/gfx-render-2D.h>
+#include <gfx/core/render-2D.h>
 #include <demos/common/animations/space/body.h>
 
 namespace demos::common::animations::space

@@ -215,19 +215,19 @@ void InteractiveDemo::handle_input(const int input)
             selected->set_rotation(selected->get_rotation() - 0.05);
             break;
 
-        case 'i':
-            if (selected == nullptr) { break; }
-            selected->set_line_thickness(selected->get_line_thickness() - 1);
-            break;
-        case 'o':
-            if (selected == nullptr) { break; }
-            selected->set_line_thickness(selected->get_line_thickness() + 1);
-            break;
-
-        case 'f':
-            if (selected == nullptr) { break; }
-            selected->set_fill(!selected->get_fill());
-            break;
+        // case 'i':
+        //     if (selected == nullptr) { break; }
+        //     selected->set_line_thickness(selected->get_line_thickness() - 1);
+        //     break;
+        // case 'o':
+        //     if (selected == nullptr) { break; }
+        //     selected->set_line_thickness(selected->get_line_thickness() + 1);
+        //     break;
+        //
+        // case 'f':
+        //     if (selected == nullptr) { break; }
+        //     selected->set_fill(!selected->get_fill());
+        //     break;
 
         case 'b':
             if (selected == nullptr) { break; }

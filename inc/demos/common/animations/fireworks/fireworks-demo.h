@@ -1,7 +1,7 @@
 #ifndef FIREWORKS_DEMO_H
 #define FIREWORKS_DEMO_H
 
-#include <gfx/core/gfx-render-2D.h>
+#include <gfx/core/render-2D.h>
 #include <demos/common/core/gfx-demo.h>
 #include <demos/common/animations/fireworks/firework.h>
 
@@ -13,7 +13,7 @@ class FireworksDemo : public demos::common::core::GfxDemo
 
 public:
 
-    FireworksDemo(const std::shared_ptr<gfx::core::GfxRender2D> renderer)
+    FireworksDemo(const std::shared_ptr<gfx::core::Render2D> renderer)
     : GfxDemo(renderer) {}
 
     void init() override;

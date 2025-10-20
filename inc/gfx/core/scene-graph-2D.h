@@ -1,7 +1,8 @@
 #ifndef GFX_PRIMITIVE_STORE_2D_H
 #define GFX_PRIMITIVE_STORE_2D_H
 
-#include <gfx/core/gfx-primitive-2D.h>
+#include <utility>
+#include <gfx/core/primitive-2D.h>
 #include <gfx/utils/uuid.h>
 
 namespace gfx::core
@@ -9,7 +10,7 @@ namespace gfx::core
 
 struct SceneNode2D
 {
-    SceneNode2D(std::shared_ptr<GfxPrimitive2D> item) : primitive(item) {}
+    SceneNode2D(std::shared_ptr<Primitive2D> item) : primitive(item) {}
 
     utils::UUID get_id() const
     {
@@ -19,7 +20,9 @@ struct SceneNode2D
         }
         return utils::UUID(0, 0);
     }
-    std::shared_ptr<GfxPrimitive2D> primitive;
+    std::shared_ptr<Primitive2D> primitive;
+    gfx::math::Matrix3x3d global_transform = gfx::math::Matrix3x3d::identity();
+    uint64_t cached_transform_version = 0;
     std::shared_ptr<SceneNode2D> parent = nullptr;
     std::vector<std::shared_ptr<SceneNode2D>> children;
 };
@@ -34,15 +37,19 @@ public:
         nodes(std::unordered_map<gfx::utils::UUID, std::shared_ptr<SceneNode2D>>()) {}
 
     inline std::shared_ptr<SceneNode2D> get_root() const { return root; }
+    inline void set_root_transform(const gfx::math::Matrix3x3d& transform) { root->global_transform = transform; }
 
-    void add_item(const std::shared_ptr<GfxPrimitive2D> item, const std::shared_ptr<GfxPrimitive2D> parent);
+    gfx::math::Matrix3x3d get_global_transform(const std::shared_ptr<Primitive2D> primtive);
+    void update_global_transforms();
 
-    inline void add_item(const std::shared_ptr<GfxPrimitive2D> item)
+    void add_item(const std::shared_ptr<Primitive2D> item, const std::shared_ptr<Primitive2D> parent);
+
+    inline void add_item(const std::shared_ptr<Primitive2D> item)
     {
         add_item(item, nullptr);
     }
 
-    void remove_item(const std::shared_ptr<GfxPrimitive2D> item);
+    void remove_item(const std::shared_ptr<Primitive2D> item);
 
     inline void clear()
     {
@@ -50,8 +57,10 @@ public:
         nodes.clear();
     }
 
+    std::vector<std::pair<std::shared_ptr<Primitive2D>, gfx::math::Matrix3x3d>> get_draw_queue();
+
     inline int num_items() const { return nodes.size(); }
-    inline bool contains_item(const std::shared_ptr<GfxPrimitive2D> item) const { return nodes.contains(item->get_id()); }
+    inline bool contains_item(const std::shared_ptr<Primitive2D> item) const { return nodes.contains(item->get_id()); }
 
 private:
     std::shared_ptr<SceneNode2D> root;

@@ -1,18 +1,18 @@
-#ifndef STAR_DEMO_H
-#define STAR_DEMO_H
+#ifndef PHYSICS_DEMO_H
+#define PHYSICS_DEMO_H
 
 #include <gfx/core/render-2D.h>
 #include <demos/common/core/gfx-demo.h>
 
-namespace demos::common::animations::star
+namespace demos::common::animations::physics
 {
 
-class StarDemo : public demos::common::core::GfxDemo
+class PhysicsDemo : public demos::common::core::GfxDemo
 {
 
 public:
 
-    StarDemo(const std::shared_ptr<gfx::core::Render2D> renderer)
+    PhysicsDemo(const std::shared_ptr<gfx::core::Render2D> renderer)
         : GfxDemo(renderer) {}
 
     void init() override;
@@ -30,4 +30,4 @@ private:
 
 }
 
-#endif // STAR_DEMO_H
+#endif // PHYSICS_DEMO_H

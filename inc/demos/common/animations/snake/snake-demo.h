@@ -1,7 +1,7 @@
 #ifndef SNAKE_DEMO_H
 #define SNAKE_DEMO_H
 
-#include <gfx/core/gfx-render-2D.h>
+#include <gfx/core/render-2D.h>
 #include <demos/common/core/gfx-demo.h>
 
 namespace demos::common::animations::snake
@@ -12,7 +12,7 @@ class SnakeDemo : public demos::common::core::GfxDemo
 
 public:
 
-    SnakeDemo(const std::shared_ptr<gfx::core::GfxRender2D> renderer)
+    SnakeDemo(const std::shared_ptr<gfx::core::Render2D> renderer)
         : GfxDemo(renderer) {}
 
     void init() override;

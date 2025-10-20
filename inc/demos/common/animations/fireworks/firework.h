@@ -1,7 +1,7 @@
 #ifndef FIREWORK_H
 #define FIREWORK_H
 
-#include <gfx/core/gfx-render-2D.h>
+#include <gfx/core/render-2D.h>
 #include <gfx/math/vec2.h>
 #include <gfx/core/types/color4.h>
 #include <demos/common/animations/fireworks/particle.h>
@@ -39,7 +39,7 @@ public:
         Done
     };
 
-    Firework(std::shared_ptr<gfx::core::GfxRender2D> renderer, const gfx::math::Vec2d position, const gfx::math::Vec2d velocity, const firework_options &options, const std::vector<gfx::core::types::Color4> colors) : 
+    Firework(std::shared_ptr<gfx::core::Render2D> renderer, const gfx::math::Vec2d position, const gfx::math::Vec2d velocity, const firework_options &options, const std::vector<gfx::core::types::Color4> colors) : 
         renderer(renderer), 
         position(position), 
         velocity(velocity), 
@@ -100,7 +100,7 @@ public:
     double smoke_x_factor = 5.0;
     std::vector<Particle> smoke_particles;
 
-    std::shared_ptr<gfx::core::GfxRender2D> renderer;
+    std::shared_ptr<gfx::core::Render2D> renderer;
     std::shared_ptr<gfx::primitives::Polyline2D> shape;
     gfx::math::Vec2d position;
     gfx::math::Vec2d velocity;

@@ -1,7 +1,7 @@
 #ifndef TEXT_DEMO_H
 #define TEXT_DEMO_H
 
-#include <gfx/core/gfx-render-2D.h>
+#include <gfx/core/render-2D.h>
 #include <demos/common/core/gfx-demo.h>
 
 namespace demos::common::animations::text
@@ -18,7 +18,7 @@ enum class Video
 
 public:
 
-    TextDemo(const std::shared_ptr<gfx::core::GfxRender2D> renderer)
+    TextDemo(const std::shared_ptr<gfx::core::Render2D> renderer)
         : GfxDemo(renderer) {}
 
     void init() override;

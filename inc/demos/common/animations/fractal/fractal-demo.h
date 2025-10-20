@@ -1,7 +1,7 @@
 #ifndef FRACTAL_DEMO_H
 #define FRACTAL_DEMO_H
 
-#include <gfx/core/gfx-render-2D.h>
+#include <gfx/core/render-2D.h>
 #include <gfx/primitives/bitmap-2D.h>
 #include <demos/common/core/gfx-demo.h>
 #include <gfx/math/vec2.h>
@@ -18,7 +18,7 @@ class FractalDemo : public demos::common::core::GfxDemo
 
 public:
 
-    FractalDemo(const std::shared_ptr<gfx::core::GfxRender2D> renderer)
+    FractalDemo(const std::shared_ptr<gfx::core::Render2D> renderer)
         : GfxDemo(renderer) {}
 
     void init() override;

@@ -29,6 +29,19 @@ public:
         }
     }
 
+    static Matrix<T, rows, cols> identity()
+    {
+        Matrix<T, rows, cols> result;
+        for (int r = 0; r < rows; ++r)
+        {
+            for (int c = 0; c < cols; ++c)
+            {
+                result(r, c) = (r == c) ? T(1) : T(0);
+            }
+        }
+        return result;
+    }
+
     T& operator()(int r, int c) 
     { 
         return data[r][c]; 

@@ -40,6 +40,7 @@ void StarDemo::init()
         polyline->set_fill(true);
         polyline->set_rounded_corners(true);
         polyline->set_anchor({ 0.5, 0.5 });
+        polyline->set_depth(i);
 
         polylines.push_back(polyline);
         renderer->add_item(polyline);

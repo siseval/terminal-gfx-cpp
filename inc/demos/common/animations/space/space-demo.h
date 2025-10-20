@@ -2,7 +2,7 @@
 #define SPACE_DEMO_H
 
 #include <unordered_map>
-#include <gfx/core/gfx-render-2D.h>
+#include <gfx/core/render-2D.h>
 #include <demos/common/core/gfx-demo.h>
 #include <demos/common/animations/space/body.h>
 #include <demos/common/animations/space/planet.h>
@@ -23,7 +23,7 @@ class SpaceDemo : public demos::common::core::GfxDemo
 
 public:
 
-    SpaceDemo(const std::shared_ptr<gfx::core::GfxRender2D> renderer) : 
+    SpaceDemo(const std::shared_ptr<gfx::core::Render2D> renderer) : 
         GfxDemo(renderer), 
         body_items(std::unordered_map<std::shared_ptr<Body>, RenderBody>()) {}
 

@@ -2,7 +2,7 @@
 #define GFX_DEMO_H
 
 #include <string>
-#include <gfx/core/gfx-render-2D.h>
+#include <gfx/core/render-2D.h>
 
 namespace demos::common::core
 {
@@ -27,7 +27,7 @@ class GfxDemo
 
 public:
 
-    GfxDemo(const std::shared_ptr<gfx::core::GfxRender2D> renderer)
+    GfxDemo(const std::shared_ptr<gfx::core::Render2D> renderer)
         : renderer(renderer) {}
 
     virtual void init() = 0;
@@ -41,7 +41,7 @@ public:
     inline void set_speed(const double s) { speed = s; }
     inline double get_speed() const { return speed; }
 
-    inline std::shared_ptr<gfx::core::GfxRender2D> get_renderer() const { return renderer; }
+    inline std::shared_ptr<gfx::core::Render2D> get_renderer() const { return renderer; }
     inline gfx::math::Vec2i get_resolution() const { return renderer->get_resolution(); }
 
     inline double get_fps() const 
@@ -63,7 +63,7 @@ public:
 
 protected:
 
-    std::shared_ptr<gfx::core::GfxRender2D> renderer;
+    std::shared_ptr<gfx::core::Render2D> renderer;
     double last_frame_us = 0.0;
     double speed = 1.0;
 };

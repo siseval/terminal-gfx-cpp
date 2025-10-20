@@ -1,7 +1,7 @@
 #ifndef CURSES_DEMO_PLAYER_H
 #define CURSES_DEMO_PLAYER_H
 
-#include <gfx/core/gfx-render-2D.h>
+#include <gfx/core/render-2D.h>
 #include <gfx/surfaces/curses-render-surface.h>
 #include <demos/common/core/demo-player.h>
 #include <demos/curses/curses-utils.h>
@@ -17,7 +17,7 @@ public:
     CursesDemoPlayer() : demos::common::core::DemoPlayer()
     {
         auto surface { std::make_shared<gfx::surfaces::CursesRenderSurface>(demos::curses::get_screen_size() * 2) };
-        renderer = std::make_shared<gfx::core::GfxRender2D>(surface, gfx::math::Vec2d { 2, 1 });
+        renderer = std::make_shared<gfx::core::Render2D>(surface, gfx::math::Vec2d { 2, 1 });
     }
 
     gfx::math::Vec2i get_screen_size() override

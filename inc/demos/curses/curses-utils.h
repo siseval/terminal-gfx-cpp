@@ -4,7 +4,6 @@
 #include <locale.h>
 #include <string>
 #include <ncurses.h>
-#include <gfx/core/gfx-render-2D.h>
 #include <gfx/math/vec2.h>
 
 #ifndef BUTTON5_PRESSED

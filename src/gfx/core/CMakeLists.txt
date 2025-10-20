@@ -1,6 +1,6 @@
 set(GFX_CORE_SOURCES
-    gfx-primitive-2D.cpp
-    gfx-render-2D.cpp
+    primitive-2D.cpp
+    render-2D.cpp
     render-surface.cpp
     scene-graph-2D.cpp
     shader-2D.cpp

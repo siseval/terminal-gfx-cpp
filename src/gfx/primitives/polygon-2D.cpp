@@ -11,7 +11,7 @@ using namespace gfx::math;
 using namespace gfx::geometry;
 
 
-Box2d Polygon2D::get_relative_extent() const
+Box2d Polygon2D::get_geometry_size() const
 {
     Box2d bounds { Vec2d::zero(), Vec2d::zero() };
 

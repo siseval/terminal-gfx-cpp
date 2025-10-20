@@ -1,7 +1,7 @@
 #ifndef DEMO_PLAYER_H
 #define DEMO_PLAYER_H
 
-#include <gfx/core/gfx-render-2D.h>
+#include <gfx/core/render-2D.h>
 #include <demos/common/core/gfx-demo.h>
 
 namespace demos::common::core
@@ -12,7 +12,7 @@ class DemoPlayer
 
 public:
 
-    DemoPlayer() : renderer(std::shared_ptr<gfx::core::GfxRender2D>()) {}
+    DemoPlayer() : renderer(std::shared_ptr<gfx::core::Render2D>()) {}
 
     void init();
     void run();
@@ -31,7 +31,7 @@ protected:
     virtual int get_input() = 0;
     virtual void draw_info() = 0;
 
-    std::shared_ptr<gfx::core::GfxRender2D> renderer;
+    std::shared_ptr<gfx::core::Render2D> renderer;
     std::vector<std::shared_ptr<GfxDemo>> demos;
     int current_demo = 0;
 

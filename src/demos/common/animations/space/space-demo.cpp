@@ -173,7 +173,7 @@ std::shared_ptr<Body> SpaceDemo::spawn_body(const std::string name, const Vec2d 
 std::shared_ptr<Body> SpaceDemo::spawn_body(const std::string name, const Vec2d position, const Vec2d velocity, const double radius, const double mass, const bool locked, const Color4 color)
 {
     auto circle = std::make_shared<Ellipse2D>();
-    circle->set_fill(true);
+    circle->set_filled(true);
     circle->set_anchor({ 0.5, 0.5 });
     renderer->add_item(circle);
 

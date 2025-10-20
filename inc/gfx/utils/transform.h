@@ -21,7 +21,7 @@ gfx::math::Vec2d transform_vector(const gfx::math::Vec2d vec, const gfx::math::M
 std::vector<gfx::math::Vec2d> transform_points(const std::vector<gfx::math::Vec2d> points, const gfx::math::Matrix3x3d &transform);
 std::vector<gfx::math::Vec2d> transform_vectors(const std::vector<gfx::math::Vec2d> vectors, const gfx::math::Matrix3x3d &transform);
 
-gfx::math::Matrix3x3d invert_affine(const gfx::math::Matrix3x3d m);
+gfx::math::Matrix3x3d invert_affine(const gfx::math::Matrix3x3d &m);
 
 }
 
