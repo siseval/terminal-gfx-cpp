@@ -8,6 +8,7 @@
 namespace gfx::core
 {
 
+
 struct SceneNode2D
 {
     SceneNode2D(std::shared_ptr<Primitive2D> item) : primitive(item) {}
@@ -39,7 +40,8 @@ public:
     inline std::shared_ptr<SceneNode2D> get_root() const { return root; }
     inline void set_root_transform(const gfx::math::Matrix3x3d& transform) { root->global_transform = transform; }
 
-    gfx::math::Matrix3x3d get_global_transform(const std::shared_ptr<Primitive2D> primtive);
+    bool transforms_dirty() const;
+    gfx::math::Matrix3x3d get_global_transform(const std::shared_ptr<Primitive2D> primitive);
     void update_global_transforms();
 
     void add_item(const std::shared_ptr<Primitive2D> item, const std::shared_ptr<Primitive2D> parent);
@@ -62,9 +64,16 @@ public:
     inline int num_items() const { return nodes.size(); }
     inline bool contains_item(const std::shared_ptr<Primitive2D> item) const { return nodes.contains(item->get_id()); }
 
+    inline int get_transform_recalculation_count() const { return transform_recalculation_count; }
+
+    double longest_recalc_time = 0;
+    double previous_recalc_time = 0;
+
 private:
     std::shared_ptr<SceneNode2D> root;
     std::unordered_map<gfx::utils::UUID, std::shared_ptr<SceneNode2D>> nodes;
+
+    int transform_recalculation_count = 0;
 
 };
 

@@ -88,6 +88,8 @@ public:
     inline void set_viewport_scaling(const gfx::math::Vec2d scaling) { viewport_scaling = scaling; }
     inline void set_viewport_scaling(const double x, const double y) { viewport_scaling = gfx::math::Vec2d { x, y }; }
 
+    inline int get_transform_recalculation_count() { return scene_graph->get_transform_recalculation_count(); }
+
 private:
 
     std::vector<std::pair<std::shared_ptr<Primitive2D>, gfx::math::Matrix3x3d>> get_draw_queue() const;

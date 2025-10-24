@@ -88,6 +88,8 @@ public:
     inline uint64_t get_transform_version() const { return transform_version; }
     inline void increment_transform_version() { transform_version++; }
 
+    static int count;
+
 protected:
 
     gfx::utils::UUID id;

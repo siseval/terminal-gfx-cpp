@@ -9,8 +9,29 @@ namespace gfx::core
 
 using namespace gfx::math;
 
+bool SceneGraph2D::transforms_dirty() const
+{
+    for (const auto& [id, node] : nodes)
+    {
+        if (node->primitive == nullptr)
+        {
+            continue;
+        }
+        uint64_t current_version { node->primitive->get_transform_version() };
+        if (current_version != node->cached_transform_version)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void SceneGraph2D::update_global_transforms()
 {
+    double t0 { static_cast<double>(clock()) };
+
+    transform_recalculation_count++;
+
     std::stack<std::pair<std::shared_ptr<SceneNode2D>, Matrix3x3d>> stack;
 
     stack.push({ get_root(), get_root()->global_transform });
@@ -43,11 +64,14 @@ void SceneGraph2D::update_global_transforms()
             stack.push({ child, node->global_transform });
         }
     }
+    double time { static_cast<double>(clock()) - t0 };
+    longest_recalc_time = time > longest_recalc_time ? time : longest_recalc_time;
+    previous_recalc_time = time;
 }
 
-Matrix3x3d SceneGraph2D::get_global_transform(const std::shared_ptr<Primitive2D> primtive)
+Matrix3x3d SceneGraph2D::get_global_transform(const std::shared_ptr<Primitive2D> primitive)
 {
-    auto node { nodes.contains(primtive->get_id()) ? nodes.at(primtive->get_id()) : nullptr };
+    auto node { nodes.contains(primitive->get_id()) ? nodes.at(primitive->get_id()) : nullptr };
     if (node == nullptr)
     {
         return Matrix3x3d::identity();
@@ -56,17 +80,17 @@ Matrix3x3d SceneGraph2D::get_global_transform(const std::shared_ptr<Primitive2D>
     {
         return node->global_transform;
     }
-    uint64_t current_version { node->primitive->get_transform_version() };
-    if (current_version != node->cached_transform_version)
-    {
-        update_global_transforms();
-        node->cached_transform_version = current_version;
-    }
+
     return node->global_transform;
 }
 
 std::vector<std::pair<std::shared_ptr<Primitive2D>, Matrix3x3d>> SceneGraph2D::get_draw_queue()
 {
+    if (transforms_dirty())
+    {
+        update_global_transforms();
+    }
+
     std::vector<std::pair<std::shared_ptr<Primitive2D>, Matrix3x3d>> draw_queue;
     for (const auto& [id, node] : nodes)
     {

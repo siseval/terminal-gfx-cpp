@@ -20,6 +20,8 @@ void SnakeDemo::init()
     target_speed = speed * 1.1;
     explode_speed = speed * 3.0;
 
+    dead = true;
+
     segment_length = resolution.x * 0.02;
     segment_width = segment_length * 0.5;
     segment_spacing = segment_length * 0.5;
@@ -79,7 +81,10 @@ void SnakeDemo::move_target(const double dt)
 
     if (!control)
     {
-        target_direction += Vec2d { utils::random_double(-0.1, 0.1), utils::random_double(-0.1, 0.1) };
+        target_direction += Vec2d { 
+            utils::random_double(-target_turn_speed, target_turn_speed), 
+            utils::random_double(-target_turn_speed, target_turn_speed) 
+        } * dt;
     }
     target_direction = target_direction.normalize();
 
@@ -136,10 +141,10 @@ void SnakeDemo::move_segments()
 void SnakeDemo::die()
 {
     dead_time = 0.0;
-    head->set_rotation_degrees(Vec2d::from_angle(std::rand() % 360).angle_degrees());
+    head->set_rotation_degrees(std::rand() % 360);
     for (int i = 0; i < segments.size(); ++i)
     {
-        segments[i]->set_rotation_degrees(Vec2d::from_angle(std::rand() % 360).angle_degrees());
+        segments[i]->set_rotation_degrees(std::rand() % 360);
     }
     dead = true;
 }
@@ -147,7 +152,7 @@ void SnakeDemo::die()
 void SnakeDemo::do_dead(const double dt)
 {
     head->set_position(head->get_position() + Vec2d::from_angle(head->get_rotation(), explode_speed * dt));
-    head->set_scale(Vec2d::lerp(Vec2d(scale), { 0.001, 0.001 }, dead_time * 3));
+    head->set_scale(Vec2d::lerp(Vec2d(scale), Vec2d(0.001), dead_time * 3));
     if (head->get_scale().x <= 0.01)
     {
         head->set_visible(false);
@@ -157,8 +162,8 @@ void SnakeDemo::do_dead(const double dt)
         auto segment { segments[i] };
         Vec2d dir { Vec2d::from_angle(segment->get_rotation()) };
 
-        segment->set_position(segment->get_position() + Vec2d::from_angle(segment->get_rotation(), explode_speed * dt));
-        segment->set_scale(Vec2d::lerp(Vec2d(scale), { 0.001, 0.001 }, dead_time * 3));
+        segment->set_position(segment->get_position() + dir * explode_speed * dt);
+        segment->set_scale(Vec2d::lerp(Vec2d(scale), Vec2d(0.001), dead_time * 3));
         if (segment->get_scale().x <= 0.01)
         {
             segment->set_visible(false);
@@ -253,10 +258,10 @@ void SnakeDemo::add_segment()
     }
     segment->set_scale(scale);
 
-    update_segments();
-
     segments.push_back(segment);
     renderer->add_item(segment);
+
+    update_segments();
 }
 
 void SnakeDemo::remove_segment()

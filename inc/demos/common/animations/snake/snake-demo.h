@@ -23,7 +23,11 @@ public:
 
     virtual std::vector<std::string> debug_text() override
     {
-        return { "dt: " + std::to_string(last_frame_us / CLOCKS_PER_SEC) };
+        return { 
+            "dt: " + std::to_string(last_frame_us / CLOCKS_PER_SEC),
+            "longest_recalc: " + std::to_string(renderer->get_scene_graph()->longest_recalc_time / 1000.0) + " ms",
+            "previous_recalc: " + std::to_string(renderer->get_scene_graph()->previous_recalc_time / 1000.0) + " ms",
+        };
     }
 
 private:
@@ -66,6 +70,7 @@ private:
     double turn_speed = 5;
 
     double target_speed = 30;
+    double target_turn_speed = 10;
     gfx::math::Vec2d target_direction;
     gfx::math::Vec2d target_bounds_margin;
     bool target_visible = false;

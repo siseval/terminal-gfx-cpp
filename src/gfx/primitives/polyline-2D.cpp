@@ -161,6 +161,10 @@ void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3
 
     for (int i = 0; i < points.size() - 1; ++i)
     {
+        if (segments_visible.size() > i && !segments_visible[i])
+        {
+            continue;
+        }
         rasterize_edge(surface, points[i], points[i + 1], transform);
     }
     if (do_close)

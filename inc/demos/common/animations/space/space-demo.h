@@ -21,11 +21,19 @@ class SpaceDemo : public demos::common::core::GfxDemo
         gfx::math::Vec2d previous_pos { 0.0, 0.0 };
     };
 
+    enum class SpawnWorkflowState
+    {
+        Inactive,
+        VelocitySelection,
+        RadiusSelection,
+    };
+
 public:
 
     SpaceDemo(const std::shared_ptr<gfx::core::Render2D> renderer) : 
         GfxDemo(renderer), 
-        body_items(std::unordered_map<std::shared_ptr<Body>, RenderBody>()) {}
+        body_items(std::unordered_map<std::shared_ptr<Body>, RenderBody>()),
+        body_trails(std::unordered_map<std::shared_ptr<Body>, std::vector<gfx::math::Vec2d>>()) {}
 
 
     void init() override;
@@ -52,12 +60,14 @@ public:
     std::shared_ptr<Body> spawn_body(const std::string name, const gfx::math::Vec2d position, const gfx::math::Vec2d velocity, const double radius, const double mass, const gfx::core::types::Color4 color);
     std::shared_ptr<Body> spawn_body(const std::string name, const gfx::math::Vec2d position, const gfx::math::Vec2d velocity, const double radius, const double mass, const bool locked, const gfx::core::types::Color4 color);
 
+    void remove_body(const std::shared_ptr<Body> body);
     void clear_bodies();
 
     void physics_process(const double dt);
     void process_bodies(const double dt);
     void handle_camera(const double dt, const double time_lerp);
 
+    void update_trails(const double time_lerp);
     void update_render_items(const double time_lerp = 1.0);
 
     void zoom(const double factor);
@@ -82,6 +92,10 @@ public:
 
 private:
 
+    void progress_spawn_workflow(const gfx::math::Vec2d position);
+    void cancel_spawn_workflow();
+    void render_spawn_workflow();
+
     void update_hovered_brackets(const double time_lerp = 1.0);
     void handle_hovered_body(const double dt, const double time_lerp = 1.0);
 
@@ -95,7 +109,7 @@ private:
 
     double t_sec { 0.0 };
 
-    static constexpr double PHYSICS_TIME_STEP { 0.0001 };
+    static constexpr double PHYSICS_TIME_STEP { 0.00005 };
     static constexpr int MAX_STEPS_PER_FRAME { 500 };
     double time_accumulator { 0.0 };
 
@@ -103,6 +117,7 @@ private:
     bool scroll_zoom_in { true };
     bool hover_mouse { false };
     std::shared_ptr<Body> hovered_body { nullptr };
+    double max_hovered_distance { 20.0 };
 
     std::shared_ptr<gfx::primitives::Polyline2D> left_bracket;
     std::shared_ptr<gfx::primitives::Polyline2D> right_bracket;
@@ -116,7 +131,26 @@ private:
     double hovered_time { 0.0 };
     double hovered_poll_time { 0.25 };
 
+    SpawnWorkflowState spawn_workflow_state { SpawnWorkflowState::Inactive };
+    gfx::math::Vec2d spawn_screen_pos { 0.0, 0.0 };
+    gfx::math::Vec2d spawn_velocity { 0.0, 0.0 };
+    gfx::math::Vec2d spawn_radius { 0.0, 0.0 };
+    double spawn_mass_multiplier { 1000.0 };
+    double spawn_velocity_multiplier { 10.0 };
+
+    std::shared_ptr<gfx::primitives::Ellipse2D> spawn_radius_indicator;
+    std::shared_ptr<gfx::primitives::Ellipse2D> spawn_radius_indicator_inner;
+    std::shared_ptr<gfx::primitives::Polyline2D> spawn_velocity_indicator_head;
+    std::shared_ptr<gfx::primitives::Polyline2D> spawn_velocity_indicator_line;
+    double spawn_velocity_indicator_max_scale { 0.15 };
+    double spawn_velocity_indicator_max_thickness { 2.0 };
+
     Camera camera;
+
+    bool trails_visible { false };
+    int trail_length { 100 };
+    double trail_point_spacing_au { 0.01 };
+    std::unordered_map<std::shared_ptr<Body>, std::vector<gfx::math::Vec2d>> body_trails;
 
     std::unordered_map<std::shared_ptr<Body>, RenderBody> body_items;
     std::vector<std::shared_ptr<Body>> body_list;

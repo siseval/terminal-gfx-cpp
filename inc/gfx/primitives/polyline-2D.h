@@ -47,7 +47,37 @@ public:
     inline void set_points(const std::vector<gfx::math::Vec2d> &new_points) { points = new_points; cache_clockwise(); }
     inline void clear_points() { points.clear(); }
 
+    inline void set_segment_visible(const size_t index, const bool visible) 
+    { 
+        if (segments_visible.size() < points.size()) 
+        { 
+            segments_visible.resize(points.size(), true); 
+        }
+        if (index < points.size()) 
+        { 
+            segments_visible[index] = visible; 
+        } 
+    }
+    inline bool get_segment_visible(const size_t index) const 
+    { 
+        if (index < points.size()) 
+        { 
+            return segments_visible[index]; 
+        } 
+        return false; 
+    }
+
     inline const std::vector<gfx::math::Vec2d> get_points() const { return points; }
+    inline gfx::math::Vec2d get_point(const size_t index) const 
+    { 
+        if (index < points.size()) 
+        { 
+            return points[index]; 
+        } 
+        return gfx::math::Vec2d::zero(); 
+    }
+
+    inline size_t get_num_points() const { return points.size(); }
 
     inline void set_close(const bool close) { do_close = close; }
     inline bool get_close() const { return do_close; }
@@ -68,7 +98,8 @@ private:
     void rasterize_rounded_corner(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Vec2d pos, const double angle0, const double angle1, const gfx::math::Matrix3x3d &transform) const;
     void rasterize_edge(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Vec2d start, const gfx::math::Vec2d end, const gfx::math::Matrix3x3d &transform) const;
 
-    std::vector<gfx::math::Vec2d> points = std::vector<gfx::math::Vec2d>();
+    std::vector<gfx::math::Vec2d> points;
+    std::vector<bool> segments_visible;
     bool do_close = false;
     bool filled = false;
     double line_thickness = 1.0;
