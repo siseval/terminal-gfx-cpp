@@ -31,6 +31,15 @@ void SnakeDemo::init()
     renderer->clear_items();
     renderer->get_render_surface()->clear_palette();
     segments.clear();
+    segment_palette.clear();
+
+    for (int i = 0; i < num_colors; ++i)
+    {
+        double progress { static_cast<double>(i) / num_colors };
+
+        Color4 color { Color4::lerp({ 0.0, 1.0, 0.0 }, { 0.0, 1.0, 1.0 }, progress) };
+        segment_palette.push_back(color);
+    }
 
     std::vector<Vec2d> head_points {
         { 0, 0 },
@@ -39,7 +48,6 @@ void SnakeDemo::init()
         { head_dimensions.x / 2, -head_dimensions.y / 2 }
     };
 
-    head_target = center;
     head = renderer->create_polyline(center, head_points, Color4(0.0, 1.0, 0.0, 1.0), 2.0);
     head->set_close(true);
     head->set_fill(true);
@@ -72,7 +80,7 @@ void SnakeDemo::init()
     target_marker->set_filled(true);
     renderer->add_item(target_marker);
 
-    dead = false;
+    spawn();
 }
 
 void SnakeDemo::move_target(const double dt)
@@ -136,6 +144,25 @@ void SnakeDemo::move_segments()
         segments[i]->set_rotation(direction.angle());
         segments[i]->set_position(segments[i - 1]->get_position() - Vec2d::from_angle(segments[i]->get_rotation(), segment_spacing * scale));
     }
+}
+
+void SnakeDemo::spawn()
+{
+    Vec2d resolution { get_resolution() };
+    Vec2d center { resolution / 2 };
+
+    head_target = center;
+    head->set_position(center);
+    head->set_visible(true);
+    for (int i = 0; i < segments.size(); ++i)
+    {
+        segments[i]->set_position(center);
+        segments[i]->set_visible(true);
+    }
+    update_segments();
+    update_scale(scale);
+
+    dead = false;
 }
 
 void SnakeDemo::die()
@@ -210,15 +237,14 @@ Vec2d SnakeDemo::closest_food()
 
 void SnakeDemo::update_segments()
 {
-    renderer->get_render_surface()->clear_palette();
     for (int i = 0; i < segments.size(); ++i)
     {
-        double progress { static_cast<double>(i) / num_segments };
+        double progress { static_cast<double>(i) / segments.size() };
+        int color_index { static_cast<int>(progress * (segment_palette.size() - 1)) };
 
         Vec2d radius { Vec2d::lerp({ segment_length, segment_width }, { 0.1, 0.1 }, progress) };
-        Color4 color { Color4::lerp({ 0.0, 1.0, 0.0 }, { 0.0, 1.0, 1.0 }, progress) };
         segments[i]->set_radius(radius);
-        segments[i]->set_color(color);
+        segments[i]->set_color(segment_palette[color_index]);
         segments[i]->set_depth(i + 1);
     }
 }
@@ -329,7 +355,7 @@ void SnakeDemo::handle_input(const int input)
         case 'm':
             if (dead)
             {
-                init();
+                spawn();
                 break;
             }
             die();

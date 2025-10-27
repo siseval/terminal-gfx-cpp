@@ -5,6 +5,7 @@
 #include <demos/common/animations/space/space-demo.h>
 #include <demos/common/animations/text/text-demo.h>
 #include <demos/common/animations/fractal/fractal-demo.h>
+#include <demos/common/animations/boids/boids-demo.h>
 
 namespace demos::common::core
 {
@@ -19,13 +20,14 @@ using namespace demos::common;
 void DemoPlayer::init()
 {
     // demos.emplace_back(std::make_shared<text::TextDemo>(renderer));
-    demos.emplace_back(std::make_shared<star::StarDemo>(renderer));
     demos.emplace_back(std::make_shared<snake::SnakeDemo>(renderer));
+    demos.emplace_back(std::make_shared<star::StarDemo>(renderer));
+    demos.emplace_back(std::make_shared<boids::BoidsDemo>(renderer));
     demos.emplace_back(std::make_shared<fractal::FractalDemo>(renderer));
     demos.emplace_back(std::make_shared<fireworks::FireworksDemo>(renderer));
     demos.emplace_back(std::make_shared<space::SpaceDemo>(renderer));
 
-    demos[current_demo]->init();
+    resize(get_screen_size());
 }
 
 void DemoPlayer::run()
@@ -39,7 +41,7 @@ void DemoPlayer::run()
         }
 
         double now_us { utils::time_us() };
-        double dt_sec = (now_us - last_frame_timestamp_us) / 1000000.0;
+        double dt_sec { (now_us - last_frame_timestamp_us) / 1000000.0 };
 
         demos[current_demo]->render_frame(dt_sec);
         demos[current_demo]->set_last_frame_us(now_us - last_frame_timestamp_us);

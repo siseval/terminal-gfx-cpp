@@ -17,7 +17,7 @@ bool SceneGraph2D::transforms_dirty() const
         {
             continue;
         }
-        uint64_t current_version { node->primitive->get_transform_version() };
+        int64_t current_version { node->primitive->get_transform_version() };
         if (current_version != node->cached_transform_version)
         {
             return true;
@@ -56,11 +56,6 @@ void SceneGraph2D::update_global_transforms()
 
         for (const auto &child : node->children)
         {
-            if (child->primitive == nullptr) 
-            {
-                stack.push({ child, node->global_transform });
-                continue; 
-            }
             stack.push({ child, node->global_transform });
         }
     }

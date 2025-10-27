@@ -20,13 +20,25 @@ void StarDemo::init()
     renderer->clear_items();
     renderer->get_render_surface()->clear_palette();
     polylines.clear();
-    for (int i = 0; i < num_polylines; ++i)
+    colors.clear();
+
+    for (int i = 0; i < num_colors; ++i)
     {
-        double progress { static_cast<double>(i) / num_polylines };
+        double progress { static_cast<double>(i) / num_colors };
 
         Color4 inner { 1.0, 0.8, 0.1 };
         Color4 outer { 0.9, 0.5, 1.0 };
+
         Color4 color { Color4::lerp(inner, outer, progress) };
+        colors.push_back(color);
+    }
+
+    for (int i = 0; i < num_polylines; ++i)
+    {
+        double progress { static_cast<double>(i) / num_polylines };
+        int color_index { static_cast<int>(progress * (colors.size() - 1)) };
+
+        Color4 color { colors[color_index] };
 
         std::vector<Vec2d> points {
             { 0, -resolution.y / distance_ratio },

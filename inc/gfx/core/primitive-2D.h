@@ -85,7 +85,7 @@ public:
     inline bool is_visible() const { return visible; }
     inline void set_visible(const bool v) { visible = v; }
 
-    inline uint64_t get_transform_version() const { return transform_version; }
+    inline int64_t get_transform_version() const { return transform_version; }
     inline void increment_transform_version() { transform_version++; }
 
     static int count;
@@ -109,7 +109,7 @@ protected:
     bool draw_obb = false;
     bool draw_anchor = false;
 
-    uint64_t transform_version = 0;
+    int64_t transform_version = -1;
 
     // bool should_fill_pixel(std::shared_ptr<GfxContext2D> context, const gfx::math::Vec2d pixel) const;
 

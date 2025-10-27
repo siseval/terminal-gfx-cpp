@@ -25,6 +25,8 @@ private:
 
     int num_polylines = 32;
     std::vector<std::shared_ptr<gfx::primitives::Polyline2D>> polylines;
+    std::vector<gfx::core::types::Color4> colors;
+    int num_colors = 64;
 
 };
 

@@ -34,6 +34,15 @@ inline double exponential_interp_3(const double a, const double b, const double 
     return ab + (bc - ab) * exp_t;
 }
 
+inline double move_towards(const double current, const double target, const double max_delta)
+{
+    if (std::abs(target - current) <= max_delta)
+    {
+        return target;
+    }
+    return current + std::copysign(max_delta, target - current);
+}
+
 inline double random_double(const double min, const double max)
 {
     static std::mt19937 rng(static_cast<unsigned int>(std::chrono::steady_clock::now().time_since_epoch().count()));

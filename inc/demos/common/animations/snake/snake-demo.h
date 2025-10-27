@@ -27,6 +27,7 @@ public:
             "dt: " + std::to_string(last_frame_us / CLOCKS_PER_SEC),
             "longest_recalc: " + std::to_string(renderer->get_scene_graph()->longest_recalc_time / 1000.0) + " ms",
             "previous_recalc: " + std::to_string(renderer->get_scene_graph()->previous_recalc_time / 1000.0) + " ms",
+            "recalc_count: " + std::to_string(renderer->get_scene_graph()->get_transform_recalculation_count()),
         };
     }
 
@@ -36,6 +37,7 @@ private:
     void move_head(const double dt);
     void move_segments();
 
+    void spawn();
     void die();
     void do_dead(const double dt);
 
@@ -83,6 +85,8 @@ private:
     std::vector<std::shared_ptr<gfx::primitives::Ellipse2D>> segments;
     std::shared_ptr<gfx::primitives::Circle2D> target_marker;
 
+    std::vector<gfx::core::types::Color4> segment_palette;
+    int num_colors = 120;
 };
 
 }

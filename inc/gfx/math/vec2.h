@@ -69,7 +69,17 @@ public:
         return { static_cast<T>(a.x + (b.x - a.x) * t), static_cast<T>(a.y + (b.y - a.y) * t) }; 
     }
 
-    Vec2<T> rotate_towards(Vec2<T> &target, double max_angle) 
+    inline Vec2<T> limit(const double max_magnitude)
+    {
+        double magnitude = length();
+        if (magnitude > max_magnitude)
+        {
+            return normalize() * max_magnitude;
+        }
+        return { x, y };
+    }
+
+    Vec2<T> rotate_towards(Vec2<T> &target, double max_angle) const
     { 
         double current_angle { angle() };
         double target_angle { target.angle() };
@@ -95,32 +105,32 @@ public:
         }
     }
 
-    Vec2<T> rotate_towards_degrees(Vec2<T> &target, double max_angle) 
+    Vec2<T> rotate_towards_degrees(Vec2<T> &target, double max_angle) const
     { 
         return rotate_towards(target, max_angle * std::numbers::pi / 180.0); 
     }
 
-    double angle() 
+    double angle() const
     { 
         return std::atan2(y, x);
     }
 
-    double angle_degrees() 
+    double angle_degrees() const
     { 
         return angle() * 180.0 / std::numbers::pi;
     }
 
-    Vec2<double> normalize() 
+    Vec2<double> normalize() const
     { 
         return { static_cast<T>(x / length()), static_cast<T>(y / length()) }; 
     }
 
-    Vec2<double> normal() 
+    Vec2<double> normal() const 
     { 
         return { -y, x }; 
     }
 
-    double length() 
+    double length() const
     { 
         return std::sqrt(x * x + y * y); 
     }
