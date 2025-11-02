@@ -14,7 +14,7 @@ class Circle2D : public gfx::core::Primitive2D
 
 public:
 
-    void rasterize(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Matrix3x3d &transform) const override;
+    void rasterize(const gfx::math::Matrix3x3d &transform, const std::function<void(const gfx::core::types::Pixel&)> emit_pixel) const override;
     gfx::math::Box2d get_geometry_size() const override;
     gfx::math::Box2d get_axis_aligned_bounding_box(const gfx::math::Matrix3x3d &transform) const override;
 

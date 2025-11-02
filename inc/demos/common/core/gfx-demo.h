@@ -10,7 +10,9 @@ namespace demos::common::core
 enum class MouseEventType
 {
     LEFT_DOWN,
+    LEFT_UP,
     RIGHT_DOWN,
+    RIGHT_UP,
     SCROLL_UP,
     SCROLL_DOWN,
     MOVE,
@@ -19,7 +21,7 @@ enum class MouseEventType
 struct MouseEvent
 {
     MouseEventType type;
-    gfx::math::Vec2i position;
+    gfx::math::Vec2d position;
 };
 
 class GfxDemo

@@ -2,6 +2,7 @@
 #include <gfx/primitives/polyline-2D.h>
 #include <gfx/utils/transform.h>
 #include <gfx/geometry/triangulate.h>
+#include <gfx/geometry/rasterize.h>
 
 namespace gfx::primitives
 {
@@ -51,34 +52,7 @@ bool Polyline2D::point_collides(const Vec2d point, const Matrix3x3d &transform) 
     return false;
 }
 
-void Polyline2D::rasterize_filled_triangle(std::shared_ptr<RenderSurface> surface, const Triangle &triangle) const
-{
-    Box2d bounds {
-        { 
-            std::min({triangle.v0.x,triangle.v1.x,triangle.v2.x }), 
-            std::min({triangle.v0.y,triangle.v1.y,triangle.v2.y }) 
-        },
-        { 
-            std::max({triangle.v0.x,triangle.v1.x,triangle.v2.x }), 
-            std::max({triangle.v0.y,triangle.v1.y,triangle.v2.y }) 
-        }
-    };
-
-    for (int y = bounds.min.y; y <= bounds.max.y; y++)
-    {
-        for (int x = bounds.min.x; x <= bounds.max.x; x++)
-        {
-            Vec2d pos { static_cast<double>(x), static_cast<double>(y) };
-
-            if (triangle.point_inside(pos))
-            {
-                surface->write_pixel(pos.round(), get_color(), get_depth());
-            }
-        }
-    }
-}
-
-void Polyline2D::rasterize_rounded_corner(std::shared_ptr<RenderSurface> surface, const Vec2d pos, const double angle0, const double angle1, const Matrix3x3d &transform) const
+void Polyline2D::rasterize_rounded_corner(const Vec2d pos, const double angle0, const double angle1, const Matrix3x3d &transform, const std::function<void(const Pixel&)> emit_pixel) const
 {
     std::vector<Vec2d> vertices;
 
@@ -98,11 +72,11 @@ void Polyline2D::rasterize_rounded_corner(std::shared_ptr<RenderSurface> surface
 
     for (int i = 0; i < vertices.size() - 1; ++i)
     {
-        rasterize_filled_triangle(surface, { transformed_pos, vertices[i], vertices[i + 1] });
+        geometry::rasterize_filled_triangle({ transformed_pos, vertices[i], vertices[i + 1] }, color, emit_pixel);
     }
 }
 
-void Polyline2D::rasterize_rounded_corners(std::shared_ptr<RenderSurface> surface, const Matrix3x3d &transform) const
+void Polyline2D::rasterize_rounded_corners(const Matrix3x3d &transform, const std::function<void(const Pixel&)> emit_pixel) const
 {
     for (int i = 0; i < points.size(); ++i)
     {
@@ -127,11 +101,11 @@ void Polyline2D::rasterize_rounded_corners(std::shared_ptr<RenderSurface> surfac
         double angle_overlap = 0.1;
         double pos_overlap = 0.2;
 
-        rasterize_rounded_corner(surface, p1 - between * pos_overlap, angle0 - angle_overlap, angle0 + angle_diff + angle_overlap, transform);
+        rasterize_rounded_corner(p1 - between * pos_overlap, angle0 - angle_overlap, angle0 + angle_diff + angle_overlap, transform, emit_pixel);
     }
 }
 
-void Polyline2D::rasterize_edge(std::shared_ptr<RenderSurface> surface, const Vec2d start, const Vec2d end, const Matrix3x3d &transform) const
+void Polyline2D::rasterize_edge(const Vec2d start, const Vec2d end, const Matrix3x3d &transform, const std::function<void(const Pixel&)> emit_pixel) const
 {
     double line_extent { line_thickness / 2.0 };
     Vec2d normal { (end - start).normal().normalize() };
@@ -148,11 +122,11 @@ void Polyline2D::rasterize_edge(std::shared_ptr<RenderSurface> surface, const Ve
     v2 = utils::transform_point(v2, transform);
     v3 = utils::transform_point(v3, transform);
 
-    rasterize_filled_triangle(surface, { v0, v1, v2 });
-    rasterize_filled_triangle(surface, { v1, v3, v2 });
+    geometry::rasterize_filled_triangle({ v0, v1, v2 }, color, emit_pixel);
+    geometry::rasterize_filled_triangle({ v1, v3, v2 }, color, emit_pixel);
 }
 
-void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3d &transform) const
+void Polyline2D::rasterize(const Matrix3x3d &transform, const std::function<void(const Pixel&)> emit_pixel) const
 {
     if (points.size() < 2)
     {
@@ -165,33 +139,28 @@ void Polyline2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3
         {
             continue;
         }
-        rasterize_edge(surface, points[i], points[i + 1], transform);
-    }
-    if (do_close)
-    {
-        rasterize_edge(surface, points.back(), points.front(), transform);
+        rasterize_edge(points[i], points[i + 1], transform, emit_pixel);
     }
 
-    if (get_fill())
+    if (do_close)
     {
-        std::vector<Vec2d> transformed_points { utils::transform_points(points, transform) };
-        if (points.size() == 3)
-        {
-            rasterize_filled_triangle(surface, { transformed_points[0], transformed_points[1], transformed_points[2] });
-        }
-        else
-        {
-            std::vector<Triangle> triangles { geometry::triangulate_polygon(transformed_points, clockwise) };
-            for (auto triangle : triangles)
-            {
-                rasterize_filled_triangle(surface, triangle);
-            }
-        }
+        rasterize_edge(points.back(), points.front(), transform, emit_pixel);
     }
 
     if (do_rounded_corners)
     {
-        rasterize_rounded_corners(surface, transform);
+        rasterize_rounded_corners(transform, emit_pixel);
+    }
+
+    if (do_fill)
+    {
+        std::vector<Vec2d> transformed_points { utils::transform_points(points, transform) };
+        std::vector<Triangle> triangles { geometry::triangulate_polygon(transformed_points, clockwise) };
+
+        for (const auto& triangle : triangles)
+        {
+            geometry::rasterize_filled_triangle(triangle, color, emit_pixel);
+        }
     }
 }
 

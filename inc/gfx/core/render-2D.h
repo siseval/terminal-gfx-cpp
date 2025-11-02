@@ -8,6 +8,7 @@
 #include <gfx/primitives/circle-2D.h>
 #include <gfx/primitives/ellipse-2D.h>
 #include <gfx/primitives/polyline-2D.h>
+#include <gfx/primitives/polygon-2D.h>
 #include <gfx/primitives/text-2D.h>
 #include <gfx/primitives/bitmap-2D.h>
 #include <gfx/text/font-manager-ttf.h>
@@ -28,7 +29,10 @@ public:
         surface(surface), 
         scene_graph(std::make_shared<SceneGraph2D>()), 
         font_manager(std::make_shared<gfx::text::FontManagerTTF>()),
-        viewport_scaling(viewport_scaling) {}
+        viewport_scaling(viewport_scaling) 
+    {
+        surface->init();
+    }
 
     void draw_frame() const;
 
@@ -48,6 +52,11 @@ public:
     std::shared_ptr<gfx::primitives::Polyline2D> create_polyline(const double x, const double y, const std::vector<gfx::math::Vec2d> &points, const types::Color4 color, const double line_thickness = 1.0) const 
     {
         return create_polyline(gfx::math::Vec2d { x, y }, points, color, line_thickness);
+    };
+    std::shared_ptr<gfx::primitives::Polygon2D> create_polygon(const gfx::math::Vec2d position, const std::vector<gfx::math::Vec2d> &points, const types::Color4 fill_color) const;
+    std::shared_ptr<gfx::primitives::Polygon2D> create_polygon(const double x, const double y, const std::vector<gfx::math::Vec2d> &points, const types::Color4 fill_color) const 
+    {
+        return create_polygon(gfx::math::Vec2d { x, y }, points, fill_color);
     };
     std::shared_ptr<gfx::primitives::Bitmap2D> create_bitmap(const gfx::math::Vec2d position, const types::Bitmap &bm) const;
     std::shared_ptr<gfx::primitives::Bitmap2D> create_bitmap(const double x, const double y, const types::Bitmap &bm) const 

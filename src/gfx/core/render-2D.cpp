@@ -13,6 +13,11 @@ void Render2D::draw_frame() const
 {
     surface->clear_frame_buffer();
 
+    std::function<void(const Pixel&)> emit_pixel = 
+        [this](const Pixel &pixel) {
+            surface->write_pixel(pixel.position, pixel.color);
+        };
+
     std::vector<std::pair<std::shared_ptr<Primitive2D>, Matrix3x3d>> draw_queue { get_draw_queue() };
     for (const auto& [primitive, transform] : draw_queue)
     {
@@ -20,7 +25,7 @@ void Render2D::draw_frame() const
         {
             continue;
         }
-        primitive->rasterize(surface, transform);
+        primitive->rasterize(transform, emit_pixel);
     }
 
     surface->clear();
@@ -73,6 +78,17 @@ std::shared_ptr<Polyline2D> Render2D::create_polyline(const Vec2d position, cons
     polyline->set_color(color);
 
     return polyline;
+}
+
+std::shared_ptr<Polygon2D> Render2D::create_polygon(const Vec2d position, const std::vector<Vec2d> &points, const Color4 color) const
+{
+    auto polygon { std::make_shared<Polygon2D>() };
+
+    polygon->set_position(position);
+    polygon->set_points(points);
+    polygon->set_color(color);
+
+    return polygon;
 }
 
 std::shared_ptr<Bitmap2D> Render2D::create_bitmap(const Vec2d position, const gfx::core::types::Bitmap &bm) const

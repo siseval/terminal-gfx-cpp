@@ -1,6 +1,8 @@
 #include <gfx/primitives/polygon-2D.h>
 #include <gfx/utils/transform.h>
 #include <gfx/geometry/triangulate.h>
+#include <gfx/geometry/rasterize.h>
+
 
 namespace gfx::primitives
 {
@@ -23,34 +25,31 @@ Box2d Polygon2D::get_geometry_size() const
     return bounds;
 }
 
-void Polygon2D::rasterize_filled_triangle(std::shared_ptr<RenderSurface> surface, const Triangle &triangle) const
+bool Polygon2D::point_collides(const Vec2d point, const Matrix3x3d &transform) const
 {
-    Box2d bounds {
-        { 
-            std::min({triangle.v0.x,triangle.v1.x,triangle.v2.x }), 
-            std::min({triangle.v0.y,triangle.v1.y,triangle.v2.y }) 
-        },
-        { 
-            std::max({triangle.v0.x,triangle.v1.x,triangle.v2.x }), 
-            std::max({triangle.v0.y,triangle.v1.y,triangle.v2.y }) 
-        }
+    Matrix3x3d inverse_transform { utils::invert_affine(transform) };
+    Vec2d local_point { utils::transform_point(point, inverse_transform) };
+
+    std::vector<Vec2d> transformed_points { 
+        utils::transform_points(points, transform) 
     };
 
-    for (int y = bounds.min.y; y <= bounds.max.y; y++)
-    {
-        for (int x = bounds.min.x; x <= bounds.max.x; x++)
-        {
-            Vec2d pos { static_cast<double>(x), static_cast<double>(y) };
+    std::vector<Triangle> triangles { 
+        geometry::triangulate_polygon(transformed_points, clockwise) 
+    };
 
-            if (triangle.point_inside(pos))
-            {
-                surface->write_pixel(pos.round(), get_color(), get_depth());
-            }
+    for (auto triangle : triangles)
+    {
+        if (triangle.point_inside(local_point))
+        {
+            return true;
         }
     }
+
+    return false;
 }
 
-void Polygon2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3d &transform) const
+void Polygon2D::rasterize(const Matrix3x3d &transform, const std::function<void(const Pixel&)> emit_pixel) const
 {
     if (points.size() < 2)
     {
@@ -67,7 +66,7 @@ void Polygon2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x
 
     for (auto triangle : triangles)
     {
-        rasterize_filled_triangle(surface, triangle);
+        geometry::rasterize_filled_triangle(triangle, color, emit_pixel);
     }
 }
 

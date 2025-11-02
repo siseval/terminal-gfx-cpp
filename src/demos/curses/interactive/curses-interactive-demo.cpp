@@ -1,5 +1,5 @@
 #include <gfx/core/render-2D.h>
-#include <gfx/surfaces/curses-render-surface.h>
+#include <gfx/surfaces/curses/curses-render-surface.h>
 #include <demos/curses/curses-utils.h>
 #include <demos/common/interactive/interactive-demo.h>
 #include <demos/common/core/demo-utils.h>

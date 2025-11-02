@@ -2,7 +2,7 @@
 #define CURSES_DEMO_PLAYER_H
 
 #include <gfx/core/render-2D.h>
-#include <gfx/surfaces/curses-render-surface.h>
+#include <gfx/surfaces/curses/curses-render-surface.h>
 #include <demos/common/core/demo-player.h>
 #include <demos/curses/curses-utils.h>
 
@@ -83,7 +83,8 @@ private:
             default:
                 break;
         }
-        event.position = gfx::math::Vec2i { e.x, e.y } * 2 / renderer->get_viewport_scaling();
+        gfx::math::Vec2d position = gfx::math::Vec2i { e.x, e.y } * 2 / renderer->get_viewport_scaling();
+        event.position = position / renderer->get_resolution();
         return event;
     }
 

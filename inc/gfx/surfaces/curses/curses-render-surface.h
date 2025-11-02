@@ -19,6 +19,8 @@ public:
         frame_buffer(std::make_unique<std::vector<int64_t>>(resolution.x * resolution.y / 2, 0))
         {};
 
+    int init() override;
+
     void present() override;
     void clear() const override;
 

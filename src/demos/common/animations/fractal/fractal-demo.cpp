@@ -27,7 +27,7 @@ void FractalDemo::init()
     fractal = Julia();
     Vec2i resolution { renderer->get_resolution() };
     bitmap = renderer->create_bitmap({ 0, 0 }, resolution * renderer->get_viewport_scaling());
-    bitmap->set_scale({ 0.5, 1.0 });
+    bitmap->set_scale(Vec2d { 1.0, 1.0 } / renderer->get_viewport_scaling());
 
     for (int i = 0; i < num_colors; ++i)
     {
@@ -256,7 +256,7 @@ void FractalDemo::report_mouse(const MouseEvent event)
     }
     else if (event.type == MouseEventType::MOVE)
     {
-        cursor_pos = event.position;
+        cursor_pos = event.position * renderer->get_resolution();
     }
     else if (event.type == MouseEventType::LEFT_DOWN)
     {

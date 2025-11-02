@@ -76,7 +76,6 @@ public:
         };
         auto cap = renderer->create_polyline({ size.x, size.y / 2 }, cap_points, { 255, 0, 0 }, size.x / 2);
         cap->set_close(true);
-        cap->set_fill(true);
         cap->set_rounded_corners(true);
         renderer->add_item(cap, shape);
 

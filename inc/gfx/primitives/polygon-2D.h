@@ -16,7 +16,7 @@ class Polygon2D : public gfx::core::Primitive2D
 
 public:
 
-    void rasterize(std::shared_ptr<gfx::core::RenderSurface> surface, const math::Matrix3x3d &transform) const override;
+    void rasterize(const gfx::math::Matrix3x3d &transform, const std::function<void(const gfx::core::types::Pixel&)> emit_pixel) const override;
     gfx::math::Box2d get_geometry_size() const override;
 
     bool point_collides(const gfx::math::Vec2d point, const gfx::math::Matrix3x3d &transform) const override;
@@ -41,8 +41,6 @@ public:
 
 
 private:
-
-    void rasterize_filled_triangle(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::geometry::Triangle &triangle) const;
 
     std::vector<gfx::math::Vec2d> points = std::vector<gfx::math::Vec2d>();
     bool clockwise = false;

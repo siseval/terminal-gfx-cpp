@@ -2,6 +2,7 @@
 #define PRIMITIVE_2D_H
 
 #include <algorithm>
+#include <gfx/core/types/pixel.h>
 #include <gfx/core/types/color4.h>
 #include <gfx/core/types/obb-2D.h>
 #include <gfx/core/render-surface.h>
@@ -19,7 +20,7 @@ public:
 
     Primitive2D() : id(gfx::utils::UUID::generate()) {}
         
-    virtual void rasterize(std::shared_ptr<RenderSurface> surface, const gfx::math::Matrix3x3d &transform) const = 0;
+    virtual void rasterize(const gfx::math::Matrix3x3d &transform, const std::function<void(const types::Pixel&)> emit_pixel) const = 0;
 
     gfx::core::types::OBB2D get_oriented_bounding_box(const gfx::math::Matrix3x3d &transform) const;
     virtual gfx::math::Box2d get_geometry_size() const = 0;

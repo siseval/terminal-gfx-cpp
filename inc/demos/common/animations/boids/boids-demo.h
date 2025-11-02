@@ -57,15 +57,15 @@ private:
     void spawn_boid();
     void remove_boid(const std::shared_ptr<Boid> boid);
 
-    int num_boids = 400;
+    int num_boids = 500;
     std::vector<std::shared_ptr<Boid>> boids;
 
     double boid_scale = 0.8;
 
-    double perception_radius = 10.0;
-    double max_speed = 60.0;
-    double max_force = 13.0;
-    double desired_separation = 30.0;
+    double perception_radius;
+    double max_speed;
+    double max_force;
+    double desired_separation;
 
     double separation_weight = 1.5;
     double alignment_weight = 1.0;

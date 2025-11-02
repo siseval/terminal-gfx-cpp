@@ -13,9 +13,16 @@ using namespace demos::common::core;
 
 void BoidsDemo::init()
 {
+    Vec2i resolution { renderer->get_resolution() };
+
     renderer->clear_items();
     renderer->get_render_surface()->clear_palette();
     boids.clear();
+
+    perception_radius = resolution.x * 0.05;
+    max_speed = resolution.x * 0.25;
+    max_force = max_speed * 0.2;
+    desired_separation = perception_radius * 0.5;
 
     for (int i = 0; i < num_boids; ++i)
     {

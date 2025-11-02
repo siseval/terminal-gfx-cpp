@@ -15,6 +15,8 @@ public:
     RenderSurface(const gfx::math::Vec2i resolution)
         : resolution(resolution) {}
 
+    virtual int init() = 0;
+
     virtual void present() = 0;
     virtual void clear() const = 0;
 
@@ -38,6 +40,7 @@ public:
 protected:
 
     gfx::math::Vec2i resolution;
+    gfx::core::types::Color4 clear_color { 0, 0, 0, 255 };
 };
 
 }

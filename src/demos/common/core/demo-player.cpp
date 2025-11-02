@@ -20,12 +20,12 @@ using namespace demos::common;
 void DemoPlayer::init()
 {
     // demos.emplace_back(std::make_shared<text::TextDemo>(renderer));
-    demos.emplace_back(std::make_shared<snake::SnakeDemo>(renderer));
     demos.emplace_back(std::make_shared<star::StarDemo>(renderer));
-    demos.emplace_back(std::make_shared<boids::BoidsDemo>(renderer));
-    demos.emplace_back(std::make_shared<fractal::FractalDemo>(renderer));
+    demos.emplace_back(std::make_shared<snake::SnakeDemo>(renderer));
     demos.emplace_back(std::make_shared<fireworks::FireworksDemo>(renderer));
     demos.emplace_back(std::make_shared<space::SpaceDemo>(renderer));
+    demos.emplace_back(std::make_shared<boids::BoidsDemo>(renderer));
+    demos.emplace_back(std::make_shared<fractal::FractalDemo>(renderer));
 
     resize(get_screen_size());
 }

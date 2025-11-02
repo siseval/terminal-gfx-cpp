@@ -1,7 +1,6 @@
 #ifndef POLYLINE_2D_H
 #define POLYLINE_2D_H
 
-#include <gfx/core/render-surface.h>
 #include <gfx/core/primitive-2D.h>
 #include <gfx/math/box2.h>
 #include <gfx/math/vec2.h>
@@ -16,7 +15,7 @@ class Polyline2D : public gfx::core::Primitive2D
 
 public:
 
-    void rasterize(std::shared_ptr<gfx::core::RenderSurface> surface, const math::Matrix3x3d &transform) const override;
+    void rasterize(const gfx::math::Matrix3x3d &transform, const std::function<void(const gfx::core::types::Pixel&)> emit_pixel) const override;
     gfx::math::Box2d get_geometry_size() const override;
     gfx::math::Box2d get_axis_aligned_bounding_box(const gfx::math::Matrix3x3d &transform) const override;
 
@@ -88,20 +87,19 @@ public:
     inline void set_line_thickness(const double t) { line_thickness = t; }
     inline double get_line_thickness() const { return line_thickness; }
 
-    inline bool get_fill() const { return filled; }
-    inline void set_fill(const bool f) { filled = f; }
+    inline void set_fill(const bool f) { do_fill = f; }
+    inline bool get_fill() const { return do_fill; }
 
 private:
 
-    void rasterize_filled_triangle(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::geometry::Triangle &triangle) const;
-    void rasterize_rounded_corners(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Matrix3x3d &transform) const;
-    void rasterize_rounded_corner(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Vec2d pos, const double angle0, const double angle1, const gfx::math::Matrix3x3d &transform) const;
-    void rasterize_edge(std::shared_ptr<gfx::core::RenderSurface> surface, const gfx::math::Vec2d start, const gfx::math::Vec2d end, const gfx::math::Matrix3x3d &transform) const;
+    void rasterize_rounded_corners(const gfx::math::Matrix3x3d &transform, const std::function<void(const gfx::core::types::Pixel&)> emit_pixel) const;
+    void rasterize_rounded_corner(const gfx::math::Vec2d pos, const double angle0, const double angle1, const gfx::math::Matrix3x3d &transform, const std::function<void(const gfx::core::types::Pixel&)> emit_pixel) const;
+    void rasterize_edge(const gfx::math::Vec2d start, const gfx::math::Vec2d end, const gfx::math::Matrix3x3d &transform, const std::function<void(const gfx::core::types::Pixel&)> emit_pixel) const;
 
     std::vector<gfx::math::Vec2d> points;
     std::vector<bool> segments_visible;
     bool do_close = false;
-    bool filled = false;
+    bool do_fill = false;
     double line_thickness = 1.0;
     bool do_rounded_corners = false;
     bool clockwise = false;

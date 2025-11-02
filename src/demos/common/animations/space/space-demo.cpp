@@ -22,7 +22,6 @@ void SpaceDemo::init()
 
     std::vector<Vec2d> arrow_points { { -20, -20 }, { 30, 0 }, { -20, 20 }, { 0, 0 } };
     spawn_velocity_indicator_head = renderer->create_polyline({ 0, 0 }, arrow_points, Color4 { 255, 255, 255 }, 2.0);
-    spawn_velocity_indicator_head->set_fill(true);
     spawn_velocity_indicator_head->set_close(true);
     spawn_velocity_indicator_head->set_rounded_corners(true);
 
@@ -64,10 +63,10 @@ void SpaceDemo::render_frame(const double dt)
 
     double time_lerp { std::min(time_accumulator / PHYSICS_TIME_STEP, 1.0) };
     handle_camera(dt, time_lerp);
-    update_hovered_brackets(time_lerp);
     update_render_items(time_lerp);
     update_trails(time_lerp);
     handle_hovered_body(dt, time_lerp);
+    update_hovered_brackets(time_lerp);
 
     render_spawn_workflow();
 
@@ -469,7 +468,7 @@ void SpaceDemo::cancel_spawn_workflow()
 
 void SpaceDemo::report_mouse(const demos::common::core::MouseEvent event)
 {
-    mouse_pos = event.position;
+    mouse_pos = event.position * renderer->get_resolution();
     hover_mouse = true;
     switch (event.type)
     {
@@ -482,24 +481,17 @@ void SpaceDemo::report_mouse(const demos::common::core::MouseEvent event)
                 }
                 else
                 {
-                    progress_spawn_workflow(event.position);
+                    progress_spawn_workflow(mouse_pos);
                 }
                 break;
             }
 
         case MouseEventType::SCROLL_UP:
-            if (scroll_zoom_in)
-            {
-                camera.smooth_zoom(0.9);
-            }
-            else
-            {
-                camera.smooth_zoom(1.1);
-            }
+            camera.smooth_zoom(0.9);
             break;
 
         case MouseEventType::SCROLL_DOWN:
-            zoom(1.1);
+            camera.smooth_zoom(1.1);
             break;
 
         default:

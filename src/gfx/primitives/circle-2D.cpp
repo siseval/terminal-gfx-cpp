@@ -6,6 +6,7 @@ namespace gfx::primitives
 
 using namespace gfx::core;
 using namespace gfx::math;
+using namespace gfx::core::types;
 
 
 Box2d Circle2D::get_geometry_size() const
@@ -43,7 +44,7 @@ bool Circle2D::point_collides(const gfx::math::Vec2d point, const gfx::math::Mat
 }
 
 
-void Circle2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3d &transform) const
+void Circle2D::rasterize(const Matrix3x3d &transform, const std::function<void(const Pixel&)> emit_pixel) const
 {
     if (radius <= 0)
     {
@@ -65,7 +66,7 @@ void Circle2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3
 
             if (distance <= r_outer && (get_filled() || distance >= r_inner))
             {
-                surface->write_pixel({ x, y }, get_color(), get_depth());
+                emit_pixel(Pixel { { x, y }, get_color() });
                 continue;
             }
         }

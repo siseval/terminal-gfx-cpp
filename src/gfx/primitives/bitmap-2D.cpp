@@ -35,7 +35,7 @@ bool Bitmap2D::point_collides(const Vec2d point, const Matrix3x3d &transform) co
     return false;
 }
 
-void Bitmap2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3d &transform) const
+void Bitmap2D::rasterize(const Matrix3x3d &transform, const std::function<void(const Pixel&)> emit_pixel) const
 {
     Box2d AABB { get_axis_aligned_bounding_box(transform) };
     Matrix3x3d inverse_transform { utils::invert_affine(transform) };
@@ -55,7 +55,7 @@ void Bitmap2D::rasterize(std::shared_ptr<RenderSurface> surface, const Matrix3x3
                 Color4 pixel { get_pixel({ img_x, img_y }) };
                 if (pixel.a > 0)
                 {
-                    surface->write_pixel({ x, y }, pixel);
+                    emit_pixel(Pixel { { x, y }, pixel });
                 }
             }
         }

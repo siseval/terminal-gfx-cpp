@@ -4,6 +4,7 @@ namespace demos::common::animations::fireworks
 {
 
 using namespace demos::common::core;
+using namespace gfx::core::types;
 
 void Particle::process(const double dt)
 {
@@ -21,8 +22,14 @@ void Particle::process(const double dt)
     }
     else
     {
-        shape->set_scale(gfx::math::Vec2d::lerp({ 1, 1 }, { 0.001, 0.001 }, t - 0.2));
+        double t2 { (t - 0.2) * 1.2 };
+        shape->set_scale(gfx::math::Vec2d::lerp({ 1, 1 }, { 0.001, 0.001 }, t2));
+        Color4 transparent_color = shape->get_color();
+        transparent_color.a = 0.0;
+        shape->set_color(Color4::lerp(shape->get_color(), transparent_color, t2 * t2 * 0.02));
     }
+    
+
 
     update_position(dt);
     apply_gravity(dt);

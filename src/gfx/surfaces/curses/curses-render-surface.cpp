@@ -1,4 +1,5 @@
-#include <gfx/surfaces/curses-render-surface.h>
+#include <locale.h>
+#include <gfx/surfaces/curses/curses-render-surface.h>
 
 namespace gfx::surfaces
 {
@@ -6,6 +7,21 @@ namespace gfx::surfaces
 using namespace gfx::core;
 using namespace gfx::core::types;
 using namespace gfx::math;
+
+int CursesRenderSurface::init()
+{
+    setlocale(LC_ALL, "");
+
+    initscr();
+    timeout(0);
+    cbreak();
+    noecho();
+    curs_set(0);
+
+    clear_color = { 0, 0, 0, 0 };
+
+    return 0;
+}
 
 
 void CursesRenderSurface::present()

@@ -61,7 +61,7 @@ private:
     double a_frequency { 0.01 };
     bool paused { false };
 
-    int num_colors { 120 };
+    int num_colors { 1000 };
     std::vector<gfx::core::types::Color4> colors;
     gfx::core::types::Color4 color0 { 0, 50, 255 };
     gfx::core::types::Color4 color1 { 255, 255, 150 };
